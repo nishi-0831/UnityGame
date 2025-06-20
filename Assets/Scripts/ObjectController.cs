@@ -1,12 +1,15 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ObjectController : MonoBehaviour
 {
-    [SerializeField] float speed_;
+    [SerializeField]private float speed_;
+    [SerializeField]private Rigidbody rigidbody_;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        rigidbody_ = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -14,31 +17,39 @@ public class ObjectController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Rigidbody rigidbody = GetComponent<Rigidbody>();
-            if (rigidbody != null)
+            if (rigidbody_ != null)
             {
                 Vector3 forceDir = new Vector3(0, 1, 0);
                 float force = 10.0f;
-                rigidbody.AddForce(forceDir * force, ForceMode.Impulse);
+                rigidbody_.AddForce(forceDir * force, ForceMode.Impulse);
             }
         }
-            int dir = 0;
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            dir = 1;
-        }
-        else if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            dir = -1;
-        }
-        else
-        {
-            return;
-        }
-        float movement = speed_  * dir * Time.deltaTime;
+        //    int dir = 0;
+        //if (Input.GetKey(KeyCode.RightArrow))
+        //{
+        //    dir = 1;
+        //}
+        //else if (Input.GetKey(KeyCode.LeftArrow))
+        //{
+        //    dir = -1;
+        //}
+        //else
+        //{
+        //    return;
+        //}
+        //float movement = speed_  * dir * Time.deltaTime;
 
-        transform.position += new Vector3(movement, 0, 0);
+        //transform.position += new Vector3(movement, 0, 0);
 
 
     }
+    private void FixedUpdate()
+    {
+        var hori = Input.GetAxis("Horizontal");
+        //var vert = Input.GetAxis("Vertical");
+
+        rigidbody_.linearVelocity = new Vector3(hori * speed_, 0, 0);
+    }
+
+
 }
