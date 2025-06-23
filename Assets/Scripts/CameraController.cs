@@ -10,8 +10,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform target_;
 
     [Header("ãóó£")]
-    [SerializeField] private Vector3 distance_;
+    [SerializeField] private float distance_;
 
+    [Header("íçéãì_ÇÃå¸Ç´")]
+    public bool isMovingLeft_ { get;  set; }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -20,11 +22,23 @@ public class CameraController : MonoBehaviour
         {
             Debug.LogError("camera_ is NULL");
         }
+        camera_.transform.position = target_.position + (target_.right * distance_);
+        camera_.transform.LookAt(target_.position);
     }
 
     // Update is called once per frame
     void Update()
     {
-        camera_.transform.position = target_.position - distance_;
+        
+    }
+    private void LateUpdate()
+    {
+        Vector3 dir = target_.right;
+        if( isMovingLeft_ )
+        {
+            dir *= -1;
+        }
+        camera_.transform.position = target_.position + (dir * distance_);
+        camera_.transform.LookAt(target_.position);
     }
 }
