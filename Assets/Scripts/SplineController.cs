@@ -1,5 +1,6 @@
 using StarterAssets;
 using System.Numerics;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -9,7 +10,9 @@ using UnityEngine.Splines;
 
 public class SplineController : MonoBehaviour
 {
-    [SerializeField] SplineContainer splineContainer_;
+    [SerializeField] SplineContainer currentSplineContainer_;
+    [SerializeField] List<SplineContainer> splineContainers_ = new List<SplineContainer>();
+
     [SerializeField] ThirdPersonController thirdPersonController_;
     [SerializeField] CameraController cameraController_;
     [SerializeField] GameObject followTarget_;
@@ -23,13 +26,13 @@ public class SplineController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        splineContainer_ = GetComponent<SplineContainer>();
+        currentSplineContainer_ = GetComponent<SplineContainer>();
         if (thirdPersonController_ == null)
         {
             thirdPersonController_ = GetComponentInChildren<ThirdPersonController>();
         }
 
-        UnityEngine.Vector3 pos = splineContainer_.EvaluatePosition(0.0f);
+        UnityEngine.Vector3 pos = currentSplineContainer_.EvaluatePosition(0.0f);
         followTarget_.transform.position = pos;
     }
 
@@ -52,18 +55,20 @@ public class SplineController : MonoBehaviour
         
         if(dir != 0)
         {
-            float movementT = speed_ / splineContainer_.CalculateLength();
+            float movementT = speed_ / currentSplineContainer_.CalculateLength();
             t_ += (movementT * dir);
-            MoveAlongApline(t_);
+            MoveAlongSpline(t_);
         }
-       
+
         if (t_ < 0.0f)
         {
-            t_ = 1.0f;
+            //t_ = 1.0f;
+            MoveOtherSpline(ref t_);
         }
         else if (t_ > 1.0f)
         {
             t_ = 0.0f;
+            MoveOtherSpline(ref t_);
         }
 
         if (thirdPersonController_ != null)
@@ -80,23 +85,23 @@ public class SplineController : MonoBehaviour
         {
             cameraController_.isMovingLeft_ = isMovingLeft;
         }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Rigidbody rigidbody = followTarget_.GetComponent<Rigidbody>();
-            if (rigidbody != null)
-            {
-                UnityEngine.Vector3 forceDir = new UnityEngine.Vector3(0, 1, 0);
-                float force = 10.0f;
-                rigidbody.AddForce(forceDir * force, ForceMode.Impulse);
-            }
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    Rigidbody rigidbody = followTarget_.GetComponent<Rigidbody>();
+        //    if (rigidbody != null)
+        //    {
+        //        UnityEngine.Vector3 forceDir = new UnityEngine.Vector3(0, 1, 0);
+        //        float force = 10.0f;
+        //        rigidbody.AddForce(forceDir * force, ForceMode.Impulse);
+        //    }
+        //}
 
     }
 
-    void MoveAlongApline(float t)
+    void MoveAlongSpline(float t)
     {
-        Spline spline = splineContainer_.Spline;
-        NativeSpline nativeSpline = new NativeSpline(spline, splineContainer_.transform.localToWorldMatrix);
+        Spline spline = currentSplineContainer_.Spline;
+        NativeSpline nativeSpline = new NativeSpline(spline, currentSplineContainer_.transform.localToWorldMatrix);
         float3 nearestPos;
         float3 tangent;
         float3 upVector;
@@ -107,18 +112,31 @@ public class SplineController : MonoBehaviour
         
         followTarget_.transform.rotation = rotation;
         followTarget_.transform.position = new UnityEngine.Vector3(nearestPos.x, followTarget_.transform.position.y, nearestPos.z);
-
-
-        //if (spline != null)
-        //{
-        //    nearestT =  SplineUtility.GetNearestPoint(spline,tf.position,out nearestPos out nearestT);
-        //}
     }
-
-
-    void Sample3()
+    void MoveOtherSpline(ref float t)
     {
-       
+        RaycastHit hit;
+        
+        var ft = followTarget_.transform;
+        if(Physics.Raycast(ft.position,-ft.up,out hit,Mathf.Infinity))
+        {
+            GameObject hitObject = hit.collider.gameObject;
+            Debug.Log(hitObject.name);
 
+            SplineContainer nextContainer =  hitObject.GetComponent<SplineContainer>();
+            if (nextContainer != null)
+            {
+                currentSplineContainer_ = nextContainer;
+            }
+            float3 outPos;
+            float outT;
+            SplineUtility.GetNearestPoint<Spline>(currentSplineContainer_.Spline, ft.position, out outPos, out outT);
+            t = outT;
+        }
+        else
+        {
+            t = Mathf.Clamp01(t);
+        }
     }
+
 }

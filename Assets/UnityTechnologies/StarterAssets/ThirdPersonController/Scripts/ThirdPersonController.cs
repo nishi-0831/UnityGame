@@ -40,10 +40,12 @@ namespace StarterAssets
         public float Gravity = -15.0f;
 
         [Space(10)]
-        [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
+        [Tooltip("着地後、再びジャンプできるようになるまでのクールタイム時間(秒単位)。0なら即座にジャンプ可能")]
         public float JumpTimeout = 0.50f;
 
-        [Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
+
+        [Tooltip("地面を離れてから「落下状態」と判定されるまでの猶予時間(秒単位)")]
+        //階段や段差を降りるとき、すぐに落下アニメーションに切り替わらないようにするため
         public float FallTimeout = 0.15f;
 
         [Header("Player Grounded")]
@@ -88,7 +90,9 @@ namespace StarterAssets
         private float _terminalVelocity = 53.0f;
 
         // timeout deltatime
+        //
         private float _jumpTimeoutDelta;
+
         private float _fallTimeoutDelta;
 
         // animation IDs
