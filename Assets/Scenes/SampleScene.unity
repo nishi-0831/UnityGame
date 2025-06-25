@@ -1931,6 +1931,10 @@ PrefabInstance:
       propertyPath: JumpHeight
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 657185006897926158, guid: 7ae956b4f54394e80818898d8f4d30c6, type: 3}
+      propertyPath: JumpTimeout
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1114260476483171701, guid: 7ae956b4f54394e80818898d8f4d30c6, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
@@ -2295,7 +2299,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &446108242
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7786,7 +7790,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineContainer_: {fileID: 0}
+  currentSplineContainer_: {fileID: 0}
+  splineContainers_: []
   thirdPersonController_: {fileID: 0}
   cameraController_: {fileID: 0}
   followTarget_: {fileID: 1776325977}
@@ -7941,7 +7946,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineContainer_: {fileID: 701861727}
+  currentSplineContainer_: {fileID: 0}
+  splineContainers_: []
   thirdPersonController_: {fileID: 86813417}
   cameraController_: {fileID: 330585548}
   followTarget_: {fileID: 86813413}
@@ -9406,7 +9412,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &953092469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9419,7 +9425,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineContainer_: {fileID: 953092470}
+  currentSplineContainer_: {fileID: 0}
+  splineContainers_: []
   thirdPersonController_: {fileID: 0}
   cameraController_: {fileID: 0}
   followTarget_: {fileID: 1776325977}
@@ -10185,7 +10192,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineContainer_: {fileID: 992671509}
+  currentSplineContainer_: {fileID: 0}
+  splineContainers_: []
   thirdPersonController_: {fileID: 0}
   cameraController_: {fileID: 0}
   followTarget_: {fileID: 1776325977}
@@ -18041,7 +18049,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineContainer_: {fileID: 1903038423}
+  currentSplineContainer_: {fileID: 0}
+  splineContainers_: []
   thirdPersonController_: {fileID: 0}
   cameraController_: {fileID: 0}
   followTarget_: {fileID: 1776325977}
