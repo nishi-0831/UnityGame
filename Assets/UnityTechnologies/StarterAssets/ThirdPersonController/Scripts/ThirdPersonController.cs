@@ -51,6 +51,7 @@ namespace StarterAssets
         [Header("Player Grounded")]
         [Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
         public bool Grounded = true;
+        public bool prevGrounded = true;
 
         [Tooltip("Useful for rough ground")]
         public float GroundedOffset = -0.14f;
@@ -184,6 +185,13 @@ namespace StarterAssets
             // set sphere position, with offset
             Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
                 transform.position.z);
+
+            prevGrounded = Grounded;
+
+            //position:球形の中心
+            //radius:球形の半身
+            //layerMask:判定対象にするレイヤー
+            //「トリガー」に設定されているものも判定対象にするか否か
             Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
                 QueryTriggerInteraction.Ignore);
 
@@ -191,6 +199,11 @@ namespace StarterAssets
             if (_hasAnimator)
             {
                 _animator.SetBool(_animIDGrounded, Grounded);
+            }
+
+            if(prevGrounded == false && Grounded == true)
+            {
+                Debug.Log("nowGrounded");
             }
         }
 
