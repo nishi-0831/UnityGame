@@ -63,11 +63,13 @@ public class SplineController : MonoBehaviour
         if (t_ < 0.0f)
         {
             //t_ = 1.0f;
+            Debug.Log("t<0.0f");
             MoveOtherSpline(ref t_);
         }
         else if (t_ > 1.0f)
         {
-            t_ = 0.0f;
+            //t_ = 0.0f;
+            Debug.Log("t > 1.0f");
             MoveOtherSpline(ref t_);
         }
 
@@ -124,7 +126,8 @@ public class SplineController : MonoBehaviour
             Debug.Log(hitObject.name);
 
             SplineContainer nextContainer =  hitObject.GetComponent<SplineContainer>();
-            if (nextContainer != null)
+            
+            if (nextContainer != null && currentSplineContainer_ != nextContainer)
             {
                 currentSplineContainer_ = nextContainer;
             }
@@ -135,6 +138,7 @@ public class SplineController : MonoBehaviour
         }
         else
         {
+            Debug.Log("t = Mathf.Clamp01(t)");
             t = Mathf.Clamp01(t);
         }
     }
