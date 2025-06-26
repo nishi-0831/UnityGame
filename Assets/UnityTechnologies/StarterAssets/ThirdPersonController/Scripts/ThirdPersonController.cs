@@ -2,6 +2,7 @@
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
+using UnityEngine.Events;
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
  */
@@ -14,6 +15,7 @@ namespace StarterAssets
 #endif
     public class ThirdPersonController : MonoBehaviour
     {
+        [SerializeField] private UnityEvent myEvent = new UnityEvent();
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
@@ -204,6 +206,7 @@ namespace StarterAssets
             if(prevGrounded == false && Grounded == true)
             {
                 Debug.Log("nowGrounded");
+                myEvent.Invoke();
             }
         }
 
