@@ -59,10 +59,14 @@ public class SplineKnotsFromProBuilder : MonoBehaviour
         for(int i=0;i<edges.Count;i++)
         {
             Vector3 a = vertices[edges[i].a];
+            Vector3 b = vertices[edges[i].b];
+            Debug.Log($"edges[{i}].a:{a}");
+            Debug.Log($"edges[{i}].b:{b}");
             KnotPositions_.Add(targetMesh_.transform.TransformPoint(a));
+            KnotPositions_.Add(targetMesh_.transform.TransformPoint(b));
         }
-        Vector3 last = vertices[edges.Last().b];
-        KnotPositions_.Add(targetMesh_.transform.TransformPoint(last));
+        //Vector3 last = vertices[edges.Last().b];
+        //KnotPositions_.Add(targetMesh_.transform.TransformPoint(last));
 
         //ƒXƒvƒ‰ƒCƒ“‚ÉKnot‚ð’Ç‰Á
         CreateSplineFromKnots();
