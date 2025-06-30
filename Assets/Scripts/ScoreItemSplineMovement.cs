@@ -9,19 +9,14 @@ public class ScoreItemSplineMovement : SplineMovementBase
     [SerializeField] private float oscillationAmount = 0.5f;
     
     private float initialY;
-    
+   
     protected override void Initialize()
     {
-        base.Initialize();
         initialY = followTarget_.transform.position.y;
         splineController_.isMovingLeft = false;
     }
-    protected override void Update()
+    protected override void UpdateMovement()
     {
-        base.Update();
-        // 基本の移動
-        //splineController_.Move(speed_);
-        
         // Y軸の振動エフェクト
         Vector3 pos = followTarget_.transform.position;
         pos.y = initialY + Mathf.Sin(Time.time * oscillationSpeed) * oscillationAmount;

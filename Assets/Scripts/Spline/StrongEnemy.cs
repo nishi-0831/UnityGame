@@ -8,42 +8,36 @@ public class StrongEnemy : SplineMovementBase
 {
     [Header("球を転がして攻撃してくる敵")]
 
-    [Space(32)]
-    [Header("球による攻撃間隔")]
+
+    [Header("球の設定")]
     [SerializeField] private float attackInterval_ = 5.0f;
-
-    [Header("球の移動速度")]
-
-    [Tooltip("角度と座標の変化量は比例させていません")]
-    [SerializeField] private float ballMoveSpeed_ = 360.0f;
-
-    [Header("球の回転速度")]
-
-    [Tooltip("角度と座標の変化量は比例させていません")]
-    [SerializeField] private float ballRollSpeed_ = 0.1f;
+    [SerializeField] private float ballMoveSpeed_ = 0.1f;
+    [SerializeField] private float ballRollSpeed_ = 360f;
     [SerializeField] private float ballOffset_ = 30.0f;
+
+
     [SerializeField] private GameObject ballPrefab_;
+    [SerializeField] private float ballRadius_ = 0.5f;
     [SerializeField]private EaseInterpolator easeInterpolator_;
 
-    private void Start()
-    {
-        
-    }
-
+    
     protected override void Initialize()
     {
-        base.Initialize();
+        if(ballPrefab_ != null)
+        {
+            //ProBuilderのSphereプリミティブの半径はデフォルトで直径1なので、2で割って半径を取得
+            ballRadius_ = ballPrefab_.transform.localScale.x / 2f;
+        }
+
         easeInterpolator_ = this.GetComponent<EaseInterpolator>();
         Debug.Assert(easeInterpolator_ != null);
 
         easeInterpolator_.onFinished_ += GenerateBall;
         easeInterpolator_.Reset();
-        //timer_ = 0.0f;
+        easeInterpolator_.duration = attackInterval_;
+        //easeInterpolator_
     }
-    // Update is called once per frame
-    protected override void Update()
-    {
-    }
+
     protected override void UpdateMovement()
     {
         base.UpdateMovement();
@@ -51,10 +45,12 @@ public class StrongEnemy : SplineMovementBase
     }
     private void GenerateBall()
     {
-        if(IsActive_)
+        easeInterpolator_.Reset();
+        if(!IsActive_)
         {
             return;
         }
+        Debug.Log($"{this.gameObject.name}:attack");
         GameObject ball = Instantiate(ballPrefab_);
         //ball.transform.position = this.transform.position;
         //自身から○○先に置きたい : ○○はtではなく距離
@@ -65,7 +61,7 @@ public class StrongEnemy : SplineMovementBase
         {
             offsetT = -offsetT;
         }
-        float ballT = splineController_.t_ - offsetT;
+        float ballT = splineController_.t_ + offsetT;
 
         var ballMovement = ball.GetComponent<RollingBallSplineMovement>();
         Debug.Assert( ballMovement != null );

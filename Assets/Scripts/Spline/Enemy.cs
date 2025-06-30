@@ -4,13 +4,13 @@ using UnityEngine.Splines;
 public class Enemy : SplineMovementBase
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    
     protected override void Initialize()
     {
-        base.Initialize();
         splineController_.isMovingLeft = false;
     }
-    protected override void Update()
+    
+    
+    protected override void UpdateMovement()
     {
         splineController_.Move(speed_);
     }

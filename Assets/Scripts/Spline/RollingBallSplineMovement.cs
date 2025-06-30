@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Splines;
-
+using UnityEngine.ProBuilder;
+using MySpline;
 public class RollingBallSplineMovement : SplineMovementBase
 {
     [Header("Rolling Ball Settings")]
@@ -11,22 +12,35 @@ public class RollingBallSplineMovement : SplineMovementBase
     [SerializeField] private float bounceForce = 5.0f;
     
     private Rigidbody rb_;
-
-
-    
+    private ProBuilderMesh proBuilderMesh_;
+    private float radius_;
+    public float Radius
+    {
+        get {  return radius_; } 
+        set 
+        {
+            radius_ = value;
+            //if(ballPrefab_ != null)
+            transform.localScale = Vector3.one * (radius_ * 2f);
+        }
+    }
     protected override void Initialize()
     {
-        base.Initialize();
         rb_ = GetComponent<Rigidbody>();
         if (rb_ == null)
         {
             rb_ = gameObject.AddComponent<Rigidbody>();
         }
+
+        proBuilderMesh_ = GetComponent<ProBuilderMesh>();
         //splineController_.isMovingLeft = false;
+        Debug.Log("Ball:Inititalize");
         IsMovingLeft = false;
     }
+   
     public void SetParam(SplineContainer splineContainer,float t,float moveSpeed,float rollSpeed,bool isLeft)
     {
+        Debug.Log("Ball:SetParame");
         this.splineController_.currentSplineContainer_ = splineContainer;
         this.splineController_.t_ = t;
         this.speed_ = moveSpeed;
@@ -34,18 +48,20 @@ public class RollingBallSplineMovement : SplineMovementBase
         //this.splineController_.isMovingLeft=isLeft;
         this.IsMovingLeft = isLeft;
     }
-    //protected override void Update()
-    //{
-    //    base .Update();
-    //}
+   
     protected override void UpdateMovement()
     {
-        base.UpdateMovement();
+        splineController_.UpdateT(speed_);
+        EvaluationInfo info = splineController_.EvaluationInfo;
         // 基本の移動
-        splineController_.Move(speed_);
-
+        transform.position = info.position + (info.upVector * Radius);
+        
         // 転がるアニメーション
-        Vector3 tangent = splineController_.GetSplineTangent();
+        Vector3 tangent = info.tangent;
+        if (IsMovingLeft)
+        {
+            tangent *= -1;
+        }
         Vector3 rotationAxis = Vector3.Cross(tangent, Vector3.up);
         float rotationAmount = speed_ * rollSpeed * Time.deltaTime;
         transform.Rotate(rotationAxis, rotationAmount, Space.World);

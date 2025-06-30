@@ -10,7 +10,7 @@ public class EaseInterpolator : MonoBehaviour
 
     public float elapsedTime {  get; private set; }
     public float time;
-    public float duration = 0;
+    public float duration = 0.1f;
     public EasingFunc func;
     bool isFinish = false;
 
@@ -39,12 +39,12 @@ public class EaseInterpolator : MonoBehaviour
         //t = Mathf.Clamp01(elapsedTime / duration);
         if(t<0)
         {
-            Debug.Log("Comeback");
+            //Debug.Log("Comeback");
             onComeback_?.Invoke();
         }
         else if(t > 1.0f)
         {
-            Debug.Log("Finish");
+            //Debug.Log("Finish");
             onFinished_?.Invoke();
         }
     }

@@ -8,11 +8,52 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Splines;
+using UnityEngine.UIElements;
+using JetBrains.Annotations;
+using MySpline;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+namespace MySpline
+{
+    public struct EvaluationInfo
+    {
 
+        public Vector3 position;
+        public Vector3 tangent;
+        public Vector3 upVector;
+        public Quaternion rotation;
+        public EvaluationInfo(Vector3 pos, Vector3 tan, Vector3 up, Quaternion rot)
+        {
+
+            position = pos;
+            tangent = tan;
+            upVector = up;
+            rotation = rot;
+        }
+        public static bool operator ==(EvaluationInfo left, EvaluationInfo right)
+        {
+            if (left.position == right.position &&
+               left.tangent == right.tangent &&
+               left.upVector == right.upVector &&
+               left.rotation == right.rotation
+               )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public static bool operator !=(EvaluationInfo left, EvaluationInfo right)
+        {
+            return !(left == right);
+        }
+    }
+}
 public class SplineController : MonoBehaviour
 {
     [SerializeField] public GameObject followTarget_;
@@ -22,7 +63,7 @@ public class SplineController : MonoBehaviour
     [SerializeField] public bool isMovingLeft = false;
 
     [Header("エディターで初期位置表示")]
-    [SerializeField] private bool enableEditorPreview = true;
+    [SerializeField] private bool enableEditorPreview = false;
     [SerializeField]
     [Range(0f, 1f)]
     private float firstT_ = 0.0f;
@@ -33,8 +74,10 @@ public class SplineController : MonoBehaviour
 
     private float prevT_;
     private bool isFirstFrame_ = true;
+    private EvaluationInfo prevEvaluationInfo_;
+    private EvaluationInfo evaluationInfo_;
     
-    
+    public EvaluationInfo EvaluationInfo { get { return evaluationInfo_; } }
     // followTarget_のプロパティアクセサを追加
     public GameObject FollowTarget 
     { 
@@ -65,20 +108,44 @@ public class SplineController : MonoBehaviour
         if(enableEditorPreview && !Application.isPlaying)
         {
             //エディタでインスペクターの変更が完了したときに呼ばれるよう設定
-            UnityEditor.EditorApplication.delayCall += UpdateEditorPreview;
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                //delayCallがnullの時は呼び出しをスキップ
+                if (this == null)
+                {
+                    return;
+                }
+
+                if (!Application.isPlaying)
+                {
+                    UpdateEditorPreview();
+                }
+            };
+        }
+    }
+    private void OnDisable()
+    {
+        //delayCallの削除
+        if(!Application.isPlaying)
+        {
+            EditorApplication.delayCall = null;
         }
     }
     private void UpdateEditorPreview()
     {
+        if (this == null || !this.gameObject.activeInHierarchy)
+        {
+            return;
+        }
         //Debug.Assert(followTarget_ != null,"followTarget == null");
         if(followTarget_ == null)
         {
             followTarget_ = this.gameObject;
-            Debug.LogWarning("followTargetが見当たらなかったので、thisを対象とします");
+            Debug.LogWarning($"{gameObject.name}:followTargetが見当たらなかったので、thisを対象とします");
         }
         if(currentSplineContainer_ == null)
         {
-            Debug.LogError($"{this.gameObject.name}.currentSplineContainer == null");
+            Debug.LogWarning($"{gameObject.name}:currentSplineContainer == null");
             return;
         }
         
@@ -109,6 +176,8 @@ public class SplineController : MonoBehaviour
         }
         prevT_ = t_;
         splineDirection_ = 1;
+        evaluationInfo_ = new EvaluationInfo();
+        prevEvaluationInfo_ = evaluationInfo_;
     }
 
     // Update is called once per frame
@@ -122,8 +191,21 @@ public class SplineController : MonoBehaviour
         {
             onMaxT?.Invoke();
         }
+        if(evaluationInfo_ != prevEvaluationInfo_)
+        {
+            prevEvaluationInfo_ = evaluationInfo_;
+            evaluationInfo_ = GetCurrentEvaluationInfo();
+        }
     }
-
+    public void UpdateT(float speed)
+    {
+        int dir = 1;
+        if(isMovingLeft)
+        {
+            dir = -1;
+        }
+        UpdateT(speed, dir);
+    }
     public void UpdateT(float speed, int moveDir)
     {
         //Math.Clamp(moveDir, -1, 1);
@@ -133,6 +215,8 @@ public class SplineController : MonoBehaviour
 
         prevT_ = t_;
         t_ += (movementT * moveDir * splineDirection_);
+
+        evaluationInfo_ = GetCurrentEvaluationInfo();
     }
     public void Move(float speed, int moveDir)
     {
@@ -163,7 +247,6 @@ public class SplineController : MonoBehaviour
     /// <returns></returns>
     public float GetSplineMovementT(float movement)
     {
-
         return movement / currentSplineContainer_.CalculateLength();
     }
     /// <summary>
@@ -187,6 +270,28 @@ public class SplineController : MonoBehaviour
         return delta;
     }
 
+    public EvaluationInfo GetEvaluationInfo(float t)
+    {
+        if (currentSplineContainer_ == null || followTarget_ == null)
+        {}
+        
+        Spline spline = currentSplineContainer_.Spline;
+        NativeSpline nativeSpline = new NativeSpline(spline, currentSplineContainer_.transform.localToWorldMatrix);
+        float3 nearestPos;
+        float3 tangent;
+        float3 upVector;
+
+        SplineUtility.Evaluate<NativeSpline>(nativeSpline, t, out nearestPos, out tangent, out upVector);
+        if (isMovingLeft) tangent *= -1;
+        tangent *= splineDirection_;
+        UnityEngine.Quaternion rotation = UnityEngine.Quaternion.LookRotation(tangent, upVector);
+
+        return new EvaluationInfo(nearestPos,tangent,upVector,rotation);
+    }
+    public EvaluationInfo GetCurrentEvaluationInfo()
+    {
+        return GetEvaluationInfo(t_);
+    }
     /// <summary>
     /// Splineの接線方向を取得
     /// </summary>
@@ -250,6 +355,10 @@ public class SplineController : MonoBehaviour
     }
     public void MoveAlongSpline(float t)
     {
+        EvaluationInfo spline = GetEvaluationInfo(t);
+        followTarget_.transform.rotation = spline.rotation;
+        followTarget_.transform.position = spline.position;
+#if false
         if (currentSplineContainer_ == null || followTarget_ == null) return;
         
         Spline spline = currentSplineContainer_.Spline;
@@ -265,9 +374,8 @@ public class SplineController : MonoBehaviour
         
         followTarget_.transform.rotation = rotation;
         followTarget_.transform.position = new UnityEngine.Vector3(nearestPos.x, followTarget_.transform.position.y, nearestPos.z);
+#endif
     }
-
-    
     public void ClampT()
     {
         t_ = Mathf.Clamp01(t_);

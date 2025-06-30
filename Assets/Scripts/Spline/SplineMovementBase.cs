@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 [RequireComponent(typeof(SplineController))]
 public abstract class SplineMovementBase : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     [SerializeField] protected float speed_ = 1.0f;
     [SerializeField] protected bool autoInitialize = true;
     //[SerializeField] protected float firstT_ = 0.0f;
-    protected SplineController splineController_;
+    [SerializeField]protected SplineController splineController_;
     protected GameObject followTarget_;
     protected bool isActive_ = true;
     public bool IsActive_
@@ -41,12 +42,13 @@ public abstract class SplineMovementBase : MonoBehaviour
         }
     }
 #endif
-    protected virtual void Awake()
+    private void Awake()
     {
         InitializeComponents();
+        Initialize();
     }
     
-    protected void Start()
+    private  void Start()
     {
         if (autoInitialize)
         {
@@ -58,22 +60,18 @@ public abstract class SplineMovementBase : MonoBehaviour
                 // イベントの登録
                 splineController_.onMaxT += OnReachMaxT;
                 splineController_.onMinT += OnReachMinT;
-
-                Initialize();
             }
         }
     }
     
-    protected virtual void Update()
+    private void Update()
     {
         if (!isActive_)
         {
             return;
         }
-        if (splineController_ != null)
-        {
-            UpdateMovement();
-        }
+
+        UpdateMovement();
     }
     
     /// <summary>
@@ -88,30 +86,27 @@ public abstract class SplineMovementBase : MonoBehaviour
             return;
         }
         
-        
-        
         //自身をfollowTargetとして使用
         followTarget_ = gameObject;
-        
         
         splineController_.FollowTarget = followTarget_;
     }
     
+  
     /// <summary>
-    /// 初期化処理（派生クラスでオーバーライド可能）
+    /// 初期化処理
     /// </summary>
     protected virtual void Initialize()
     {
-        
+
     }
-    
+
     /// <summary>
     /// 毎フレームの移動処理
     /// </summary>
     protected virtual void UpdateMovement()
     {
-        // 基本の移動処理は派生クラスで実装
-        OnUpdateMovement();
+       
     }
     
     /// <summary>
@@ -129,22 +124,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     {
         Debug.Log($"{gameObject.name}: Reached Min T");
     }
-    
-    /// <summary>
-    /// 初期化時の処理（派生クラスでオーバーライド）
-    /// </summary>
-    protected virtual void OnInitialize()
-    {
-        // 派生クラスで実装
-    }
-    
-    /// <summary>
-    /// 毎フレームの移動処理（派生クラスでオーバーライド）
-    /// </summary>
-    protected virtual void OnUpdateMovement()
-    {
-        // 派生クラスで実装
-    }
+   
     
     /// <summary>
     /// 破棄時の処理
