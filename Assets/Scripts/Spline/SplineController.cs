@@ -9,29 +9,31 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Splines;
 
-//using static UnityEditor.PlayerSettings;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class SplineController : MonoBehaviour
 {
-    
     [SerializeField] public GameObject followTarget_;
-
     [SerializeField] public SplineContainer currentSplineContainer_;
     [SerializeField] public float t_;
-    
-    [SerializeField] public int splineDirection_;
-    
+    [SerializeField] public int splineDirection_ = 1;
     [SerializeField] public bool isMovingLeft = false;
+
+    [Header("エディターで初期位置表示")]
+    [SerializeField] private bool enableEditorPreview = true;
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float firstT_ = 0.0f;
+
+
     public Action onMaxT;
     public Action onMinT;
 
-    // 前フレームの位置を記録
-    //private Vector3 currentPositon_;
-    //private Vector3 previousPosition_;
-    //private float currentT_;
     private float prevT_;
     private bool isFirstFrame_ = true;
-    private float firstT_ = 0.0f;
+    
     
     // followTarget_のプロパティアクセサを追加
     public GameObject FollowTarget 
@@ -40,14 +42,70 @@ public class SplineController : MonoBehaviour
         set { followTarget_ = value; } 
     }
 
+    public float FirstT
+    {
+        get { return firstT_; }
+        set 
+        {
+            firstT_ = value;
+            //t_ = 
+#if UNITY_EDITOR
+            if(enableEditorPreview && !Application.isPlaying)
+            {
+                UpdateEditorPreview();
+            }
+#endif
+        }
+    }
+
+#if UNITY_EDITOR    
+    //Edit Mode/Play Mode問わず呼びだされる、インスペクターのプロパティが変更されたときに呼び出されるメソッド
+    private void OnValidate()
+    {
+        if(enableEditorPreview && !Application.isPlaying)
+        {
+            //エディタでインスペクターの変更が完了したときに呼ばれるよう設定
+            UnityEditor.EditorApplication.delayCall += UpdateEditorPreview;
+        }
+    }
+    private void UpdateEditorPreview()
+    {
+        //Debug.Assert(followTarget_ != null,"followTarget == null");
+        if(followTarget_ == null)
+        {
+            followTarget_ = this.gameObject;
+            Debug.LogWarning("followTargetが見当たらなかったので、thisを対象とします");
+        }
+        if(currentSplineContainer_ == null)
+        {
+            Debug.LogError($"{this.gameObject.name}.currentSplineContainer == null");
+            return;
+        }
+        
+        if(enableEditorPreview)
+        {
+            MoveAlongSplineEditorOnly(firstT_);
+        }
+    }
+
+    private void MoveAlongSplineEditorOnly(float t)
+    {
+        followTarget_.transform.position = GetSplinePos(t);
+        if(!Application.isPlaying)
+        {
+            UnityEditor.SceneView.RepaintAll();
+        }
+    }
+#endif
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         t_ = firstT_;
         if (followTarget_ != null && currentSplineContainer_ != null)
         {
-            UnityEngine.Vector3 pos = currentSplineContainer_.EvaluatePosition(t_);
-            followTarget_.transform.position = pos;
+            //UnityEngine.Vector3 pos = currentSplineContainer_.EvaluatePosition(t_);
+            //followTarget_.transform.position = pos;
+            MoveAlongSpline(t_);
         }
         prevT_ = t_;
         splineDirection_ = 1;

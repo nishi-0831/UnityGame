@@ -14,18 +14,15 @@ public class EaseInterpolator : MonoBehaviour
     public EasingFunc func;
     bool isFinish = false;
 
-    public Vector3 from_;
-    public Vector3 to_;
+    [HideInInspector]public Vector3 from_;
+    [HideInInspector] public Vector3 to_;
 
     public  Action onFinished_;
     public Action onComeback_;
 
     public bool isReverse_ = false;
     // Update is called once per frame
-    void Update()
-    {
-        time = t;
-    }
+    
     public void UpdateTime()
     {
         elapsedTime += UnityEngine.Time.deltaTime;

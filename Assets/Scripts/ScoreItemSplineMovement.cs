@@ -16,7 +16,6 @@ public class ScoreItemSplineMovement : SplineMovementBase
         initialY = followTarget_.transform.position.y;
         splineController_.isMovingLeft = false;
     }
-    
     protected override void Update()
     {
         base.Update();

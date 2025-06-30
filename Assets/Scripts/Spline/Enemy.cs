@@ -4,10 +4,7 @@ using UnityEngine.Splines;
 public class Enemy : SplineMovementBase
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    protected override void Start() 
-    {
-        base.Start();
-    }
+    
     protected override void Initialize()
     {
         base.Initialize();
@@ -29,6 +26,6 @@ public class Enemy : SplineMovementBase
         base.OnReachMinT();
         splineController_.Reverse();
     }
-    
+
     
 }

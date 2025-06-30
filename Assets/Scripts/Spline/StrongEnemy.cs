@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Splines;
 [RequireComponent(typeof(EaseInterpolator))]
@@ -9,34 +10,33 @@ public class StrongEnemy : SplineMovementBase
 
     [Space(32)]
     [Header("ãÖÇ…ÇÊÇÈçUåÇä‘äu")]
-    [SerializeField] private float attackInterval_;
+    [SerializeField] private float attackInterval_ = 5.0f;
 
     [Header("ãÖÇÃà⁄ìÆë¨ìx")]
 
     [Tooltip("äpìxÇ∆ç¿ïWÇÃïœâªó ÇÕî‰ó·Ç≥ÇπÇƒÇ¢Ç‹ÇπÇÒ")]
-    [SerializeField] private float ballMoveSpeed_;
+    [SerializeField] private float ballMoveSpeed_ = 360.0f;
 
     [Header("ãÖÇÃâÒì]ë¨ìx")]
 
     [Tooltip("äpìxÇ∆ç¿ïWÇÃïœâªó ÇÕî‰ó·Ç≥ÇπÇƒÇ¢Ç‹ÇπÇÒ")]
-    [SerializeField] private float ballRollSpeed_;
+    [SerializeField] private float ballRollSpeed_ = 0.1f;
+    [SerializeField] private float ballOffset_ = 30.0f;
+    [SerializeField] private GameObject ballPrefab_;
+    [SerializeField]private EaseInterpolator easeInterpolator_;
 
-    [SerializeField] private float ballOffset_;
-    private EaseInterpolator easeInterpolator_;
-    private GameObject ballPrefab_;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-
-        easeInterpolator_ = GetComponent<EaseInterpolator>();
-        Debug.Assert( easeInterpolator_ != null);
-
-        easeInterpolator_.onFinished_ += GenerateBall;
+        
     }
+
     protected override void Initialize()
     {
         base.Initialize();
+        easeInterpolator_ = this.GetComponent<EaseInterpolator>();
+        Debug.Assert(easeInterpolator_ != null);
+
+        easeInterpolator_.onFinished_ += GenerateBall;
         easeInterpolator_.Reset();
         //timer_ = 0.0f;
     }
@@ -44,11 +44,10 @@ public class StrongEnemy : SplineMovementBase
     protected override void Update()
     {
     }
-
     protected override void UpdateMovement()
     {
         base.UpdateMovement();
-
+        easeInterpolator_.UpdateTime();
     }
     private void GenerateBall()
     {
@@ -72,10 +71,11 @@ public class StrongEnemy : SplineMovementBase
         Debug.Assert( ballMovement != null );
 
         ballMovement.SetParam(
-            t : ballT,
+            splineContainer: splineController_.currentSplineContainer_,
+            t: ballT,
             moveSpeed: ballMoveSpeed_,
             rollSpeed: ballRollSpeed_,
-            isLeft:IsMovingLeft
+            isLeft: IsMovingLeft
             );
     }
 }

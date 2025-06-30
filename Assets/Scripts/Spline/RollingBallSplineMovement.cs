@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Splines;
 
 public class RollingBallSplineMovement : SplineMovementBase
 {
@@ -11,25 +12,22 @@ public class RollingBallSplineMovement : SplineMovementBase
     
     private Rigidbody rb_;
 
+
     
-    protected override void Start()
+    protected override void Initialize()
     {
-        base.Start();
+        base.Initialize();
         rb_ = GetComponent<Rigidbody>();
         if (rb_ == null)
         {
             rb_ = gameObject.AddComponent<Rigidbody>();
         }
-    }
-
-    protected override void Initialize()
-    {
-        base.Initialize();
         //splineController_.isMovingLeft = false;
         IsMovingLeft = false;
     }
-    public void SetParam(float t,float moveSpeed,float rollSpeed,bool isLeft)
+    public void SetParam(SplineContainer splineContainer,float t,float moveSpeed,float rollSpeed,bool isLeft)
     {
+        this.splineController_.currentSplineContainer_ = splineContainer;
         this.splineController_.t_ = t;
         this.speed_ = moveSpeed;
         this.rollSpeed = rollSpeed;

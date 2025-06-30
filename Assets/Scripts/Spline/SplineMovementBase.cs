@@ -6,7 +6,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     [Header("Spline Movement Settings")]
     [SerializeField] protected float speed_ = 1.0f;
     [SerializeField] protected bool autoInitialize = true;
-    [SerializeField] protected float firstT_ = 0.0f;
+    //[SerializeField] protected float firstT_ = 0.0f;
     protected SplineController splineController_;
     protected GameObject followTarget_;
     protected bool isActive_ = true;
@@ -20,19 +20,40 @@ public abstract class SplineMovementBase : MonoBehaviour
         get { return splineController_.isMovingLeft; } 
         protected set { splineController_.isMovingLeft = value; }
     }
+
+    public float FirstT
+    {
+        get { return splineController_.FirstT; }
+        protected set
+        {
+            if (splineController_ != null)
+            {
+                splineController_.FirstT = value;
+            }
+        }
+    }
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if(splineController_ == null)
+        {
+            splineController_ = GetComponent<SplineController>();
+        }
+    }
+#endif
     protected virtual void Awake()
     {
         InitializeComponents();
     }
     
-    protected virtual void Start()
+    protected void Start()
     {
         if (autoInitialize)
         {
             if (splineController_ != null)
             {
                 //初期位置設定
-                splineController_.MoveAlongSpline(firstT_);
+                splineController_.MoveAlongSpline(FirstT);
 
                 // イベントの登録
                 splineController_.onMaxT += OnReachMaxT;
