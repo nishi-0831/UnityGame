@@ -8,10 +8,18 @@ public class BasicRigidBodyPush : MonoBehaviour
 
 	private void OnControllerColliderHit(ControllerColliderHit hit)
 	{
-		if (canPush) PushRigidBodies(hit);
-	}
-
-	private void PushRigidBodies(ControllerColliderHit hit)
+        //if (canPush) PushRigidBodies(hit);
+        var bodyLayerMask = 1 << hit.gameObject.layer;
+        if ((bodyLayerMask & pushLayers.value) == 0) return;
+        Debug.Log($"{hit.gameObject.name}と{this.name}が衝突しました");
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        var bodyLayerMask = 1 << other.gameObject.layer;
+        if ((bodyLayerMask & pushLayers.value) == 0) return;
+        Debug.Log($"{other.gameObject.name}と{this.name}が衝突しました");
+    }
+    private void PushRigidBodies(ControllerColliderHit hit)
 	{
 		// https://docs.unity3d.com/ScriptReference/CharacterController.OnControllerColliderHit.html
 

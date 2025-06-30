@@ -1,5 +1,10 @@
-﻿ using UnityEngine;
-#if ENABLE_INPUT_SYSTEM 
+﻿using System; 
+using UnityEngine;
+using TMPro;
+using static UnityEngine.InputSystem.XR.TrackedPoseDriver;
+
+
+#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 using UnityEngine.Events;
@@ -15,7 +20,7 @@ namespace StarterAssets
 #endif
     public class ThirdPersonController : MonoBehaviour
     {
-        [SerializeField] private UnityEvent myEvent = new UnityEvent();
+        [SerializeField] public Action myEvent;
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
@@ -90,6 +95,7 @@ namespace StarterAssets
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
         private float _verticalVelocity;
+        public float VerticalVelocity => _verticalVelocity;
         private float _terminalVelocity = 53.0f;
 
         // timeout deltatime
@@ -116,7 +122,7 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
-
+        private bool _isAir;
         private bool IsCurrentDeviceMouse
         {
             get
@@ -165,7 +171,7 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
-            Move();
+            //Move();
         }
 
         private void LateUpdate()
@@ -203,9 +209,11 @@ namespace StarterAssets
                 _animator.SetBool(_animIDGrounded, Grounded);
             }
 
-            if(prevGrounded == false && Grounded == true)
+            //if(prevGrounded == false && Grounded == true)
+            if(_isAir && Grounded)
             {
                 Debug.Log("nowGrounded");
+                _isAir = false;
                 myEvent.Invoke();
             }
         }
@@ -215,7 +223,7 @@ namespace StarterAssets
             // if there is an input and camera position is not fixed
             if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
             {
-                //Don't multiply mouse input by Time.deltaTime;
+                //Don't multiply mouse input by UpdateTime.deltaTime;
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
                 _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
@@ -231,27 +239,25 @@ namespace StarterAssets
                 _cinemachineTargetYaw, 0.0f);
         }
 
-        public void SetSplineMoveInput(Vector2 moveInput,float curentSpeed)
+        public void SetMoveInput(Vector2 moveInput)
         {
             if(_input != null)
             {
                 _input.move = moveInput;
-                _speed = curentSpeed;
-                _animationBlend = Mathf.Lerp(_animationBlend, curentSpeed, Time.deltaTime);
-
                 if(_hasAnimator)
                 {
-                    _animator.SetFloat(_animIDSpeed, _animationBlend);
-                    _animator.SetFloat(_animIDMotionSpeed, moveInput.magnitude);
+                    _animator.SetFloat(_animIDSpeed, Mathf.Abs(moveInput.x));
                 }
             }
         }
-        private void Move()
+        public void Move(Vector3 motion)
         {
-            if(GetComponent<SplineController>() != null)
-            {
-                return;
-            }
+            //_controller.Move(targetDirection.normalized * (_speed * UpdateTime.deltaTime) +
+            //                 new Vector3(0.0f, _verticalVelocity, 0.0f) * UpdateTime.deltaTime);
+            //_controller.Move(new Vector3(1,_verticalVelocity,1) * Time.deltaTime);
+            _controller.Move(motion);
+#if false
+            #region
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -309,13 +315,14 @@ namespace StarterAssets
             // move the player
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
                              new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-
+            #endregion
             // update animator if using character
             if (_hasAnimator)
             {
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
             }
+#endif
         }
 
         private void JumpAndGravity()
@@ -374,6 +381,7 @@ namespace StarterAssets
                     {
                         _animator.SetBool(_animIDFreeFall, true);
                     }
+                    _isAir = true;
                 }
 
                 // if we are not grounded, do not jump
@@ -387,6 +395,17 @@ namespace StarterAssets
             }
         }
 
+        public void AddVerticalForce(float height)
+        {
+            if (_hasAnimator)
+            {
+                _input.jump = true;
+                _animator.SetBool(_animIDJump, true);
+                //_animator.SetTrigger(_animIDJump);
+            }
+            else { Debug.LogWarning("aaa"); }
+                _verticalVelocity = Mathf.Sqrt(height * -2f * Gravity);
+        }
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
             if (lfAngle < -360f) lfAngle += 360f;
@@ -414,7 +433,7 @@ namespace StarterAssets
             {
                 if (FootstepAudioClips.Length > 0)
                 {
-                    var index = Random.Range(0, FootstepAudioClips.Length);
+                    var index = UnityEngine.Random.Range(0, FootstepAudioClips.Length);
                     AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(_controller.center), FootstepAudioVolume);
                 }
             }

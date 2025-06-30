@@ -37,7 +37,7 @@ public class ObjectController : MonoBehaviour
         //{
         //    return;
         //}
-        //float movement = speed_  * dir * Time.deltaTime;
+        //float movement = speed_  * dir * UpdateTime.deltaTime;
 
         //transform.position += new Vector3(movement, 0, 0);
 
