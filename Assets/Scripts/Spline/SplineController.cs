@@ -11,6 +11,8 @@ using UnityEngine.Splines;
 using UnityEngine.UIElements;
 using JetBrains.Annotations;
 using MySpline;
+using TMPro;
+
 
 
 #if UNITY_EDITOR
@@ -33,46 +35,17 @@ namespace MySpline
             upVector = up;
             rotation = rot;
         }
-        public override bool Equals(object obj)
-        {
-            //return base.Equals(obj);
-            if(obj.GetType() != this.GetType())
-            {
-                return false;
-            }
-            var other = (EvaluationInfo)obj;
-            return this == other;
-        }
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-        public static bool operator ==(EvaluationInfo left, EvaluationInfo right)
-        {
-            if (left.position == right.position &&
-               left.tangent == right.tangent &&
-               left.upVector == right.upVector &&
-               left.rotation == right.rotation
-               )
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        public static bool operator !=(EvaluationInfo left, EvaluationInfo right)
-        {
-            return !(left == right);
-        }
+       
     }
 }
 public class SplineController : MonoBehaviour
 {
+    
+
+    
     [SerializeField] public GameObject followTarget_;
     [SerializeField] public SplineContainer currentSplineContainer_;
-    [SerializeField] public float t_;
+    [SerializeField] private float t_;
     [SerializeField] public int splineDirection_ = 1;
     [SerializeField] public bool isMovingLeft = false;
 
@@ -98,7 +71,15 @@ public class SplineController : MonoBehaviour
         get { return followTarget_; } 
         set { followTarget_ = value; } 
     }
-
+    public float T
+    {
+        get { return t_; }
+        set 
+        {
+            t_ = value;
+            evaluationInfo_ = GetEvaluationInfo(t_);
+        }
+    }
     public float FirstT
     {
         get { return firstT_; }
@@ -171,7 +152,7 @@ public class SplineController : MonoBehaviour
 
     private void MoveAlongSplineEditorOnly(float t)
     {
-        followTarget_.transform.position = GetSplinePos(t);
+        followTarget_.transform.position = GetEvaluationInfo(t).position;
         if(!Application.isPlaying)
         {
             UnityEditor.SceneView.RepaintAll();
@@ -205,12 +186,9 @@ public class SplineController : MonoBehaviour
         else if(t_ > 1.0f)
         {
             onMaxT?.Invoke();
-        }
-        if(evaluationInfo_ != prevEvaluationInfo_)
-        {
-            prevEvaluationInfo_ = evaluationInfo_;
-            evaluationInfo_ = GetCurrentEvaluationInfo();
-        }
+        }    
+        evaluationInfo_ = GetEvaluationInfo(t_);
+       
     }
     public void UpdateT(float speed)
     {
@@ -231,7 +209,7 @@ public class SplineController : MonoBehaviour
         prevT_ = t_;
         t_ += (movementT * moveDir * splineDirection_);
 
-        evaluationInfo_ = GetCurrentEvaluationInfo();
+        evaluationInfo_ = GetEvaluationInfo(t_);
     }
     public void Move(float speed, int moveDir)
     {
@@ -276,8 +254,8 @@ public class SplineController : MonoBehaviour
             return Vector3.zero;
         }
 
-        Vector3 currentPosition = GetSplinePos();
-        Vector3 delta = currentPosition - GetSplinePos(prevT_);
+        Vector3 currentPosition = evaluationInfo_.position;
+        Vector3 delta = currentPosition - GetEvaluationInfo(prevT_).position;
         
         //// Y軸の移動量は除外（重力処理はThirdPersonControllerで行うため）
         //delta.y = 0;
@@ -303,97 +281,17 @@ public class SplineController : MonoBehaviour
 
         return new EvaluationInfo(nearestPos,tangent,upVector,rotation);
     }
-    public EvaluationInfo GetCurrentEvaluationInfo()
-    {
-        return GetEvaluationInfo(t_);
-    }
-    /// <summary>
-    /// Splineの接線方向を取得
-    /// </summary>
-    /// <returns>正規化された接線ベクトル</returns>
-    public Vector3 GetSplineTangent()
-    {
-        return GetSplineTangent(t_);
-    }
-    public Vector3 GetSplineTangent(float t)
-    {
-        if (currentSplineContainer_ == null) return Vector3.forward;
-        
-        Spline spline = currentSplineContainer_.Spline;
-        NativeSpline nativeSpline = new NativeSpline(spline, currentSplineContainer_.transform.localToWorldMatrix);
-        float3 nearestPos;
-        float3 tangent;
-        float3 upVector;
-
-        SplineUtility.Evaluate<NativeSpline>(nativeSpline, t, out nearestPos, out tangent, out upVector);
-
-        if (isMovingLeft) tangent *= -1;
-        tangent *= splineDirection_;
-
-        return math.normalize(tangent);
-    }
-    public Quaternion GetSplineRot()
-    {
-        return GetSplineRot(t_);
-    }
-    public Quaternion GetSplineRot(float t)
-    {
-        if (currentSplineContainer_ == null) return Quaternion.identity;
-        
-        Spline spline = currentSplineContainer_.Spline;
-        NativeSpline nativeSpline = new NativeSpline(spline, currentSplineContainer_.transform.localToWorldMatrix);
-        float3 nearestPos;
-        float3 tangent;
-        float3 upVector;
-
-        SplineUtility.Evaluate<NativeSpline>(nativeSpline, t, out nearestPos, out tangent, out upVector);
-        if (isMovingLeft) tangent *= -1;
-        tangent *= splineDirection_;
-        return  UnityEngine.Quaternion.LookRotation(tangent, upVector);
-    }
-    public Vector3 GetSplinePos(float t)
-    {
-        if (currentSplineContainer_ == null) return Vector3.zero;
-        
-        Spline spline = currentSplineContainer_.Spline;
-        NativeSpline nativeSpline = new NativeSpline(spline, currentSplineContainer_.transform.localToWorldMatrix);
-        float3 nearestPos;
-        float3 tangent;
-        float3 upVector;
-
-        SplineUtility.Evaluate<NativeSpline>(nativeSpline, t, out nearestPos, out tangent, out upVector);
-        return nearestPos;
-    }
-    public Vector3 GetSplinePos()
-    {
-        return GetSplinePos(t_);
-    }
+    
+   
     public void MoveAlongSpline(float t)
     {
         EvaluationInfo spline = GetEvaluationInfo(t);
         followTarget_.transform.rotation = spline.rotation;
         followTarget_.transform.position = spline.position;
-#if false
-        if (currentSplineContainer_ == null || followTarget_ == null) return;
-        
-        Spline spline = currentSplineContainer_.Spline;
-        NativeSpline nativeSpline = new NativeSpline(spline, currentSplineContainer_.transform.localToWorldMatrix);
-        float3 nearestPos;
-        float3 tangent;
-        float3 upVector;
-
-        SplineUtility.Evaluate<NativeSpline>(nativeSpline, t, out nearestPos, out tangent, out upVector);
-        if (isMovingLeft) tangent *= -1;
-        tangent *= splineDirection_;
-        UnityEngine.Quaternion rotation = UnityEngine.Quaternion.LookRotation(tangent, upVector);
-        
-        followTarget_.transform.rotation = rotation;
-        followTarget_.transform.position = new UnityEngine.Vector3(nearestPos.x, followTarget_.transform.position.y, nearestPos.z);
-#endif
     }
     public void ClampT()
     {
-        t_ = Mathf.Clamp01(t_);
+        T = Mathf.Clamp01(t_);
     }
     public void MoveOtherSplineMinOrMax()
     {
@@ -426,12 +324,12 @@ public class SplineController : MonoBehaviour
             SplineContainer nextContainer = hitObject.GetComponent<SplineContainer>();
             if (nextContainer == null)
             {
+                ClampT();
+                MoveAlongSpline(t_);
                 return;
             }
-            if (currentSplineContainer_ == nextContainer)
-            {
-                return;
-            }
+            
+            
             {
                 Spline currentSpline = currentSplineContainer_.Spline;
                 NativeSpline currentNativeSpline = new NativeSpline(currentSpline, currentSplineContainer_.transform.localToWorldMatrix);
@@ -477,14 +375,15 @@ public class SplineController : MonoBehaviour
                 }
 
                 currentSplineContainer_ = nextContainer;
-                t_ = outT;
+                T = outT;
                 Debug.Log("currT:" + t_);
             }
         }
         else
         {
             Debug.Log("Raycast == false");
-            t_ = Mathf.Clamp01(t_);
+            ClampT();
+            MoveAlongSpline(t_);
         }
     }
     

@@ -3,32 +3,28 @@ using UnityEngine;
 
 [RequireComponent(typeof(ThirdPersonController))]
 [RequireComponent (typeof(SplineController))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : SplineMovementBase
 {
     
-    [SerializeField] private SplineController splineController_;
+    //[SerializeField] private SplineController splineController_;
     
     [SerializeField] ThirdPersonController thirdPersonController_;
     [SerializeField] CameraController cameraController_;
-    [SerializeField] GameObject followTarget_;
-    public float speed_;
+    //[SerializeField] GameObject followTarget_;
+    //public float speed_;
     [SerializeField][Range(0f, 30f)] float verticalForce_;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    protected override void Initialize()
     {
         if (thirdPersonController_ == null)
         {
             thirdPersonController_ = GetComponentInChildren<ThirdPersonController>();
         }
 
-        splineController_ = GetComponent<SplineController>();
+        
 
         splineController_.splineDirection_ = 1;
-        splineController_.onMaxT += splineController_.MoveOtherSplineMinOrMax;
-        splineController_.onMinT += splineController_.MoveOtherSplineMinOrMax;
-
-        UnityEngine.Vector3 pos = splineController_.currentSplineContainer_.EvaluatePosition(0.0f);
-        followTarget_.transform.position = pos;
+        
         thirdPersonController_.myEvent = splineController_.CheckUnderSpline;
     }
 
@@ -55,10 +51,11 @@ public class PlayerController : MonoBehaviour
         moveInput.x = inputAxis;
         thirdPersonController_.SetMoveInput(moveInput);
         
+
         // Spline上のt更新
         splineController_.UpdateT(speed_, inputAxis);
 
-        transform.rotation = splineController_.GetSplineRot();
+        transform.rotation = splineController_.EvaluationInfo.rotation;
 
         // ThirdPersonControllerに渡す移動量を計算
         // Splineの移動量 + Y軸の重力/ジャンプ処理
@@ -73,5 +70,16 @@ public class PlayerController : MonoBehaviour
         {
             cameraController_.isMovingLeft_ = splineController_.isMovingLeft;
         }
+    }
+    protected override void OnReachMaxT()
+    {
+        base.OnReachMaxT();
+        splineController_.MoveOtherSplineMinOrMax();
+    }
+
+    protected override void OnReachMinT()
+    {
+        base.OnReachMinT();
+        splineController_.MoveOtherSplineMinOrMax();
     }
 }

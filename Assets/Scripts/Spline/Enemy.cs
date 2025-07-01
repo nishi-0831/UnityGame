@@ -8,8 +8,6 @@ public class Enemy : SplineMovementBase
     {
         splineController_.isMovingLeft = false;
     }
-    
-    
     protected override void UpdateMovement()
     {
         splineController_.Move(speed_);
@@ -26,6 +24,4 @@ public class Enemy : SplineMovementBase
         base.OnReachMinT();
         splineController_.Reverse();
     }
-
-    
 }

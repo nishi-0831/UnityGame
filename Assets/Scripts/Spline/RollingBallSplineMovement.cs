@@ -42,7 +42,7 @@ public class RollingBallSplineMovement : SplineMovementBase
     {
         Debug.Log("Ball:SetParame");
         this.splineController_.currentSplineContainer_ = splineContainer;
-        this.splineController_.t_ = t;
+        this.splineController_.T = t;
         this.speed_ = moveSpeed;
         this.rollSpeed = rollSpeed;
         //this.splineController_.isMovingLeft=isLeft;
@@ -101,7 +101,7 @@ public class RollingBallSplineMovement : SplineMovementBase
         // ï®óùìIÇ»íµÇÀï‘ÇËå¯â 
         if (rb_ != null)
         {
-            Vector3 bounceDirection = Vector3.up + splineController_.GetSplineTangent() * 0.5f;
+            Vector3 bounceDirection = Vector3.up + splineController_.EvaluationInfo.tangent * 0.5f;
             rb_.AddForce(bounceDirection * bounceForce, ForceMode.Impulse);
         }
         
