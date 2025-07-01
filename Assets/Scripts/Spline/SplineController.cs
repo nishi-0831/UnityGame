@@ -33,6 +33,20 @@ namespace MySpline
             upVector = up;
             rotation = rot;
         }
+        public override bool Equals(object obj)
+        {
+            //return base.Equals(obj);
+            if(obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            var other = (EvaluationInfo)obj;
+            return this == other;
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
         public static bool operator ==(EvaluationInfo left, EvaluationInfo right)
         {
             if (left.position == right.position &&
@@ -177,6 +191,7 @@ public class SplineController : MonoBehaviour
         prevT_ = t_;
         splineDirection_ = 1;
         evaluationInfo_ = new EvaluationInfo();
+        //evaluationInfo_.ToString();
         prevEvaluationInfo_ = evaluationInfo_;
     }
 
