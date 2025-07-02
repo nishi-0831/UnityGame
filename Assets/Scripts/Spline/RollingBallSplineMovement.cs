@@ -118,5 +118,6 @@ public class RollingBallSplineMovement : SplineMovementBase
         rb_.AddForce(splineController_.EvaluationInfo.tangent * splineMovement.magnitude, ForceMode.VelocityChange);
 
         Debug.Log($"{gameObject.name}: Ball Fall");
+        
     }
 }

@@ -11,7 +11,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     [SerializeField]protected SplineController splineController_;
     protected GameObject followTarget_;
     protected bool isActive_ = true;
-    
+    protected Collider targetCollider_;
 
     public bool IsActive_
     {
@@ -90,7 +90,9 @@ public abstract class SplineMovementBase : MonoBehaviour
         
         //©g‚ğfollowTarget‚Æ‚µ‚Äg—p
         followTarget_ = gameObject;
-        
+        targetCollider_ = followTarget_.GetComponent<Collider>();
+        //includelayer“™‚ğİ’è...
+
         splineController_.FollowTarget = followTarget_;
     }
     
