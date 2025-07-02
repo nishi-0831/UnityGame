@@ -12,8 +12,9 @@ public class RollingBallSplineMovement : SplineMovementBase
     [SerializeField] private float bounceForce = 5.0f;
     
     private Rigidbody rb_;
-    private ProBuilderMesh proBuilderMesh_;
-    private float radius_;
+    private Vector3 lastVelosity_;
+    
+    [SerializeField] private float radius_;
     public float Radius
     {
         get {  return radius_; } 
@@ -32,10 +33,13 @@ public class RollingBallSplineMovement : SplineMovementBase
             rb_ = gameObject.AddComponent<Rigidbody>();
         }
 
-        proBuilderMesh_ = GetComponent<ProBuilderMesh>();
+    
         //splineController_.isMovingLeft = false;
         Debug.Log("Ball:Inititalize");
         IsMovingLeft = false;
+
+        radius_ = transform.localScale.x / 2f;
+        FollowTarget.transform.rotation = splineController_.EvaluationInfo.rotation;
     }
    
     public void SetParam(SplineContainer splineContainer,float t,float moveSpeed,float rollSpeed,bool isLeft)
@@ -54,15 +58,21 @@ public class RollingBallSplineMovement : SplineMovementBase
     {
         splineController_.UpdateT(speed_);
         EvaluationInfo info = splineController_.EvaluationInfo;
+        Vector3 splineMovement = splineController_.GetSplineMovementDelta();
+        lastVelosity_ =  splineMovement / Time.deltaTime;
+
         // 基本の移動
         transform.position = info.position + (info.upVector * Radius);
         
         // 転がるアニメーション
         Vector3 tangent = info.tangent;
         
-        Vector3 rotationAxis = Vector3.Cross(tangent, Vector3.up);
-        float rotationAmount = speed_ * rollSpeed * Time.deltaTime;
-        transform.Rotate(rotationAxis, rotationAmount, Space.World);
+        Vector3 rotationAxis = Vector3.Cross(tangent, info.upVector);
+        float rotationAmount = rollSpeed * Time.deltaTime;
+        
+        transform.Rotate(rotationAxis, -rotationAmount, Space.World);
+        // デバッグ用ログ
+        //Debug.Log($"IsMovingLeft: {IsMovingLeft}, tangent: {tangent}, rotationAxis: {rotationAxis}, rotationAmount: {rotationAmount}");
     }
     
     protected override void OnReachMaxT()
@@ -75,11 +85,11 @@ public class RollingBallSplineMovement : SplineMovementBase
         }
         else
         {
-            IsActive_ = false;
+            Disable();
             Fall();
         }
     }
-    
+ 
     protected override void OnReachMinT()
     {
         base.OnReachMinT();
@@ -90,7 +100,7 @@ public class RollingBallSplineMovement : SplineMovementBase
         }
         else
         {
-            IsActive_= false;
+            Disable();
             Fall();
         }
     }
@@ -106,18 +116,15 @@ public class RollingBallSplineMovement : SplineMovementBase
             rb_.AddForce(bounceDirection * bounceForce, ForceMode.Impulse);
         }
         
-        Debug.Log($"{gameObject.name}: Ball bounced");
+        //Debug.Log($"{gameObject.name}: Ball bounced");
     }
     
     /// <summary>
-    /// 端に至ったら、そのまま落下
+    /// 端に至ったら、落下
     /// </summary>
     private void Fall()
     {
-        Vector3 splineMovement = splineController_.GetSplineMovementDelta();
-        rb_.AddForce(splineController_.EvaluationInfo.tangent * splineMovement.magnitude, ForceMode.VelocityChange);
-
-        Debug.Log($"{gameObject.name}: Ball Fall");
-        
+        rb_.linearVelocity = lastVelosity_.magnitude * splineController_.EvaluationInfo.tangent.normalized;        
+        rb_.useGravity = true;
     }
 }

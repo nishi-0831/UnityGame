@@ -12,15 +12,15 @@ public class ScoreItemSplineMovement : SplineMovementBase
    
     protected override void Initialize()
     {
-        initialY = followTarget_.transform.position.y;
+        initialY = FollowTarget.transform.position.y;
         splineController_.isMovingLeft = false;
     }
     protected override void UpdateMovement()
     {
         // Y軸の振動エフェクト
-        Vector3 pos = followTarget_.transform.position;
+        Vector3 pos = FollowTarget.transform.position;
         pos.y = initialY + Mathf.Sin(Time.time * oscillationSpeed) * oscillationAmount;
-        followTarget_.transform.position = pos;
+        FollowTarget.transform.position = pos;
     }
     
     protected override void OnReachMaxT()

@@ -24,4 +24,8 @@ public class Enemy : SplineMovementBase
         base.OnReachMinT();
         splineController_.Reverse();
     }
+    public override void OnDamage()
+    {
+        base .OnDamage();
+    }
 }

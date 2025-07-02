@@ -54,8 +54,8 @@ public class LerpPingPong : MonoBehaviour
         rb = this.GetComponent<Rigidbody>();
         interpolator = GetComponent<EaseInterpolator>();
         interpolator.onFinished_ += OnFinished;
-        interpolator.from_ = _from.position;
-        interpolator.to_ = _to.position;
+        interpolator.from_ = _from.TransformPoint(_from.position);
+        interpolator.to_ = _to.TransformPoint(_to.position);
         
 
         InitializeStateMachine();

@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.chaser324.unity-wireframe": "https://github.com/insominx/unity-wireframe.git?path=/Packages/unity-wireframe",
+    "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap.extras": "4.1.0",
     "com.unity.ai.navigation": "2.0.6",
     "com.unity.burst": "1.8.19",

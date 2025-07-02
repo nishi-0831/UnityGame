@@ -10,7 +10,7 @@ public class PlayerController : SplineMovementBase
     
     [SerializeField] ThirdPersonController thirdPersonController_;
     [SerializeField] CameraController cameraController_;
-    //[SerializeField] GameObject followTarget_;
+    //[SerializeField] GameObject FollowTarget;
     //public float speed_;
     [SerializeField][Range(0f, 30f)] float verticalForce_;
     // Start is called once before the first execution of Update after the MonoBehaviour is created

@@ -6,13 +6,23 @@ public abstract class SplineMovementBase : MonoBehaviour
 {
     [Header("Spline Movement Settings")]
     [SerializeField] protected float speed_ = 1.0f;
-    [SerializeField] protected bool autoInitialize = true;
-    //[SerializeField] protected float firstT_ = 0.0f;
+    [SerializeField] protected bool autoInitialize_ = true;
+    
     [SerializeField]protected SplineController splineController_;
-    protected GameObject followTarget_;
     protected bool isActive_ = true;
     protected Collider targetCollider_;
 
+    [Header("レイヤーの設定")]
+    [SerializeField] protected SplineLayerSettings layerSettings_;
+    //[Tooltip("デフォルトのレイヤー")]
+    //[SerializeField] protected LayerMask activeLayer_;
+    //[Tooltip("自身の当たり判定を無効化する際に変化するレイヤー")]
+    //[SerializeField] protected LayerMask disabledLayer_;
+    public GameObject FollowTarget
+    {
+        get { return splineController_.FollowTarget; }
+        set { splineController_.FollowTarget = value; }
+    }
     public bool IsActive_
     {
         get { return isActive_; }
@@ -52,7 +62,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     
     private  void Start()
     {
-        if (autoInitialize)
+        if (autoInitialize_)
         {
             if (splineController_ != null)
             {
@@ -89,14 +99,23 @@ public abstract class SplineMovementBase : MonoBehaviour
         }
         
         //自身をfollowTargetとして使用
-        followTarget_ = gameObject;
-        targetCollider_ = followTarget_.GetComponent<Collider>();
+        FollowTarget = gameObject;
+        targetCollider_ = FollowTarget.GetComponent<Collider>();
         //includelayer等を設定...
+        //if(layerSettings_ != null)
+        {
+            targetCollider_.excludeLayers = layerSettings_.disabledLayer;
 
-        splineController_.FollowTarget = followTarget_;
+            FollowTarget.layer = (int)Mathf.Log(layerSettings_.activeLayer.value, 2);
+            
+        }
+
+        
+        
     }
-    
-  
+   
+   
+
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -118,7 +137,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// </summary>
     protected virtual void OnReachMaxT()
     {
-        Debug.Log($"{gameObject.name}: Reached Max T");
+        //Debug.Log($"{gameObject.name}: Reached Max T");
     }
     
     /// <summary>
@@ -126,7 +145,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// </summary>
     protected virtual void OnReachMinT()
     {
-        Debug.Log($"{gameObject.name}: Reached Min T");
+        //Debug.Log($"{gameObject.name}: Reached Min T");
     }
    
     
@@ -139,6 +158,17 @@ public abstract class SplineMovementBase : MonoBehaviour
     {
         splineController_.onMaxT -= OnReachMaxT;
     }
+
+    /// <summary>
+    /// 曲線上の移動、当たり判定を無効化
+    /// </summary>
+    protected void Disable()
+    {
+        Debug.Log($"Disable:{FollowTarget.name}");
+        IsActive_ = false;
+        FollowTarget.layer = (int)Mathf.Log(layerSettings_.disabledLayer.value, 2);
+    }
+
     /// <summary>
     /// 破棄時の処理
     /// </summary>
@@ -149,5 +179,13 @@ public abstract class SplineMovementBase : MonoBehaviour
             splineController_.onMaxT -= OnReachMaxT;
             splineController_.onMinT -= OnReachMinT;
         }
+    }
+
+    /// <summary>
+    /// ダメージを受けた時の処理
+    /// </summary>
+    public virtual void OnDamage()
+    {
+        Debug.Log($"{FollowTarget.name}がダメージを食らった");
     }
 }

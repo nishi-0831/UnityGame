@@ -95,6 +95,10 @@ public class SplineController : MonoBehaviour
 #endif
         }
     }
+    public float PrevT
+    {
+        get { return prevT_; }
+    }
 
 #if UNITY_EDITOR    
     //Edit Mode/Play Mode問わず呼びだされる、インスペクターのプロパティが変更されたときに呼び出されるメソッド
@@ -132,7 +136,7 @@ public class SplineController : MonoBehaviour
         {
             return;
         }
-        //Debug.Assert(followTarget_ != null,"followTarget == null");
+        //Debug.Assert(FollowTarget != null,"followTarget == null");
         if(followTarget_ == null)
         {
             followTarget_ = this.gameObject;
@@ -165,7 +169,7 @@ public class SplineController : MonoBehaviour
         if (followTarget_ != null && currentSplineContainer_ != null)
         {
             //UnityEngine.Vector3 pos = currentSplineContainer_.EvaluatePosition(t_);
-            //followTarget_.transform.position = pos;
+            //FollowTarget.transform.position = pos;
             MoveAlongSpline(t_);
         }
         prevT_ = t_;
@@ -252,6 +256,11 @@ public class SplineController : MonoBehaviour
         else
             isMovingLeft = true;
     }
+
+    public float GetCurrSplineLength()
+    {
+        return currentSplineContainer_.CalculateLength();
+    }
     /// <summary>
     /// Spline上においてmovementが占める割合を取得
     /// </summary>
@@ -275,8 +284,6 @@ public class SplineController : MonoBehaviour
         Vector3 currentPosition = evaluationInfo_.position;
         Vector3 delta = currentPosition - GetEvaluationInfo(prevT_).position;
         
-        //// Y軸の移動量は除外（重力処理はThirdPersonControllerで行うため）
-        //delta.y = 0;
         
         return delta;
     }
