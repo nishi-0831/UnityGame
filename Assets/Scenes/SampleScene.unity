@@ -623,11 +623,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06f15efa8ccd0fb40a17fbe74c00f233, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed_: 0.6
+  autoInitialize: 1
   splineController_: {fileID: 86813419}
   thirdPersonController_: {fileID: 86813417}
   cameraController_: {fileID: 330585548}
-  followTarget_: {fileID: 86813413}
-  speed_: 0.6
   verticalForce_: 12.4
 --- !u!114 &86813419
 MonoBehaviour:
@@ -16377,6 +16377,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PressMachine
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -22578,7 +22582,7 @@ MonoBehaviour:
   currentSplineContainer_: {fileID: 538104644}
   t_: 0
   splineDirection_: 0
-  isMovingLeft: 1
+  isMovingLeft: 0
   enableEditorPreview: 1
   firstT_: 0.637
 --- !u!114 &1422642658

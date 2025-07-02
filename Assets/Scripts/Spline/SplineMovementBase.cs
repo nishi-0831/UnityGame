@@ -11,6 +11,8 @@ public abstract class SplineMovementBase : MonoBehaviour
     [SerializeField]protected SplineController splineController_;
     protected GameObject followTarget_;
     protected bool isActive_ = true;
+    
+
     public bool IsActive_
     {
         get { return isActive_; }
@@ -126,6 +128,15 @@ public abstract class SplineMovementBase : MonoBehaviour
     }
    
     
+    protected void CancelOnReachMinT()
+    {
+        splineController_.onMinT -= OnReachMinT;
+    }
+
+    protected void CancelOnReachMaxT()
+    {
+        splineController_.onMaxT -= OnReachMaxT;
+    }
     /// <summary>
     /// ”jŠü‚Ìˆ—
     /// </summary>

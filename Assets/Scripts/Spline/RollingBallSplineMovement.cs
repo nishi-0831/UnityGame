@@ -41,6 +41,7 @@ public class RollingBallSplineMovement : SplineMovementBase
     public void SetParam(SplineContainer splineContainer,float t,float moveSpeed,float rollSpeed,bool isLeft)
     {
         Debug.Log("Ball:SetParame");
+        Debug.Log($"BallT:{t}");
         this.splineController_.currentSplineContainer_ = splineContainer;
         this.splineController_.T = t;
         this.speed_ = moveSpeed;
@@ -58,10 +59,7 @@ public class RollingBallSplineMovement : SplineMovementBase
         
         // 転がるアニメーション
         Vector3 tangent = info.tangent;
-        if (IsMovingLeft)
-        {
-            tangent *= -1;
-        }
+        
         Vector3 rotationAxis = Vector3.Cross(tangent, Vector3.up);
         float rotationAmount = speed_ * rollSpeed * Time.deltaTime;
         transform.Rotate(rotationAxis, rotationAmount, Space.World);
@@ -70,7 +68,7 @@ public class RollingBallSplineMovement : SplineMovementBase
     protected override void OnReachMaxT()
     {
         base.OnReachMaxT();
-
+        CancelOnReachMaxT();
         if (bounceOnBounds)
         {
             HandleBounce();
@@ -78,12 +76,14 @@ public class RollingBallSplineMovement : SplineMovementBase
         else
         {
             IsActive_ = false;
+            Fall();
         }
     }
     
     protected override void OnReachMinT()
     {
         base.OnReachMinT();
+        CancelOnReachMinT();
         if (bounceOnBounds)
         {
             HandleBounce();
@@ -91,6 +91,7 @@ public class RollingBallSplineMovement : SplineMovementBase
         else
         {
             IsActive_= false;
+            Fall();
         }
     }
     
@@ -113,6 +114,9 @@ public class RollingBallSplineMovement : SplineMovementBase
     /// </summary>
     private void Fall()
     {
+        Vector3 splineMovement = splineController_.GetSplineMovementDelta();
+        rb_.AddForce(splineController_.EvaluationInfo.tangent * splineMovement.magnitude, ForceMode.VelocityChange);
 
+        Debug.Log($"{gameObject.name}: Ball Fall");
     }
 }

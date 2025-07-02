@@ -55,7 +55,7 @@ public class SplineController : MonoBehaviour
     [Range(0f, 1f)]
     private float firstT_ = 0.0f;
 
-
+    private bool onceAction_ = false;
     public Action onMaxT;
     public Action onMinT;
 
@@ -159,8 +159,7 @@ public class SplineController : MonoBehaviour
         }
     }
 #endif
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
         t_ = firstT_;
         if (followTarget_ != null && currentSplineContainer_ != null)
@@ -175,6 +174,11 @@ public class SplineController : MonoBehaviour
         //evaluationInfo_.ToString();
         prevEvaluationInfo_ = evaluationInfo_;
     }
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        
+    }
 
     // Update is called once per frame
     void Update()
@@ -182,10 +186,24 @@ public class SplineController : MonoBehaviour
         if(t_ < 0)
         {
             onMinT?.Invoke();
+            if(onceAction_)
+            {
+               foreach(var d in onMinT.GetInvocationList())
+                {
+                    onMinT -= (Action)d;
+                }
+            }
         }
         else if(t_ > 1.0f)
         {
             onMaxT?.Invoke();
+            if (onceAction_)
+            {
+                foreach (var d in onMaxT.GetInvocationList())
+                {
+                    onMaxT -= (Action)d;
+                }
+            }
         }    
         evaluationInfo_ = GetEvaluationInfo(t_);
        

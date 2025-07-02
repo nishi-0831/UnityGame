@@ -63,9 +63,12 @@ public class StrongEnemy : SplineMovementBase
         }
         float ballT = splineController_.T + offsetT;
 
+        Debug.Log($"{gameObject.name}:ballT = {ballT}");
+
         var ballMovement = ball.GetComponent<RollingBallSplineMovement>();
         Debug.Assert( ballMovement != null );
 
+        
         ballMovement.SetParam(
             splineContainer: splineController_.currentSplineContainer_,
             t: ballT,
