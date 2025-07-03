@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[ExecuteAlways]
+//[ExecuteAlways]
 public class CameraController : MonoBehaviour
 {
     [Header("カメラ")]
@@ -11,34 +11,114 @@ public class CameraController : MonoBehaviour
 
     [Header("距離")]
     [SerializeField] private float distance_;
+    [Header("注視点の高さ")]
+    [SerializeField] private float height_ = 1.0f;
 
     [Header("注視点の向き")]
-    public bool isMovingLeft_ { get;  set; }
+    public bool isMovingLeft_ { get; set; }
+    
+    [Header("Y軸追従設定")]
+    [SerializeField][Range(0.0f, 1.0f)] private float verticalFollowSpeed_ = 0.1f;
+    [SerializeField] private bool enableVerticalFollow_ = true;
+    
+    // SplineContainer変更時の強制Y移動用
+    private float targetBaseY_;
+    private bool forceYUpdate_ = false;
+    [SerializeField] private float splineChangeYSpeed_ = 2.0f; // SplineContainer変更時のY移動速度
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         camera_ = GetComponent<Camera>();
-        if(camera_ == null )
+        if (camera_ == null)
         {
             Debug.LogError("camera_ is NULL");
         }
-        camera_.transform.position = target_.position + (target_.right * distance_);
-        camera_.transform.LookAt(target_.position);
+        
+        // 初期位置設定
+        Vector3 initialPos = target_.position + (target_.right * distance_);
+        camera_.transform.position = initialPos;
+        targetBaseY_ = target_.position.y;
+        
+        // 注視点設定
+        UpdateLookAt();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
     private void LateUpdate()
     {
+        // XZ軸は正確に追従
         Vector3 dir = target_.right;
-        if( isMovingLeft_ )
+        if (isMovingLeft_)
         {
             dir *= -1;
         }
-        camera_.transform.position = target_.position + (dir * distance_);
-        camera_.transform.LookAt(target_.position);
+        Vector3 horizontalPos = target_.position + (dir * distance_);
+
+        // Y軸の処理
+        float targetY = CalculateTargetY();
+        float currentY = camera_.transform.position.y;
+        
+        // Y座標の更新
+        float newY;
+        if (forceYUpdate_)
+        {
+            // SplineContainer変更時は強制的に移動
+            newY = Mathf.Lerp(currentY, targetY, splineChangeYSpeed_ * Time.deltaTime);
+            if (Mathf.Abs(newY - targetY) < 0.1f)
+            {
+                forceYUpdate_ = false;
+            }
+        }
+        else if (enableVerticalFollow_)
+        {
+            // 通常のY軸追従
+            newY = Mathf.Lerp(currentY, targetY, verticalFollowSpeed_ * Time.deltaTime);
+        }
+        else
+        {
+            // Y軸追従無効
+            newY = currentY;
+        }
+
+        // カメラ位置更新
+        camera_.transform.position = new Vector3(horizontalPos.x, newY, horizontalPos.z);
+        
+        // 注視点更新
+        UpdateLookAt();
+    }
+    
+    private float CalculateTargetY()
+    {
+        return targetBaseY_ + height_;
+    }
+    
+    private void UpdateLookAt()
+    {
+        Vector3 lookTarget = new Vector3(target_.position.x, CalculateTargetY(), target_.position.z);
+        Vector3 lookDirection = (lookTarget - camera_.transform.position).normalized;
+        camera_.transform.rotation = Quaternion.LookRotation(lookDirection);
+    }
+    
+    /// <summary>
+    /// SplineContainer変更時にカメラのベースY座標を強制更新
+    /// </summary>
+    /// <param name="newBaseY">新しいベースY座標</param>
+    public void OnSplineContainerChanged(float newBaseY)
+    {
+        targetBaseY_ = newBaseY;
+        forceYUpdate_ = true;
+        Debug.Log($"Camera: SplineContainer changed, new base Y: {newBaseY}");
+    }
+    
+    /// <summary>
+    /// 現在のプレイヤー位置をベースY座標として設定
+    /// </summary>
+    public void UpdateBaseY()
+    {
+        if (target_ != null)
+        {
+            OnSplineContainerChanged(target_.position.y);
+        }
     }
 }

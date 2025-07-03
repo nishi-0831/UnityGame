@@ -1,10 +1,11 @@
 using NUnit.Framework;
+using StarterAssets;
 using System;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Splines;
 [RequireComponent(typeof(EaseInterpolator))]
-public class StrongEnemy : SplineMovementBase
+public class StrongEnemy : SplineMovementBase, IPlayerInteractable
 {
     [Header("球を転がして攻撃してくる敵")]
 
@@ -20,7 +21,8 @@ public class StrongEnemy : SplineMovementBase
     [SerializeField] private float ballRadius_ = 0.5f;
     [SerializeField]private EaseInterpolator easeInterpolator_;
 
-    
+    [SerializeField] private bool canBeStomped = true;
+    [SerializeField] private int damageToPlayer = 0;
     protected override void Initialize()
     {
         if(ballPrefab_ != null)
@@ -76,5 +78,54 @@ public class StrongEnemy : SplineMovementBase
             rollSpeed: ballRollSpeed_,
             isLeft: IsMovingLeft
             );
+    }
+
+    public override void OnDamage()
+    {
+        base.OnDamage();
+        // 敵を倒す処理
+        Debug.Log($"{gameObject.name} was defeated!");
+        Disable();
+        Destroy(gameObject, 0.5f); // 少し遅延して削除
+    }
+
+    // IPlayerInteractable実装
+    public bool OnStompedByPlayer(GameObject player)
+    {
+        if (!canBeStomped || !IsActive_)
+            return false;
+
+        Debug.Log($"{gameObject.name} was stomped by player!");
+        OnDamage();
+
+        // プレイヤーに跳ね返り効果を与える
+        var playerThirdPerson = player.GetComponent<ThirdPersonController>();
+        if (playerThirdPerson != null)
+        {
+            playerThirdPerson.AddVerticalForce(5f); // 少しジャンプさせる
+        }
+
+        return true; // 踏みつけ成功
+    }
+
+    public void OnSideCollisionWithPlayer(GameObject player)
+    {
+        //ダメージは与えない
+#if false
+        if (!IsActive_)
+            return;
+
+        Debug.Log($"{gameObject.name} damaged player!");
+
+        // プレイヤーにダメージを与える処理
+        var playerController = player.GetComponent<PlayerController>();
+        if (playerController != null)
+        {
+            // ダメージ処理をここに実装
+            playerController.OnDamage(damageToPlayer);
+            Debug.Log($"Player took {damageToPlayer} damage!");
+        }
+    
+#endif
     }
 }

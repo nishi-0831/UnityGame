@@ -57,12 +57,9 @@ public class LerpPingPong : MonoBehaviour
         interpolator.from_ = _from.TransformPoint(_from.position);
         interpolator.to_ = _to.TransformPoint(_to.position);
         
-
         InitializeStateMachine();
 
         stateMachine_.Start(MoveState.WAIT);
-        
-        
         
     }
     private void InitializeStateMachine()

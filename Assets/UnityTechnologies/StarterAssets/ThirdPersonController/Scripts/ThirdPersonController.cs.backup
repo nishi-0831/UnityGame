@@ -1,0 +1,27 @@
+﻿using System; 
+using UnityEngine;
+using System.Collections;
+
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
+
+namespace StarterAssets
+{
+    [RequireComponent(typeof(CharacterController))]
+#if ENABLE_INPUT_SYSTEM 
+    [RequireComponent(typeof(PlayerInput))]
+#endif
+    public class ThirdPersonController : MonoBehaviour
+    {
+        [SerializeField] public Action myEvent;
+        
+        [Header("Player")]
+        public float MoveSpeed = 2.0f;
+        public float SprintSpeed = 5.335f;
+        [Range(0.0f, 0.3f)]
+        public float RotationSmoothTime = 0.12f;
+        public float SpeedChangeRate = 10.0f;
+
+        public AudioClip LandingAudioClip;
+        public

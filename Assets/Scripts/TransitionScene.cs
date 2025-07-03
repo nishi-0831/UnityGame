@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class TransitionScene : MonoBehaviour
 {
+    public static TransitionScene Instance { get; private set; }
+
     [System.Serializable]
     public struct SceneName
     {
@@ -12,31 +14,37 @@ public class TransitionScene : MonoBehaviour
     }
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
-        
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
-
     // Update is called once per frame
     void Update()
     {
         
     }
 
-    public void TransitionTitle()
+    public void ToTitle()
     {
         SceneManager.LoadScene(SceneName.title);
     }
-    public void TransitionPlay()
+    public void ToPlay()
     {
         SceneManager.LoadScene(SceneName.play);
     }
-    public void TransitionGameOver()
+    public void ToGameOver()
     {
         SceneManager.LoadScene(SceneName.gameOver);
     }
-    public void TransitionResult()
+    public void ToResult()
     {
         SceneManager.LoadScene(SceneName.result);
     }

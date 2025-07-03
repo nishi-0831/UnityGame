@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class SplineMovementBase : MonoBehaviour
 {
     [Header("Spline Movement Settings")]
+    [SerializeField] protected int hp_ = 1;
     [SerializeField] protected float speed_ = 1.0f;
     [SerializeField] protected bool autoInitialize_ = true;
     
@@ -14,10 +15,7 @@ public abstract class SplineMovementBase : MonoBehaviour
 
     [Header("レイヤーの設定")]
     [SerializeField] protected SplineLayerSettings layerSettings_;
-    //[Tooltip("デフォルトのレイヤー")]
-    //[SerializeField] protected LayerMask activeLayer_;
-    //[Tooltip("自身の当たり判定を無効化する際に変化するレイヤー")]
-    //[SerializeField] protected LayerMask disabledLayer_;
+    
     public GameObject FollowTarget
     {
         get { return splineController_.FollowTarget; }
@@ -187,5 +185,9 @@ public abstract class SplineMovementBase : MonoBehaviour
     public virtual void OnDamage()
     {
         Debug.Log($"{FollowTarget.name}がダメージを食らった");
+    }
+    public virtual void OnDamage(int damageValue)
+    {
+        Debug.Log($"{FollowTarget.name}が{damageValue}のダメージを受けた");
     }
 }

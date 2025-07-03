@@ -2,6 +2,8 @@
 using UnityEngine;
 using TMPro;
 using static UnityEngine.InputSystem.XR.TrackedPoseDriver;
+using System.Collections;
+
 
 
 #if ENABLE_INPUT_SYSTEM
@@ -60,6 +62,15 @@ namespace StarterAssets
         public bool Grounded = true;
         public bool prevGrounded = true;
 
+        //private bool isStunned = false;
+        public bool IsStunned { get 
+            {
+                //Debug.Log(_animator.GetBool(_animIDCanInputReact));
+                return !_animator.GetBool(_animIDCanInputReact); 
+            } 
+        }
+            
+
         [Tooltip("Useful for rough ground")]
         public float GroundedOffset = -0.14f;
 
@@ -97,6 +108,8 @@ namespace StarterAssets
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
         private float _verticalVelocity;
+        [SerializeField] 
+        float stunDuration_ = 0.5f; // スタン時間
         public float VerticalVelocity => _verticalVelocity;
         private float _terminalVelocity = 53.0f;
 
@@ -112,6 +125,8 @@ namespace StarterAssets
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDTakeDamage;
+        private int _animIDCanInputReact;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -176,6 +191,7 @@ namespace StarterAssets
             //Move();
         }
 
+        
         private void LateUpdate()
         {
             //CameraRotation();
@@ -188,8 +204,21 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDTakeDamage = Animator.StringToHash("TakeDamage");
+            _animIDCanInputReact = Animator.StringToHash("CanInputReact");
         }
 
+        public void TakeDamage()
+        {
+            if (_hasAnimator)
+            {
+                _animator.SetTrigger(_animIDTakeDamage);
+            }
+            else
+            {
+                Debug.LogWarning("Animator is not assigned, cannot play TakeDamage animation.");
+            }
+        }
         private void GroundedCheck()
         {
             // set sphere position, with offset
@@ -254,9 +283,6 @@ namespace StarterAssets
         }
         public void Move(Vector3 motion)
         {
-            //_controller.Move(targetDirection.normalized * (_speed * UpdateTime.deltaTime) +
-            //                 new Vector3(0.0f, _verticalVelocity, 0.0f) * UpdateTime.deltaTime);
-            //_controller.Move(new Vector3(1,_verticalVelocity,1) * Time.deltaTime);
             _controller.Move(motion);
 #if false
             #region
@@ -351,7 +377,8 @@ namespace StarterAssets
                 if (_input.jump && _jumpTimeoutDelta <= 0.0f)
                 {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+                    //_verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+                    AddVerticalForce(JumpHeight);
 
                     // update animator if using character
                     if (_hasAnimator)
@@ -399,14 +426,18 @@ namespace StarterAssets
 
         public void AddVerticalForce(float height)
         {
+            if (IsStunned)
+            {
+                return;
+            }
             if (_hasAnimator)
             {
                 _input.jump = true;
                 _animator.SetBool(_animIDJump, true);
                 //_animator.SetTrigger(_animIDJump);
             }
-            else { Debug.LogWarning("aaa"); }
-                _verticalVelocity = Mathf.Sqrt(height * -2f * Gravity);
+            
+            _verticalVelocity = Mathf.Sqrt(height * -2f * Gravity);
         }
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {

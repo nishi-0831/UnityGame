@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ScoreItemSplineMovement : SplineMovementBase
+public class ScoreItemSplineMovement : SplineMovementBase, IPlayerInteractable
 {
     [Header("Score Item Settings")]
     [SerializeField] private int scoreValue = 100;
@@ -15,6 +15,7 @@ public class ScoreItemSplineMovement : SplineMovementBase
         initialY = FollowTarget.transform.position.y;
         splineController_.isMovingLeft = false;
     }
+    
     protected override void UpdateMovement()
     {
         // Y軸の振動エフェクト
@@ -52,8 +53,28 @@ public class ScoreItemSplineMovement : SplineMovementBase
         if (other.CompareTag("Player"))
         {
             // スコア加算処理（実際のゲームではScoreManagerなどを使用）
-            Debug.Log($"Score +{scoreValue}");
-            Destroy(gameObject);
+            GiveScoreToPlayer(other.gameObject);
         }
+    }
+    
+    private void GiveScoreToPlayer(GameObject player)
+    {
+        Debug.Log($"Score +{scoreValue}");
+        // ここでScoreManagerに通知する処理を追加
+        Destroy(gameObject);
+    }
+    
+    // IPlayerInteractable実装
+    public bool OnStompedByPlayer(GameObject player)
+    {
+        // スコアアイテムは踏みつけでも普通の取得と同じ
+        GiveScoreToPlayer(player);
+        return false; // 踏みつけエフェクトは不要
+    }
+    
+    public void OnSideCollisionWithPlayer(GameObject player)
+    {
+        // 横からの衝突でも取得
+        GiveScoreToPlayer(player);
     }
 }
