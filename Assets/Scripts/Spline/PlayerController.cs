@@ -152,6 +152,7 @@ public class PlayerController : SplineMovementBase
         if (cameraController_ != null)
         {
             cameraController_.isMovingLeft_ = splineController_.isMovingLeft;
+            cameraController_.SetEvaluationInfo(splineController_.EvaluationInfo);
         }
     }
 

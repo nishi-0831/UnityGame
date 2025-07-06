@@ -15,8 +15,8 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
     [SerializeField] private float attackInterval_ = 5.0f;
     [SerializeField] private float ballMoveSpeed_ = 0.1f;
     [SerializeField] private float ballRollSpeed_ = 360f;
-    [SerializeField] private float ballOffset_ = 30.0f;
-
+    //[SerializeField] private float ballOffset_ = 30.0f;
+    [SerializeField] private float ballOffsetT_ = 0.1f;
 
     [SerializeField] private GameObject ballPrefab_;
     [SerializeField] private float ballRadius_ = 0.5f;
@@ -26,6 +26,7 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
     [SerializeField] private int damageToPlayer = 0;
     [SerializeField] private Animator animator;
     [SerializeField] private float stompBounceForce = 5f;
+    [SerializeField] private float ballLifeSpan_ = 5f;
     private int animIDDie;
     private int animIDAttack;
     protected override void Initialize()
@@ -64,16 +65,26 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
         //Debug.Log($"{this.gameObject.name}:attack");
         GameObject ball = Instantiate(ballPrefab_);
 
-        float offsetT = splineController_.GetSplineMovementT(Mathf.Abs(ballOffset_));
+        //float offsetT = splineController_.GetSplineMovementT(Mathf.Abs(ballOffset_));
+        //if(IsMovingLeft)
+        //{
+        //    offsetT = -offsetT;
+        //}
+        //float ballT = splineController_.T + offsetT;
+
+        float ballT;
         if(IsMovingLeft)
         {
-            offsetT = -offsetT;
+            ballT = splineController_.T - ballOffsetT_;
         }
-        float ballT = splineController_.T + offsetT;
+        else
+        {
+            ballT = splineController_.T + ballOffsetT_;
+        }
 
-        //Debug.Log($"{gameObject.name}:ballT = {ballT}");
+            //Debug.Log($"{gameObject.name}:ballT = {ballT}");
 
-        var ballMovement = ball.GetComponent<RollingBallSplineMovement>();
+            var ballMovement = ball.GetComponent<RollingBallSplineMovement>();
         Debug.Assert( ballMovement != null );
 
         
@@ -82,7 +93,8 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
             t: ballT,
             moveSpeed: ballMoveSpeed_,
             rollSpeed: ballRollSpeed_,
-            isLeft: IsMovingLeft
+            isLeft: IsMovingLeft,
+            lifeSpan : ballLifeSpan_
             );
 
         animator?.SetTrigger(animIDAttack);

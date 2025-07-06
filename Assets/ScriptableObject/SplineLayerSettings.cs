@@ -5,7 +5,7 @@ public class SplineLayerSettings : ScriptableObject
 {
     public LayerMask activeLayer;
     public LayerMask disabledLayer;
-    
+    public LayerMask groundLayer;
     
    
 }

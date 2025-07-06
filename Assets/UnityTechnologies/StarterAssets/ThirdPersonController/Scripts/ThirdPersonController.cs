@@ -107,7 +107,7 @@ namespace StarterAssets
         private float _animationBlend;
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
-        private float _verticalVelocity;
+        [SerializeField] private float _verticalVelocity;
         [SerializeField] 
         float stunDuration_ = 0.5f; // スタン時間
         public float VerticalVelocity => _verticalVelocity;
@@ -261,7 +261,7 @@ namespace StarterAssets
             {
                 Debug.Log("nowGrounded");
                 _isAir = false;
-                myEvent?.Invoke();
+                //myEvent?.Invoke();
             }
         }
 

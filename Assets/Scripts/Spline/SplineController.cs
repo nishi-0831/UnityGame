@@ -40,9 +40,9 @@ namespace MySpline
 }
 public class SplineController : MonoBehaviour
 {
-    
 
-    
+
+    [SerializeField] private SplineLayerSettings splineLayerSettings_;
     [SerializeField] public GameObject followTarget_;
     [SerializeField] public SplineContainer currentSplineContainer_;
     [SerializeField] private float t_;
@@ -131,6 +131,7 @@ public class SplineController : MonoBehaviour
 
                 if (CanFindSplineContainer())
                 {
+                    Debug.Log("FindSplineContainer");
                     FindParentSplineContainer();
                 }
             };
@@ -171,6 +172,7 @@ public class SplineController : MonoBehaviour
     private void MoveAlongSplineEditorOnly(float t)
     {
         followTarget_.transform.position = GetEvaluationInfo(t).position;
+        Debug.Log("MoveAlongSplineEditorOnly");
         if(!Application.isPlaying)
         {
             UnityEditor.SceneView.RepaintAll();
@@ -351,6 +353,7 @@ public class SplineController : MonoBehaviour
    
     public void MoveAlongSpline(float t)
     {
+        Debug.Log($"{followTarget_.name}:MoveAlongSpline");
         EvaluationInfo spline = GetEvaluationInfo(t);
         followTarget_.transform.rotation = spline.rotation;
         followTarget_.transform.position = spline.position;
@@ -384,11 +387,18 @@ public class SplineController : MonoBehaviour
     {
         RaycastHit hit;
         
-        if (Physics.Raycast(pos + new Vector3(0,offsetRayStartPosY,0), dir, out hit, Mathf.Infinity))
+        if (Physics.Raycast(pos + new Vector3(0,offsetRayStartPosY,0), dir, out hit, Mathf.Infinity, splineLayerSettings_.groundLayer))
         {
             GameObject hitObject = hit.collider.gameObject;
 
             SplineContainer nextContainer = hitObject.GetComponent<SplineContainer>();
+            var hitLayerMask = (int)Mathf.Log(splineLayerSettings_.groundLayer, 2);
+            if ((hitLayerMask != hitObject.layer))
+            {
+                Debug.Log(hitLayerMask);
+                Debug.Log($"{hitObject.name}:{hitObject.layer}");
+                return; 
+            }
             if (nextContainer == null)
             {
                 ClampT();

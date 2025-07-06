@@ -250,10 +250,10 @@ MonoBehaviour:
   ballOffset_: 30
   ballPrefab_: {fileID: 5900284842744972119, guid: fa4b07e48ed5c294cbb870e4ed47442f, type: 3}
   ballRadius_: 0.5
-  easeInterpolator_: {fileID: 0}
+  easeInterpolator_: {fileID: 536357929650465464}
   canBeStomped: 1
   damageToPlayer: 0
-  animator: {fileID: 0}
+  animator: {fileID: 8728576206991912903}
   stompBounceForce: 5
 --- !u!65 &7272133104683582006
 BoxCollider:

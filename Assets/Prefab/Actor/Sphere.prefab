@@ -2284,10 +2284,10 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -2308,13 +2308,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  splineLayerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
   followTarget_: {fileID: 5900284842744972119}
   currentSplineContainer_: {fileID: 0}
   t_: 0
   splineDirection_: 0
   isMovingLeft: 1
+  offsetRayStartPosY: 1
   enableEditorPreview: 0
   firstT_: 0.465
+  offsetY_: 0
+  autoFindParentSplineContainer_: 1
+  overwriteCurrentWithParentSplineContainer_: 0
 --- !u!114 &3936872027912104542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2327,11 +2332,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e29df038230e4742a84e73137a30688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hp_: 1
   speed_: 0.5
   autoInitialize_: 1
   splineController_: {fileID: 1421127866671353073}
   layerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
+  lifespan_: 5
+  destroyDelay_: 3
   rollSpeed: 360
   bounceOnBounds: 0
   bounceForce: 5
+  destroyTriggerLayer_:
+    serializedVersion: 2
+    m_Bits: 256
   radius_: 0
+  canBeStomped: 1
+  damageToPlayer: 1
