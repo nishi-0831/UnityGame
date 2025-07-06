@@ -11,8 +11,8 @@ public class CameraController : MonoBehaviour
 
     [Header("距離")]
     [SerializeField] private float distance_;
-    [Header("注視点の高さ")]
-    [SerializeField] private float height_ = 1.0f;
+    
+    [SerializeField] private float splineOffsetY = 1.0f;
 
     [Header("注視点の向き")]
     public bool isMovingLeft_ { get; set; }
@@ -25,10 +25,17 @@ public class CameraController : MonoBehaviour
     private float targetBaseY_;
     private bool forceYUpdate_ = false;
     [SerializeField] private float splineChangeYSpeed_ = 2.0f; // SplineContainer変更時のY移動速度
-
+    [SerializeField] private EaseInterpolator ease_;
+    private Coroutine coroutine_;
+    // Y座標の更新
+    float newY;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        ease_ = GetComponent<EaseInterpolator>();
+        ease_.func = ease_.OutSine;
+        ease_.onFinished_ = () => { forceYUpdate_ = false; };
+
         camera_ = GetComponent<Camera>();
         if (camera_ == null)
         {
@@ -36,7 +43,7 @@ public class CameraController : MonoBehaviour
         }
         
         // 初期位置設定
-        Vector3 initialPos = target_.position + (target_.right * distance_);
+        Vector3 initialPos = target_.position + (target_.right * distance_) + new Vector3(0,splineOffsetY,0);
         camera_.transform.position = initialPos;
         targetBaseY_ = target_.position.y;
         
@@ -59,16 +66,15 @@ public class CameraController : MonoBehaviour
         float targetY = CalculateTargetY();
         float currentY = camera_.transform.position.y;
         
-        // Y座標の更新
-        float newY;
+        
         if (forceYUpdate_)
         {
-            // SplineContainer変更時は強制的に移動
-            newY = Mathf.Lerp(currentY, targetY, splineChangeYSpeed_ * Time.deltaTime);
-            if (Mathf.Abs(newY - targetY) < 0.1f)
-            {
-                forceYUpdate_ = false;
-            }
+            //// SplineContainer変更時は強制的に移動
+            //newY = Mathf.Lerp(currentY, targetY, splineChangeYSpeed_ * Time.deltaTime);
+            //if (Mathf.Abs(newY - targetY) < 0.1f)
+            //{
+            //    forceYUpdate_ = false;
+            //}
         }
         else if (enableVerticalFollow_)
         {
@@ -90,13 +96,18 @@ public class CameraController : MonoBehaviour
     
     private float CalculateTargetY()
     {
-        return targetBaseY_ + height_;
+        return targetBaseY_ + splineOffsetY;
     }
     
     private void UpdateLookAt()
     {
-        Vector3 lookTarget = new Vector3(target_.position.x, CalculateTargetY(), target_.position.z);
-        Vector3 lookDirection = (lookTarget - camera_.transform.position).normalized;
+        Vector3 lookDirection = -target_.right;
+        if (isMovingLeft_)
+        {
+            lookDirection *= -1;
+        }
+        Vector3 lookTarget = camera_.transform.position + (lookDirection * distance_);
+        //Vector3 lookDirection = (lookTarget - camera_.transform.position).normalized;
         camera_.transform.rotation = Quaternion.LookRotation(lookDirection);
     }
     
@@ -108,9 +119,25 @@ public class CameraController : MonoBehaviour
     {
         targetBaseY_ = newBaseY;
         forceYUpdate_ = true;
+        StopInterpolation();
+        interpolation(camera_.transform.position.y,CalculateTargetY());
         Debug.Log($"Camera: SplineContainer changed, new base Y: {newBaseY}");
     }
     
+    private void interpolation(float a, float b)
+    {
+        
+        coroutine_ = StartCoroutine(ease_.Interpolation(a, b, ease_.duration, 
+            (value) => { newY = value; }));
+    }
+    private void StopInterpolation()
+    {
+        if(coroutine_ != null)
+        {
+            StopCoroutine(coroutine_);
+        }
+        ease_.Reset();
+    }
     /// <summary>
     /// 現在のプレイヤー位置をベースY座標として設定
     /// </summary>

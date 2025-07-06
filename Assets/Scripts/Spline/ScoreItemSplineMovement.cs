@@ -1,51 +1,88 @@
+using Benjathemaker;
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
+
+[RequireComponent (typeof(SimpleGemsAnim))]
 public class ScoreItemSplineMovement : SplineMovementBase, IPlayerInteractable
 {
     [Header("Score Item Settings")]
     [SerializeField] private int scoreValue = 100;
-    [SerializeField] private bool destroyOnBounds = true;
-    [SerializeField] private float oscillationSpeed = 2.0f;
-    [SerializeField] private float oscillationAmount = 0.5f;
     
-    private float initialY;
+    [SerializeField] private float animDuration = 1.0f;
+    [SerializeField] private float jumpHeight = 5.0f;
+    [SerializeField] private float initialOffsetY = 1.0f;
+    [SerializeField] private float endPosOffsetY = 1.0f;
+    [SerializeField] private SimpleGemsAnim simpleGemsAnim;
    
     protected override void Initialize()
     {
-        initialY = FollowTarget.transform.position.y;
+        FollowTarget.transform.position = FollowTarget.transform.position + new Vector3(0f, initialOffsetY, 0f);
+
+        simpleGemsAnim = FollowTarget.GetComponent<SimpleGemsAnim>();
+        simpleGemsAnim.Initialize(FollowTarget);
+        
         splineController_.isMovingLeft = false;
     }
     
     protected override void UpdateMovement()
     {
-        // Y軸の振動エフェクト
-        Vector3 pos = FollowTarget.transform.position;
-        pos.y = initialY + Mathf.Sin(Time.time * oscillationSpeed) * oscillationAmount;
-        FollowTarget.transform.position = pos;
+        simpleGemsAnim.UpdateRot();
+        simpleGemsAnim.UpdatePos();
+        simpleGemsAnim.UpdateScale();
     }
     
     protected override void OnReachMaxT()
     {
         base.OnReachMaxT();
-        if (destroyOnBounds)
-        {
-            DestroyItem();
-        }
+        splineController_.Reverse();
     }
     
     protected override void OnReachMinT()
     {
         base.OnReachMinT();
-        if (destroyOnBounds)
-        {
-            DestroyItem();
-        }
+        splineController_.Reverse();
     }
-    
+
     private void DestroyItem()
     {
-        Debug.Log($"{gameObject.name}: Score item destroyed at bounds");
-        Destroy(gameObject);
+        
+        //Vector3 playerPos = player.transform.position;
+        //float verticalVelocity = Mathf.Sqrt(height * -2f * Gravity)
+    }
+    private IEnumerator DestroyAnim(GameObject player)
+    {
+        Disable();
+
+        simpleGemsAnim.rotationSpeed = 1080; 
+
+        Vector3 startPos = FollowTarget.transform.position;
+        
+        float elapsed = 0f;
+        while(elapsed < animDuration)
+        {
+            //回転
+            simpleGemsAnim.UpdateRot();
+
+            //座標
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / animDuration);
+
+            Vector3 endPos = player.transform.position + new Vector3(0,endPosOffsetY,0);
+
+            Vector3 holizontal = Vector3.Lerp(startPos, endPos, t);
+
+            float vertical = Mathf.Sin(Mathf.PI * t) * jumpHeight;
+
+            transform.position = new Vector3(holizontal.x,holizontal.y + vertical, holizontal.z);
+
+            yield return null;
+        }
+        Debug.Log($"Score +{scoreValue}");
+        // ここでScoreManagerに通知する処理を追加
+        ScoreManager.Instance.ReceiveScore(scoreValue);
+        Destroy(this.gameObject);
     }
     
     private void OnTriggerEnter(Collider other)
@@ -57,11 +94,11 @@ public class ScoreItemSplineMovement : SplineMovementBase, IPlayerInteractable
         }
     }
     
+    
     private void GiveScoreToPlayer(GameObject player)
     {
-        Debug.Log($"Score +{scoreValue}");
-        // ここでScoreManagerに通知する処理を追加
-        Destroy(gameObject);
+       
+        StartCoroutine(DestroyAnim(player));
     }
     
     // IPlayerInteractable実装

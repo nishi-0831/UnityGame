@@ -2,6 +2,7 @@ using NUnit.Framework;
 using StarterAssets;
 using System;
 using Unity.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Splines;
 [RequireComponent(typeof(EaseInterpolator))]
@@ -23,9 +24,17 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
 
     [SerializeField] private bool canBeStomped = true;
     [SerializeField] private int damageToPlayer = 0;
+    [SerializeField] private Animator animator;
+    [SerializeField] private float stompBounceForce = 5f;
+    private int animIDDie;
+    private int animIDAttack;
     protected override void Initialize()
     {
-        if(ballPrefab_ != null)
+        Animator animator = GetComponent<Animator>();
+        animIDDie = Animator.StringToHash("Die");
+        animIDAttack = Animator.StringToHash("Attack");
+
+        if (ballPrefab_ != null)
         {
             //ProBuilderのSphereプリミティブの半径はデフォルトで直径1なので、2で割って半径を取得
             ballRadius_ = ballPrefab_.transform.localScale.x / 2f;
@@ -52,11 +61,8 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
         {
             return;
         }
-        Debug.Log($"{this.gameObject.name}:attack");
+        //Debug.Log($"{this.gameObject.name}:attack");
         GameObject ball = Instantiate(ballPrefab_);
-        //ball.transform.position = this.transform.position;
-        //自身から○○先に置きたい : ○○はtではなく距離
-        //distanceを渡してtの値に変換、自身のtと増減(向きによる)
 
         float offsetT = splineController_.GetSplineMovementT(Mathf.Abs(ballOffset_));
         if(IsMovingLeft)
@@ -65,7 +71,7 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
         }
         float ballT = splineController_.T + offsetT;
 
-        Debug.Log($"{gameObject.name}:ballT = {ballT}");
+        //Debug.Log($"{gameObject.name}:ballT = {ballT}");
 
         var ballMovement = ball.GetComponent<RollingBallSplineMovement>();
         Debug.Assert( ballMovement != null );
@@ -78,6 +84,8 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
             rollSpeed: ballRollSpeed_,
             isLeft: IsMovingLeft
             );
+
+        animator?.SetTrigger(animIDAttack);
     }
 
     public override void OnDamage()
@@ -86,9 +94,15 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
         // 敵を倒す処理
         Debug.Log($"{gameObject.name} was defeated!");
         Disable();
-        Destroy(gameObject, 0.5f); // 少し遅延して削除
+        if(animator)
+        {
+            animator.SetTrigger(animIDDie);
+        }
     }
-
+    public override void OnRequestDestroy()
+    {
+        Destroy(gameObject);
+    }
     // IPlayerInteractable実装
     public bool OnStompedByPlayer(GameObject player)
     {
@@ -102,7 +116,7 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
         var playerThirdPerson = player.GetComponent<ThirdPersonController>();
         if (playerThirdPerson != null)
         {
-            playerThirdPerson.AddVerticalForce(5f); // 少しジャンプさせる
+            playerThirdPerson.AddVerticalForce(stompBounceForce); // 少しジャンプさせる
         }
 
         return true; // 踏みつけ成功
@@ -110,22 +124,14 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
 
     public void OnSideCollisionWithPlayer(GameObject player)
     {
-        //ダメージは与えない
-#if false
         if (!IsActive_)
             return;
-
-        Debug.Log($"{gameObject.name} damaged player!");
-
-        // プレイヤーにダメージを与える処理
         var playerController = player.GetComponent<PlayerController>();
         if (playerController != null)
         {
             // ダメージ処理をここに実装
-            playerController.OnDamage(damageToPlayer);
+            playerController.OnDamage(damageToPlayer, splineController_.T);
             Debug.Log($"Player took {damageToPlayer} damage!");
         }
-    
-#endif
     }
 }

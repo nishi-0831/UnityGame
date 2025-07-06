@@ -48,12 +48,18 @@ public class SplineController : MonoBehaviour
     [SerializeField] private float t_;
     [SerializeField] public int splineDirection_ = 1;
     [SerializeField] public bool isMovingLeft = false;
+    [SerializeField] protected float offsetRayStartPosY = 1.0f;
 
     [Header("エディターで初期位置表示")]
     [SerializeField] private bool enableEditorPreview = false;
     [SerializeField]
     [Range(0f, 1f)]
     private float firstT_ = 0.0f;
+    [SerializeField] float offsetY_ = 0f;
+    [Header("currentSplineContainerがnullの場合、親のSplineContainerを取得するか否か")]
+    [SerializeField] private bool autoFindParentSplineContainer_ = true;
+    [Header("既存のcurrentSplineContainerを上書きして親のSplineContainerを取得するか否か")]
+    [SerializeField] private bool overwriteCurrentWithParentSplineContainer_ = false;
 
     private bool onceAction_ = false;
     public Action onMaxT;
@@ -100,8 +106,11 @@ public class SplineController : MonoBehaviour
         get { return prevT_; }
     }
 
-#if UNITY_EDITOR    
-    //Edit Mode/Play Mode問わず呼びだされる、インスペクターのプロパティが変更されたときに呼び出されるメソッド
+    #region EditModePreview
+#if UNITY_EDITOR
+    /// <summary>
+    /// Edit Mode/Play Mode問わず呼びだされる、インスペクターのプロパティが変更されたときに呼び出されるメソッド
+    /// </summary>
     private void OnValidate()
     {
         if(enableEditorPreview && !Application.isPlaying)
@@ -118,6 +127,11 @@ public class SplineController : MonoBehaviour
                 if (!Application.isPlaying)
                 {
                     UpdateEditorPreview();
+                }
+
+                if (CanFindSplineContainer())
+                {
+                    FindParentSplineContainer();
                 }
             };
         }
@@ -163,9 +177,15 @@ public class SplineController : MonoBehaviour
         }
     }
 #endif
+    #endregion
     private void Awake()
     {
         t_ = firstT_;
+        if (CanFindSplineContainer())
+        {
+            FindParentSplineContainer();
+        }
+
         if (followTarget_ != null && currentSplineContainer_ != null)
         {
             //UnityEngine.Vector3 pos = currentSplineContainer_.EvaluatePosition(t_);
@@ -177,6 +197,27 @@ public class SplineController : MonoBehaviour
         evaluationInfo_ = new EvaluationInfo();
         //evaluationInfo_.ToString();
         prevEvaluationInfo_ = evaluationInfo_;
+    }
+
+    protected bool CanFindSplineContainer()
+    {
+        bool ret = false;
+        if (autoFindParentSplineContainer_)
+        {
+            if (overwriteCurrentWithParentSplineContainer_ || currentSplineContainer_ == null)
+            {
+               ret = true;
+            }
+        }
+        return ret;
+    }
+    protected void FindParentSplineContainer()
+    {
+        SplineContainer[] components = GetComponentsInParent<SplineContainer>();
+        if (components.Length > 0)
+        {
+            currentSplineContainer_ = components[0];
+        }
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -304,7 +345,7 @@ public class SplineController : MonoBehaviour
         tangent *= splineDirection_;
         UnityEngine.Quaternion rotation = UnityEngine.Quaternion.LookRotation(tangent, upVector);
 
-        return new EvaluationInfo(nearestPos,tangent,upVector,rotation);
+        return new EvaluationInfo(nearestPos + new float3(0,offsetY_,0),tangent,upVector,rotation);
     }
     
    
@@ -318,6 +359,7 @@ public class SplineController : MonoBehaviour
     {
         T = Mathf.Clamp01(t_);
     }
+    #region 他のSplineContainerへの移動関連
     public void MoveOtherSplineMinOrMax()
     {
         float t = 0.0f;
@@ -341,8 +383,8 @@ public class SplineController : MonoBehaviour
     private void MoveOtherSpline(Vector3 pos,Vector3 dir)
     {
         RaycastHit hit;
-
-        if (Physics.Raycast(pos, dir, out hit, Mathf.Infinity))
+        
+        if (Physics.Raycast(pos + new Vector3(0,offsetRayStartPosY,0), dir, out hit, Mathf.Infinity))
         {
             GameObject hitObject = hit.collider.gameObject;
 
@@ -353,7 +395,11 @@ public class SplineController : MonoBehaviour
                 MoveAlongSpline(t_);
                 return;
             }
-            
+            if(nextContainer == currentSplineContainer_)
+            {
+                return;
+            }
+
             
             {
                 Spline currentSpline = currentSplineContainer_.Spline;
@@ -419,4 +465,5 @@ public class SplineController : MonoBehaviour
             MoveOtherSpline(followTarget_.transform.position,-followTarget_.transform.up);
         }
     }
+    #endregion
 }

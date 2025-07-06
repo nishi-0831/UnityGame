@@ -83,7 +83,7 @@ namespace StarterAssets
 
         
         [Header("Cinemachine")]
-        [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
+        [Tooltip("The follow target_ set in the Cinemachine Virtual Camera that the camera will follow")]
         public GameObject CinemachineCameraTarget;
 
         [Tooltip("How far in degrees can you move the camera up")]
@@ -126,6 +126,7 @@ namespace StarterAssets
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
         private int _animIDTakeDamage;
+        private int _animIDDying;
         private int _animIDCanInputReact;
 
 #if ENABLE_INPUT_SYSTEM 
@@ -206,6 +207,7 @@ namespace StarterAssets
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
             _animIDTakeDamage = Animator.StringToHash("TakeDamage");
             _animIDCanInputReact = Animator.StringToHash("CanInputReact");
+            _animIDDying = Animator.StringToHash("Dying");
         }
 
         public void TakeDamage()
@@ -219,6 +221,20 @@ namespace StarterAssets
                 Debug.LogWarning("Animator is not assigned, cannot play TakeDamage animation.");
             }
         }
+
+        public void Dying()
+        {
+            if (_hasAnimator)
+            {
+                _animator.SetTrigger(_animIDDying);
+                _animator.SetBool(_animIDCanInputReact, false);
+            }
+            else
+            {
+                Debug.LogWarning("Animator is not assigned, cannot play Dying animation.");
+            }
+        }
+
         private void GroundedCheck()
         {
             // set sphere position, with offset
@@ -245,7 +261,7 @@ namespace StarterAssets
             {
                 Debug.Log("nowGrounded");
                 _isAir = false;
-                myEvent.Invoke();
+                myEvent?.Invoke();
             }
         }
 
@@ -265,7 +281,7 @@ namespace StarterAssets
             _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
             _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
-            // Cinemachine will follow this target
+            // Cinemachine will follow this target_
             CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
                 _cinemachineTargetYaw, 0.0f);
         }

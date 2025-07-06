@@ -29,6 +29,7 @@ public class BasicRigidBodyPush : MonoBehaviour
 
     private void HandlePlayerInteraction(Collider other, IPlayerInteractable interactable)
     {
+        Debug.Log($"{transform.position.y} > {other.transform.position.y}");
         // 踏みつけ判定：プレイヤーが相手より上にいるかチェック
         bool isStomping = transform.position.y > other.transform.position.y + stompThreshold;
         

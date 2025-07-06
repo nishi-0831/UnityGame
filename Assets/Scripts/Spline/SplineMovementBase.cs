@@ -146,7 +146,13 @@ public abstract class SplineMovementBase : MonoBehaviour
         //Debug.Log($"{gameObject.name}: Reached Min T");
     }
    
-    
+    /// <summary>
+    /// 破棄要請が来たとき
+    /// </summary>
+    public virtual void OnRequestDestroy()
+    {
+        Debug.Log($"{gameObject.name} : was requested destroy");
+    }
     protected void CancelOnReachMinT()
     {
         splineController_.onMinT -= OnReachMinT;
@@ -189,5 +195,10 @@ public abstract class SplineMovementBase : MonoBehaviour
     public virtual void OnDamage(int damageValue)
     {
         Debug.Log($"{FollowTarget.name}が{damageValue}のダメージを受けた");
+    }
+
+    public virtual void OnDamage(int damageValue, float enemyT)
+    {
+
     }
 }

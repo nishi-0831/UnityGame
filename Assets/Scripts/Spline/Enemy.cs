@@ -8,14 +8,25 @@ public class Enemy : SplineMovementBase, IPlayerInteractable
     [SerializeField] private bool canBeStomped = true;
     [SerializeField] private int damageToPlayer = 1;
 
+
+    [SerializeField] private Animator animator;
+    [SerializeField] private float stompBounceForce = 5f;
+    private int animIDDie;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Initialize()
     {
-        splineController_.isMovingLeft = false;
+        //splineController_.isMovingLeft = false;
+
+        Animator animator = GetComponent<Animator>();
+        animIDDie = Animator.StringToHash("Die");
     }
 
     protected override void UpdateMovement()
     {
+        if(Input.GetKey(KeyCode.P))
+        {
+            OnDamage();
+        }
         splineController_.Move(speed_);
     }
 
@@ -38,7 +49,13 @@ public class Enemy : SplineMovementBase, IPlayerInteractable
         // 敵を倒す処理
         Debug.Log($"{gameObject.name} was defeated!");
         Disable();
-        Destroy(gameObject, 0.5f); // 少し遅延して削除
+
+        animator?.SetTrigger(animIDDie);
+    }
+
+    public override void OnRequestDestroy()
+    {
+        Destroy(gameObject);
     }
 
     // IPlayerInteractable実装
@@ -54,7 +71,7 @@ public class Enemy : SplineMovementBase, IPlayerInteractable
         var playerThirdPerson = player.GetComponent<ThirdPersonController>();
         if (playerThirdPerson != null)
         {
-            playerThirdPerson.AddVerticalForce(5f); // 少しジャンプさせる
+            playerThirdPerson.AddVerticalForce(stompBounceForce); // 少しジャンプさせる
         }
 
         return true; // 踏みつけ成功
@@ -72,7 +89,7 @@ public class Enemy : SplineMovementBase, IPlayerInteractable
         if (playerController != null)
         {
             // ダメージ処理をここに実装
-            playerController.OnDamage(damageToPlayer);
+            playerController.OnDamage(damageToPlayer,splineController_.T);
             Debug.Log($"Player took {damageToPlayer} damage!");
         }
     }

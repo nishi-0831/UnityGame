@@ -9,7 +9,7 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
     [SerializeField] private float rollSpeed = 360.0f;
     [SerializeField] private bool bounceOnBounds = false;
     [SerializeField] private float bounceForce = 5.0f;
-    [SerializeField] private float knockbackForce = 10.0f;
+    //[SerializeField] private float knockbackForce = 10.0f;
     
     private Rigidbody rb_;
     private Vector3 lastVelosity_;
@@ -158,7 +158,7 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
         if (playerController != null)
         {
             // É_ÉÅÅ[ÉWèàóùÇÇ±Ç±Ç…é¿ëï
-            playerController.OnDamage(damageToPlayer);
+            playerController.OnDamage(damageToPlayer,splineController_.T);
             Debug.Log($"Player took {damageToPlayer} damage!");
         }
     }
