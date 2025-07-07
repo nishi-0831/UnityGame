@@ -26,6 +26,8 @@ public class PlayerController : SplineMovementBase
     private SplineContainer previousSplineContainer_;
 
     private int dir_;
+    [Header("デバッグ用")]
+    [SerializeField] private ClearZone clearZone_;
     [SerializeField] string hitName = "";
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Initialize()
@@ -113,9 +115,7 @@ public class PlayerController : SplineMovementBase
             }
             if (Input.GetKeyDown(KeyCode.K))
             {
-                //thirdPersonController_.AddVerticalForce(verticalForce_);
-                thirdPersonController_.TakeDamage();
-                OnDamage(0, splineController_.T + -0.5f);
+                clearZone_.ClearGame();
             }
             if (Input.GetKeyDown(KeyCode.L))
             {

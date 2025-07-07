@@ -30,6 +30,7 @@ public class ScoreManager : MonoBehaviour
             return;
         }
         scoreData_.Initialize();
+        StartCountClearTime();
     }
     public void StartCountClearTime()
     {
@@ -61,9 +62,9 @@ public class ScoreManager : MonoBehaviour
         {
             EndCountClearTime();
         }
-
+        scoreData_.clearTime = Time.time - startTime_;
     }
-
+    
     public void ReceiveScore(int value)
     {
         scoreData_.score += value;

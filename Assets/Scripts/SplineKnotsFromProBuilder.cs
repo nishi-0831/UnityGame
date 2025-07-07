@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 [RequireComponent(typeof(SplineContainer))]
-[RequireComponent(typeof(ProBuilderMesh))]
+//[RequireComponent(typeof(ProBuilderMesh))]
 public class SplineKnotsFromProBuilder : MonoBehaviour
 {
     // データソースの種類

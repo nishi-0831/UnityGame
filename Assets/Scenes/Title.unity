@@ -217,7 +217,7 @@ PrefabInstance:
       objectReference: {fileID: 278873946}
     - target: {fileID: 3429934956301895189, guid: bbe919934a582d84091598871c8d2307, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: TransitionPlay
+      value: ToPlay
       objectReference: {fileID: 0}
     - target: {fileID: 4020107943229999807, guid: bbe919934a582d84091598871c8d2307, type: 3}
       propertyPath: m_Name

@@ -10,7 +10,7 @@ public class ScoreData : ScriptableObject
     [SerializeField] private float initTime = 0f;
     public int score;
     public float clearTime;
-
+    
     //スコアの初期化
     public void Initialize()
     {
