@@ -73,24 +73,31 @@ public class PlayerController : SplineMovementBase
         Vector3 rayOrigin = transform.position + Vector3.up * 0.1f; // è≠Çµè„Ç©ÇÁRayÇèoÇ∑Ç±Ç∆Ç≈ínñ Ç∆ÇÃåÎåüèoÇå∏ÇÁÇ∑
         Vector3 rayDirection = Vector3.down;
         float rayDistance = 2.0f;
-        if (Physics.Raycast(rayOrigin, rayDirection, out hit, rayDistance))
-        {
-            Debug.DrawRay(rayOrigin, rayDirection * hit.distance, Color.yellow);
-            //Debug.Log("Did Hit");
-            hitName = hit.collider.gameObject.name;
+        //if (Physics.Raycast(rayOrigin, rayDirection, out hit, rayDistance))
+        //{
+        //    Debug.DrawRay(rayOrigin, rayDirection * hit.distance, Color.yellow);
+        //    //Debug.Log("Did Hit");
+        //    hitName = hit.collider.gameObject.name;
 
-        }
-        else
-        {
-            Debug.DrawRay(rayOrigin, rayDirection * 1000, Color.white);
-            hitName = "";
-        }
+        //}
+        //else
+        //{
+        //    Debug.DrawRay(rayOrigin, rayDirection * 1000, Color.white);
+        //    hitName = "";
+        //}
         UpdateCamera();
     }
     private void FixedUpdate()
     {
         
-        splineController_.CheckUnderSpline();
+        //splineController_.CheckUnderSpline();
+    }
+    public void CheckSpline(SplineContainer splineContainer)
+    {
+        if(splineController_.currentSplineContainer_ != splineContainer)
+        {
+            splineController_.currentSplineContainer_ = splineContainer;
+        }
     }
     private void InputMovement()
     {

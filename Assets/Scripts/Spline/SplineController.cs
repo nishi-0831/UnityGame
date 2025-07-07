@@ -12,6 +12,8 @@ using UnityEngine.UIElements;
 using JetBrains.Annotations;
 using MySpline;
 using TMPro;
+using static UnityEditor.Rendering.CameraUI;
+
 
 
 
@@ -55,6 +57,8 @@ public class SplineController : MonoBehaviour
     [SerializeField]
     [Range(0f, 1f)]
     private float firstT_ = 0.0f;
+    [Header("メッシュの半径(上方向)")]
+    [SerializeField] private float splineMeshRadius_;
     [SerializeField] float offsetY_ = 0f;
     [Header("currentSplineContainerがnullの場合、親のSplineContainerを取得するか否か")]
     [SerializeField] private bool autoFindParentSplineContainer_ = true;
@@ -171,7 +175,9 @@ public class SplineController : MonoBehaviour
 
     private void MoveAlongSplineEditorOnly(float t)
     {
-        followTarget_.transform.position = GetEvaluationInfo(t).position;
+        SetSplineMeshRadius();
+        //followTarget_.transform.position = GetEvaluationInfo(t).position;
+        MoveAlongSpline(t);
         Debug.Log("MoveAlongSplineEditorOnly");
         if(!Application.isPlaying)
         {
@@ -190,9 +196,8 @@ public class SplineController : MonoBehaviour
 
         if (followTarget_ != null && currentSplineContainer_ != null)
         {
-            //UnityEngine.Vector3 pos = currentSplineContainer_.EvaluatePosition(t_);
-            //FollowTarget.transform.position = pos;
             MoveAlongSpline(t_);
+            SetSplineMeshRadius();
         }
         prevT_ = t_;
         splineDirection_ = 1;
@@ -200,7 +205,18 @@ public class SplineController : MonoBehaviour
         //evaluationInfo_.ToString();
         prevEvaluationInfo_ = evaluationInfo_;
     }
-
+    private void SetSplineMeshRadius()
+    {
+        SplineExtrude splineExtrude = currentSplineContainer_.GetComponent<SplineExtrude>();
+        if (splineExtrude != null)
+        {
+            splineMeshRadius_ = splineExtrude.Radius;
+        }
+        else
+        {
+            splineMeshRadius_ = 0;
+        }
+    }
     protected bool CanFindSplineContainer()
     {
         bool ret = false;
@@ -356,7 +372,7 @@ public class SplineController : MonoBehaviour
         Debug.Log($"{followTarget_.name}:MoveAlongSpline");
         EvaluationInfo spline = GetEvaluationInfo(t);
         followTarget_.transform.rotation = spline.rotation;
-        followTarget_.transform.position = spline.position;
+        followTarget_.transform.position = spline.position + new Vector3(0, splineMeshRadius_ / 2.0f, 0);
     }
     public void ClampT()
     {
@@ -410,23 +426,25 @@ public class SplineController : MonoBehaviour
                 return;
             }
 
-            
+            float3 currTangent = currentSplineContainer_.EvaluateTangent(t_);
+            float3 nextTangent = nextContainer.EvaluateTangent(t_);
+            float dot = math.dot(currTangent, nextTangent);
             {
-                Spline currentSpline = currentSplineContainer_.Spline;
-                NativeSpline currentNativeSpline = new NativeSpline(currentSpline, currentSplineContainer_.transform.localToWorldMatrix);
-                float3 currPos, currTangent, currUp;
-                SplineUtility.Evaluate<NativeSpline>(currentNativeSpline, t_, out currPos, out currTangent, out currUp);
+                //Spline currentSpline = currentSplineContainer_.Spline;
+                //NativeSpline currentNativeSpline = new NativeSpline(currentSpline, currentSplineContainer_.transform.localToWorldMatrix);
+                //float3 currPos, currTangent, currUp;
+                //SplineUtility.Evaluate<NativeSpline>(currentNativeSpline, t_, out currPos, out currTangent, out currUp);
 
-                float3 outPos;
-                float outT;
-                Debug.Log("prevT:" + t_);
+                //float3 outPos;
+                //float outT;
+                //Debug.Log("prevT:" + t_);
 
-                NativeSpline nextNativeSpline = new NativeSpline(nextContainer.Spline, nextContainer.transform.localToWorldMatrix);
-                float3 nextTangent, nextUp;
-                SplineUtility.GetNearestPoint<NativeSpline>(nextNativeSpline, hit.point, out outPos, out outT);
-                SplineUtility.Evaluate<NativeSpline>(nextNativeSpline, outT, out outPos, out nextTangent, out nextUp);
+                //NativeSpline nextNativeSpline = new NativeSpline(nextContainer.Spline, nextContainer.transform.localToWorldMatrix);
+                //float3 nextTangent, nextUp;
+                //SplineUtility.GetNearestPoint<NativeSpline>(nextNativeSpline, hit.point, out outPos, out outT);
+                //SplineUtility.Evaluate<NativeSpline>(nextNativeSpline, outT, out outPos, out nextTangent, out nextUp);
 
-                float dot = math.dot(math.normalize(currTangent), math.normalize(nextTangent));
+                //float dot = math.dot(math.normalize(currTangent), math.normalize(nextTangent));
                 if (dot > 0)
                 {
                     Debug.Log("同じ向き");
@@ -456,6 +474,10 @@ public class SplineController : MonoBehaviour
                 }
 
                 currentSplineContainer_ = nextContainer;
+                NativeSpline currentNativeSpline = new NativeSpline(currentSplineContainer_.Spline, currentSplineContainer_.transform.localToWorldMatrix);
+                float3 outPos;
+                float outT;
+                SplineUtility.GetNearestPoint<NativeSpline>(currentNativeSpline, hit.point, out outPos, out outT);
                 T = outT;
                 Debug.Log("currT:" + t_);
             }

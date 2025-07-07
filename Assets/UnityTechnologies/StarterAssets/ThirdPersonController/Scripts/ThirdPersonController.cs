@@ -3,6 +3,8 @@ using UnityEngine;
 using TMPro;
 using static UnityEngine.InputSystem.XR.TrackedPoseDriver;
 using System.Collections;
+using UnityEngine.Splines;
+
 
 
 
@@ -249,6 +251,16 @@ namespace StarterAssets
             //「トリガー」に設定されているものも判定対象にするか否か
             Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
                 QueryTriggerInteraction.Ignore);
+            // Debug.Log($"{collision.gameObject.name}と{this.name}が衝突しました");
+            //GameObject collisionGameObject = collision.gameObject;
+
+            //if (collisionGameObject.layer == (int)Mathf.Log(groundLayer, 2))
+            //{
+            //    PlayerController playerController = GetComponent<PlayerController>();
+            //    SplineContainer collisionContainer = collisionGameObject.GetComponent<SplineContainer>();
+            //    playerController?.CheckSpline(collisionContainer);
+            //}
+
 
             // update animator if using character
             if (_hasAnimator)
