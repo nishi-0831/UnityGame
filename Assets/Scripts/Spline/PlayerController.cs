@@ -1,14 +1,15 @@
-using StarterAssets;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Splines;
+using MySpline;
+using StarterAssets;
 
-[RequireComponent(typeof(ThirdPersonController))]
+
+
 [RequireComponent(typeof(SplineController))]
+[RequireComponent(typeof(AnimationController))]
 public class PlayerController : SplineMovementBase
 {
-    //[SerializeFIeld] private int hp_ = 3;
     [SerializeField] float takeDamageInterval_ = 1.0f; // ダメージを受ける間隔
     private bool canTakeDamage_ = true; // ダメージを受けられるかどうか
 
@@ -17,107 +18,126 @@ public class PlayerController : SplineMovementBase
     //減衰率
     [SerializeField] private float attenuationRate_ = 1f;
 
-    [SerializeField] ThirdPersonController thirdPersonController_;
+    [SerializeField] AnimationController playerAnimationController_;
     [SerializeField] CameraController cameraController_;
 
     [SerializeField][Range(0f, 30f)] float verticalForce_;
 
     // SplineContainer変更検知用
     private SplineContainer previousSplineContainer_;
-
+    [SerializeField] private LayerMask groundLayer_;
     private int dir_;
     [Header("デバッグ用")]
     [SerializeField] private ClearZone clearZone_;
-    [SerializeField] string hitName = "";
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private MySpline.EvaluationInfo evaluationInfo_;
+    public Vector3 halsExtends_;
+    public Vector3 vertical;
+    [SerializeField] private StarterAssetsInputs inputs_;
+    [SerializeField] private Rigidbody rb_;
+    [SerializeField] private CapsuleCollider capsuleCollider_;
+
+    // Splineの垂直方向の変化とジャンプを統合するための変数
+    private Vector3 previousSplinePosition_;
+    private bool isFirstFrame_ = true;
+
     protected override void Initialize()
     {
-        if (thirdPersonController_ == null)
+        if (playerAnimationController_ == null)
         {
-            thirdPersonController_ = GetComponentInChildren<ThirdPersonController>();
+            playerAnimationController_ = GetComponent<AnimationController>();
         }
 
         splineController_.splineDirection_ = 1;
 
-       // thirdPersonController_.myEvent = splineController_.CheckUnderSpline;
-
         // 初期SplineContainerを記録
         previousSplineContainer_ = splineController_.currentSplineContainer_;
+        
+        // 初期Spline位置を記録
+        previousSplinePosition_ = splineController_.GetSplineMeshPos();
     }
 
-    // Update is called once per frame
     void Update()
     {
-       
-        
-          
+        evaluationInfo_ = splineController_.EvaluationInfo;
         InputMovement();
         transform.rotation = splineController_.EvaluationInfo.rotation;
 
-        // ThirdPersonControllerに渡す移動量を計算
-        // Splineの移動量 + Y軸の重力/ジャンプ処理
-        Vector3 splineMovement = splineController_.GetSplineMovementDelta();
-        Vector3 verticalMovement = new Vector3(0, thirdPersonController_.VerticalVelocity * Time.deltaTime, 0);
-
-        Vector3 totalMovement = splineMovement + verticalMovement;
-
-        thirdPersonController_.Move(totalMovement);
-
+        // Splineの基準位置を取得
+        Vector3 currentSplinePosition = splineController_.GetSplineMeshPos();
         
-       
-            
+        // Splineの垂直方向の変化量を計算
+        Vector3 splineVerticalDelta = Vector3.zero;
+        if (!isFirstFrame_)
+        {
+            Vector3 splineDelta = currentSplinePosition - previousSplinePosition_;
+            splineVerticalDelta = new Vector3(0, splineDelta.y, 0); // Y成分のみ取得
+        }
+        
+        // ジャンプによる垂直方向の移動量を計算
+        Vector3 jumpVerticalMovement = Vector3.up * playerAnimationController_.VerticalVelocity * Time.deltaTime;
+        vertical = jumpVerticalMovement; // デバッグ用
+
+        // 現在のプレイヤー位置から水平方向の成分を取得
+        Vector3 currentHorizontalPosition = new Vector3(currentSplinePosition.x, transform.position.y, currentSplinePosition.z);
+        
+        // 新しい位置 = Splineの水平位置 + Splineの垂直変化 + ジャンプの垂直移動
+        Vector3 newPosition = currentHorizontalPosition + splineVerticalDelta + jumpVerticalMovement;
+        transform.position = newPosition;
+
+        // 地面判定をPlayerAnimationControllerに反映
+        playerAnimationController_.Grounded = Physics.CheckBox(transform.position, halsExtends_, transform.rotation, groundLayer_);
+        
+        // 前フレームの位置を更新
+        previousSplinePosition_ = currentSplinePosition;
+        isFirstFrame_ = false;
+        
         CheckSplineContainerChange();
-
-
-        RaycastHit hit;
-        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f; // 少し上からRayを出すことで地面との誤検出を減らす
-        Vector3 rayDirection = Vector3.down;
-        float rayDistance = 2.0f;
-        //if (Physics.Raycast(rayOrigin, rayDirection, out hit, rayDistance))
-        //{
-        //    Debug.DrawRay(rayOrigin, rayDirection * hit.distance, Color.yellow);
-        //    //Debug.Log("Did Hit");
-        //    hitName = hit.collider.gameObject.name;
-
-        //}
-        //else
-        //{
-        //    Debug.DrawRay(rayOrigin, rayDirection * 1000, Color.white);
-        //    hitName = "";
-        //}
         UpdateCamera();
     }
-    private void FixedUpdate()
-    {
-        
-        //splineController_.CheckUnderSpline();
-    }
+
     public void CheckSpline(SplineContainer splineContainer)
     {
+        if (splineContainer == null)
+        {
+            Debug.Log("checksplineContainer==null");
+            return;
+        }
         if(splineController_.currentSplineContainer_ != splineContainer)
         {
-            splineController_.currentSplineContainer_ = splineContainer;
+            splineController_.ChangeOtherSpline(splineContainer);
+        }
+    }
+
+   
+    private void OnCollisionEnter(Collision collision)
+    {
+        GameObject groundObj = collision.gameObject;
+        Debug.Log("groundObj:" + groundObj.name);
+        Debug.Log("collisionObject:" + collision.gameObject.name);
+        if (groundObj.layer == (int)Mathf.Log(groundLayer_, 2))
+        {
+            SplineContainer collisionContainer = groundObj.GetComponent<SplineContainer>();
+            CheckSpline(collisionContainer);
         }
     }
     private void InputMovement()
     {
-        int inputAxis = 0;
-        if (!thirdPersonController_.IsStunned)
+        
+        if (!playerAnimationController_.IsStunned)
         {
-            if (Input.GetKey(KeyCode.LeftArrow))
+            if(inputs_.move.x == -1)
             {
                 splineController_.isMovingLeft = true;
-                inputAxis = -1;
             }
-            if (Input.GetKey(KeyCode.RightArrow))
+            else if(inputs_.move.x == 1)
             {
                 splineController_.isMovingLeft = false;
-                inputAxis = 1;
             }
+
+            
             if (Input.GetKeyDown(KeyCode.T))
             {
-                //thirdPersonController_.AddVerticalForce(verticalForce_);
-                thirdPersonController_.TakeDamage();
+                playerAnimationController_.TakeDamage();
                 OnDamage(0,splineController_.T + 0.5f);
             }
             if (Input.GetKeyDown(KeyCode.K))
@@ -126,29 +146,33 @@ public class PlayerController : SplineMovementBase
             }
             if (Input.GetKeyDown(KeyCode.L))
             {
-                thirdPersonController_.Dying();
+                playerAnimationController_.Dying();
                 OnTriggerDyingAnim();
             }
-
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                playerAnimationController_.AddVerticalForce(verticalForce_);
+            }
         }
 
-
         // Spline上のt更新
-        splineController_.UpdateT(speed_, inputAxis);
+        splineController_.UpdateT(speed_, (int)inputs_.move.x);
         // アニメーション用の入力設定
         UnityEngine.Vector2 moveInput = UnityEngine.Vector2.zero;
-        moveInput.x = inputAxis;
-        thirdPersonController_.SetMoveInput(moveInput);
-        if (knockbackForce >0)
+        //moveInput.x = ;
+        playerAnimationController_.SetMoveInput(inputs_.move);
+        
+        if (knockbackForce > 0)
         {
             knockbackForce += attenuationRate_ * Time.deltaTime;
-            splineController_.UpdateT(knockbackForce,dir_);
+            splineController_.UpdateT(knockbackForce, dir_);
         }
         else
         {
             knockbackForce = 0;
         }
     }
+
     protected override void UpdateMovement()
     {
         // Splineの移動はUpdateメソッドで行うため、ここでは何もしない
@@ -220,7 +244,7 @@ public class PlayerController : SplineMovementBase
     {
         dir_ = -(int)Mathf.Sign(enemyT - splineController_.T);
         OnDamage(damageValue);
-        thirdPersonController_.TakeDamage();
+        playerAnimationController_.TakeDamage();
     }
 
     private IEnumerator WaitCanTakeDamage()
@@ -230,7 +254,6 @@ public class PlayerController : SplineMovementBase
             canTakeDamage_ = false;
             yield return new WaitForSeconds(takeDamageInterval_);
             canTakeDamage_ = true;
-            //knockbackForce = 0;
         }
     }
 
@@ -241,7 +264,6 @@ public class PlayerController : SplineMovementBase
 
     private IEnumerator DyingAnim()
     {
-        
         //遷移にかかる時間
         float transitionDuration = 5.0f;
         float elapsed = 0f;
@@ -249,9 +271,10 @@ public class PlayerController : SplineMovementBase
         {
             elapsed += Time.deltaTime;
             //ゲームオーバーの文字を表示
-
             yield return null;
         }
         TransitionScene.Instance.ToGameOver();
     }
+
+    
 }

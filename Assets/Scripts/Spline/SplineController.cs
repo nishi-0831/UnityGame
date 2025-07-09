@@ -22,6 +22,7 @@ using UnityEditor;
 #endif
 namespace MySpline
 {
+    [System.Serializable]
     public struct EvaluationInfo
     {
 
@@ -59,7 +60,7 @@ public class SplineController : MonoBehaviour
     private float firstT_ = 0.0f;
     [Header("メッシュの半径(上方向)")]
     [SerializeField] private float splineMeshRadius_;
-    [SerializeField] float offsetY_ = 0f;
+    [SerializeField] public float offsetY_ = 0f;
     [Header("currentSplineContainerがnullの場合、親のSplineContainerを取得するか否か")]
     [SerializeField] private bool autoFindParentSplineContainer_ = true;
     [Header("既存のcurrentSplineContainerを上書きして親のSplineContainerを取得するか否か")]
@@ -366,13 +367,20 @@ public class SplineController : MonoBehaviour
         return new EvaluationInfo(nearestPos + new float3(0,offsetY_,0),tangent,upVector,rotation);
     }
     
-   
+   public void MoveAlongSpline()
+    {
+        MoveAlongSpline(t_);
+    }
     public void MoveAlongSpline(float t)
     {
         Debug.Log($"{followTarget_.name}:MoveAlongSpline");
         EvaluationInfo spline = GetEvaluationInfo(t);
         followTarget_.transform.rotation = spline.rotation;
         followTarget_.transform.position = spline.position + new Vector3(0, splineMeshRadius_ / 2.0f, 0);
+    }
+    public Vector3 GetSplineMeshPos()
+    {
+        return EvaluationInfo.position + new Vector3(0, splineMeshRadius_ / 2.0f, 0);
     }
     public void ClampT()
     {
@@ -399,6 +407,46 @@ public class SplineController : MonoBehaviour
         MoveOtherSpline(ft.position + (move* ft.forward) , -ft.up);
     }
 
+    public void ChangeOtherSpline(SplineContainer nextContainer)
+    {
+        float3 currTangent = currentSplineContainer_.EvaluateTangent(t_);
+        float3 nextTangent = nextContainer.EvaluateTangent(t_);
+        float dot = math.dot(currTangent, nextTangent);
+        if (dot > 0)
+        {
+            Debug.Log("同じ向き");
+        }
+        else if (dot < 0)
+        {
+            splineDirection_ *= -1;
+            Debug.Log("逆向き");
+        }
+        else
+        {
+            Debug.Log("直角");
+            float rotY = math.atan2(currTangent.x, currTangent.z);
+            UnityEngine.Quaternion rot = UnityEngine.Quaternion.Euler(0, rotY, 0);
+            UnityEngine.Matrix4x4 rotMat = UnityEngine.Matrix4x4.Rotate(rot);
+            float3 right = rotMat.MultiplyPoint3x4(new UnityEngine.Vector3(1, 0, 0));
+            if (math.dot(right, nextTangent) > 0)
+            {
+                splineDirection_ = 1;
+                Debug.Log("右");
+            }
+            else
+            {
+                splineDirection_ = -1;
+                Debug.Log("左");
+            }
+        }
+
+        currentSplineContainer_ = nextContainer;
+        NativeSpline currentNativeSpline = new NativeSpline(currentSplineContainer_.Spline, currentSplineContainer_.transform.localToWorldMatrix);
+        float3 outPos;
+        float outT;
+        SplineUtility.GetNearestPoint<NativeSpline>(currentNativeSpline, followTarget_.transform.position, out outPos, out outT);
+        T = outT;
+    }
     private void MoveOtherSpline(Vector3 pos,Vector3 dir)
     {
         RaycastHit hit;

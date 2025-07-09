@@ -68,10 +68,10 @@ public class Enemy : SplineMovementBase, IPlayerInteractable
         OnDamage();
 
         // プレイヤーに跳ね返り効果を与える
-        var playerThirdPerson = player.GetComponent<ThirdPersonController>();
-        if (playerThirdPerson != null)
+        var playerAnimationController = player.GetComponent<AnimationController>();
+        if (playerAnimationController != null)
         {
-            playerThirdPerson.AddVerticalForce(stompBounceForce); // 少しジャンプさせる
+            playerAnimationController.AddVerticalForce(stompBounceForce); // 少しジャンプさせる
         }
 
         return true; // 踏みつけ成功

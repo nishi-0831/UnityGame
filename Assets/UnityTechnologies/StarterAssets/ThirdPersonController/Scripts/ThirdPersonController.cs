@@ -249,17 +249,13 @@ namespace StarterAssets
             //radius:球形の半身
             //layerMask:判定対象にするレイヤー
             //「トリガー」に設定されているものも判定対象にするか否か
-            Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
-                QueryTriggerInteraction.Ignore);
+            //Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
+              //  QueryTriggerInteraction.Ignore);
+            
             // Debug.Log($"{collision.gameObject.name}と{this.name}が衝突しました");
             //GameObject collisionGameObject = collision.gameObject;
 
-            //if (collisionGameObject.layer == (int)Mathf.Log(groundLayer, 2))
-            //{
-            //    PlayerController playerController = GetComponent<PlayerController>();
-            //    SplineContainer collisionContainer = collisionGameObject.GetComponent<SplineContainer>();
-            //    playerController?.CheckSpline(collisionContainer);
-            //}
+            
 
 
             // update animator if using character
@@ -311,7 +307,7 @@ namespace StarterAssets
         }
         public void Move(Vector3 motion)
         {
-            _controller.Move(motion);
+            //_controller.Move(motion);
 #if false
             #region
             // set target speed based on move speed, sprint speed and if sprint is pressed
@@ -398,7 +394,7 @@ namespace StarterAssets
                 // stop our velocity dropping infinitely when grounded
                 if (_verticalVelocity < 0.0f)
                 {
-                    _verticalVelocity = -2f;
+                    _verticalVelocity = 0.0f;
                 }
 
                 // Jump
@@ -446,7 +442,7 @@ namespace StarterAssets
             }
 
             // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
-            if (_verticalVelocity < _terminalVelocity)
+            if (!Grounded)
             {
                 _verticalVelocity += Gravity * Time.deltaTime;
             }

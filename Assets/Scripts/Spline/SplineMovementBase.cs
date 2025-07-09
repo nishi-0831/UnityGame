@@ -135,7 +135,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// </summary>
     protected virtual void OnReachMaxT()
     {
-        //Debug.Log($"{gameObject.name}: Reached Max T");
+        Debug.Log($"{gameObject.name}: Reached Max T");
     }
     
     /// <summary>
@@ -143,7 +143,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// </summary>
     protected virtual void OnReachMinT()
     {
-        //Debug.Log($"{gameObject.name}: Reached Min T");
+        Debug.Log($"{gameObject.name}: Reached Min T");
     }
    
     /// <summary>
