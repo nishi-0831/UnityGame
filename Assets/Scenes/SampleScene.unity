@@ -582,7 +582,7 @@ MonoBehaviour:
   verticalForce_: 12.4
   groundLayer_:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   clearZone_: {fileID: 59694151}
   evaluationInfo_:
     position: {x: 0, y: 0, z: 0}
