@@ -25,7 +25,7 @@ public class PlayerController : SplineMovementBase
 
     // SplineContainer変更検知用
     private SplineContainer previousSplineContainer_;
-    [SerializeField] private LayerMask groundLayer_;
+    [SerializeField]private LayerMask groundLayer_;
     private int dir_;
     [Header("デバッグ用")]
     [SerializeField] private ClearZone clearZone_;
@@ -42,6 +42,8 @@ public class PlayerController : SplineMovementBase
 
     protected override void Initialize()
     {
+        //groundLayer_ = layerSettings_.groundLayer;
+
         if (animController_ == null)
         {
             animController_ = GetComponent<AnimationController>();
@@ -110,7 +112,7 @@ public class PlayerController : SplineMovementBase
     private void OnCollisionEnter(Collision collision)
     {
         GameObject groundObj = collision.gameObject;
-        
+        Debug.Log("OnCollisionEnter");
         if (groundObj.layer == (int)Mathf.Log(splineController_.splineLayerSettings_.groundLayer, 2))
         {
             SplineContainer collisionContainer = groundObj.GetComponent<SplineContainer>();
@@ -121,6 +123,8 @@ public class PlayerController : SplineMovementBase
     private void OnCollisionStay(Collision collision)
     {
         GameObject groundObj = collision.gameObject;
+        Debug.Log("OnCollisionStay");
+
         if (groundObj.layer == (int)Mathf.Log(splineController_.splineLayerSettings_.groundLayer, 2))
         {
             animController_.Grounded = true;
@@ -221,13 +225,13 @@ public class PlayerController : SplineMovementBase
     protected override void OnReachMaxT()
     {
         base.OnReachMaxT();
-        splineController_.MoveOtherSplineMinOrMax();
+        //splineController_.MoveOtherSplineMinOrMax();
     }
 
     protected override void OnReachMinT()
     {
         base.OnReachMinT();
-        splineController_.MoveOtherSplineMinOrMax();
+        //splineController_.MoveOtherSplineMinOrMax();
     }
 
     public override void OnDamage()

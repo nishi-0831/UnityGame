@@ -13,6 +13,8 @@ using JetBrains.Annotations;
 using MySpline;
 using TMPro;
 using static UnityEditor.Rendering.CameraUI;
+using static UnityEditor.PlayerSettings;
+
 
 
 
@@ -441,12 +443,14 @@ public class SplineController : MonoBehaviour
         }
 
         
-        NativeSpline nextNativeSpline = new NativeSpline(currentSplineContainer_.Spline, currentSplineContainer_.transform.localToWorldMatrix);
+        NativeSpline nextNativeSpline = new NativeSpline(nextContainer.Spline, nextContainer.transform.localToWorldMatrix);
         float3 outPos;
         float outT;
         SplineUtility.GetNearestPoint<NativeSpline>(nextNativeSpline, followTarget_.transform.position, out outPos, out outT);
         float nextT = outT;
+        currentSplineContainer_ = nextContainer;
         T = outT;
+        Debug.Log("Change");
     }
     private void MoveOtherSpline(Vector3 pos,Vector3 dir)
     {
@@ -538,13 +542,29 @@ public class SplineController : MonoBehaviour
             MoveAlongSpline(t_);
         }
     }
-    
+    public bool RayUnderSpline(Vector3 pos, Vector3 dir)
+    {
+        RaycastHit hit;
+
+        if (Physics.Raycast(pos + new Vector3(0, offsetRayStartPosY, 0), dir, out hit, Mathf.Infinity, splineLayerSettings_.groundLayer))
+        {
+            Debug.Log( "ray to "+hit.collider.gameObject.name);
+            return true;
+        }
+        else
+        {
+            Debug.Log("no ray");
+            return false;
+        }
+    }
     public void CheckUnderSpline()
     {
         if (followTarget_ != null)
         {
-            MoveOtherSpline(followTarget_.transform.position,-followTarget_.transform.up);
+            RayUnderSpline(followTarget_.transform.position,-followTarget_.transform.up);
+            
         }
     }
+
     #endregion
 }
