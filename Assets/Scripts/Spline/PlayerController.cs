@@ -18,7 +18,7 @@ public class PlayerController : SplineMovementBase
     //減衰率
     [SerializeField] private float attenuationRate_ = 1f;
 
-    [SerializeField] AnimationController playerAnimationController_;
+    [SerializeField] AnimationController animController_;
     [SerializeField] CameraController cameraController_;
 
     [SerializeField][Range(0f, 30f)] float verticalForce_;
@@ -42,9 +42,9 @@ public class PlayerController : SplineMovementBase
 
     protected override void Initialize()
     {
-        if (playerAnimationController_ == null)
+        if (animController_ == null)
         {
-            playerAnimationController_ = GetComponent<AnimationController>();
+            animController_ = GetComponent<AnimationController>();
         }
 
         splineController_.splineDirection_ = 1;
@@ -74,7 +74,7 @@ public class PlayerController : SplineMovementBase
         }
         
         // ジャンプによる垂直方向の移動量を計算
-        Vector3 jumpVerticalMovement = Vector3.up * playerAnimationController_.VerticalVelocity * Time.deltaTime;
+        Vector3 jumpVerticalMovement = Vector3.up * animController_.VerticalVelocity * Time.deltaTime;
         vertical = jumpVerticalMovement; // デバッグ用
 
         // 現在のプレイヤー位置から水平方向の成分を取得
@@ -82,10 +82,8 @@ public class PlayerController : SplineMovementBase
         
         // 新しい位置 = Splineの水平位置 + Splineの垂直変化 + ジャンプの垂直移動
         Vector3 newPosition = currentHorizontalPosition + splineVerticalDelta + jumpVerticalMovement;
-        transform.position = newPosition;
-
-        // 地面判定をPlayerAnimationControllerに反映
-        playerAnimationController_.Grounded = Physics.CheckBox(transform.position, halsExtends_, transform.rotation, groundLayer_);
+        //transform.position = newPosition;
+        rb_.MovePosition(newPosition);
         
         // 前フレームの位置を更新
         previousSplinePosition_ = currentSplinePosition;
@@ -112,18 +110,30 @@ public class PlayerController : SplineMovementBase
     private void OnCollisionEnter(Collision collision)
     {
         GameObject groundObj = collision.gameObject;
-        Debug.Log("groundObj:" + groundObj.name);
-        Debug.Log("collisionObject:" + collision.gameObject.name);
-        if (groundObj.layer == (int)Mathf.Log(groundLayer_, 2))
+        
+        if (groundObj.layer == (int)Mathf.Log(splineController_.splineLayerSettings_.groundLayer, 2))
         {
             SplineContainer collisionContainer = groundObj.GetComponent<SplineContainer>();
             CheckSpline(collisionContainer);
+            animController_.Grounded = true;
         }
+    }
+    private void OnCollisionStay(Collision collision)
+    {
+        GameObject groundObj = collision.gameObject;
+        if (groundObj.layer == (int)Mathf.Log(splineController_.splineLayerSettings_.groundLayer, 2))
+        {
+            animController_.Grounded = true;
+        }
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        animController_.Grounded = false;
     }
     private void InputMovement()
     {
         
-        if (!playerAnimationController_.IsStunned)
+        if (!animController_.IsStunned)
         {
             if(inputs_.move.x == -1)
             {
@@ -137,7 +147,7 @@ public class PlayerController : SplineMovementBase
             
             if (Input.GetKeyDown(KeyCode.T))
             {
-                playerAnimationController_.TakeDamage();
+                animController_.TakeDamage();
                 OnDamage(0,splineController_.T + 0.5f);
             }
             if (Input.GetKeyDown(KeyCode.K))
@@ -146,12 +156,12 @@ public class PlayerController : SplineMovementBase
             }
             if (Input.GetKeyDown(KeyCode.L))
             {
-                playerAnimationController_.Dying();
+                animController_.Dying();
                 OnTriggerDyingAnim();
             }
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                playerAnimationController_.AddVerticalForce(verticalForce_);
+                animController_.AddVerticalForce(verticalForce_);
             }
         }
 
@@ -160,7 +170,7 @@ public class PlayerController : SplineMovementBase
         // アニメーション用の入力設定
         UnityEngine.Vector2 moveInput = UnityEngine.Vector2.zero;
         //moveInput.x = ;
-        playerAnimationController_.SetMoveInput(inputs_.move);
+        animController_.SetMoveInput(inputs_.move);
         
         if (knockbackForce > 0)
         {
@@ -244,7 +254,7 @@ public class PlayerController : SplineMovementBase
     {
         dir_ = -(int)Mathf.Sign(enemyT - splineController_.T);
         OnDamage(damageValue);
-        playerAnimationController_.TakeDamage();
+        animController_.TakeDamage();
     }
 
     private IEnumerator WaitCanTakeDamage()

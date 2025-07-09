@@ -15,7 +15,8 @@ public class ScoreItemSplineMovement : SplineMovementBase, IPlayerInteractable
     [SerializeField] private float initialOffsetY = 1.0f;
     [SerializeField] private float endPosOffsetY = 1.0f;
     [SerializeField] private SimpleGemsAnim simpleGemsAnim;
-   
+    
+
     protected override void Initialize()
     {
         FollowTarget.transform.position = FollowTarget.transform.position + new Vector3(0f, initialOffsetY, 0f);
@@ -47,7 +48,6 @@ public class ScoreItemSplineMovement : SplineMovementBase, IPlayerInteractable
 
     private void DestroyItem()
     {
-        
         //Vector3 playerPos = player.transform.position;
         //float verticalVelocity = Mathf.Sqrt(height * -2f * Gravity)
     }
@@ -82,6 +82,8 @@ public class ScoreItemSplineMovement : SplineMovementBase, IPlayerInteractable
         Debug.Log($"Score +{scoreValue}");
         // Ç±Ç±Ç≈ScoreManagerÇ…í ímÇ∑ÇÈèàóùÇí«â¡
         ScoreManager.Instance.ReceiveScore(scoreValue);
+        
+        
         Destroy(this.gameObject);
     }
     
@@ -97,7 +99,6 @@ public class ScoreItemSplineMovement : SplineMovementBase, IPlayerInteractable
     
     private void GiveScoreToPlayer(GameObject player)
     {
-       
         StartCoroutine(DestroyAnim(player));
     }
     

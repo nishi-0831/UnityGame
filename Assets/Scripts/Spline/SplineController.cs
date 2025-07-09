@@ -45,7 +45,7 @@ public class SplineController : MonoBehaviour
 {
 
 
-    [SerializeField] private SplineLayerSettings splineLayerSettings_;
+    [SerializeField] public SplineLayerSettings splineLayerSettings_;
     [SerializeField] public GameObject followTarget_;
     [SerializeField] public SplineContainer currentSplineContainer_;
     [SerializeField] private float t_;
@@ -136,7 +136,7 @@ public class SplineController : MonoBehaviour
 
                 if (CanFindSplineContainer())
                 {
-                    Debug.Log("FindSplineContainer");
+                    //Debug.Log("FindSplineContainer");
                     FindParentSplineContainer();
                 }
             };
@@ -179,7 +179,7 @@ public class SplineController : MonoBehaviour
         SetSplineMeshRadius();
         //followTarget_.transform.position = GetEvaluationInfo(t).position;
         MoveAlongSpline(t);
-        Debug.Log("MoveAlongSplineEditorOnly");
+        //Debug.Log("MoveAlongSplineEditorOnly");
         if(!Application.isPlaying)
         {
             UnityEditor.SceneView.RepaintAll();
@@ -373,7 +373,7 @@ public class SplineController : MonoBehaviour
     }
     public void MoveAlongSpline(float t)
     {
-        Debug.Log($"{followTarget_.name}:MoveAlongSpline");
+        //Debug.Log($"{followTarget_.name}:MoveAlongSpline");
         EvaluationInfo spline = GetEvaluationInfo(t);
         followTarget_.transform.rotation = spline.rotation;
         followTarget_.transform.position = spline.position + new Vector3(0, splineMeshRadius_ / 2.0f, 0);
@@ -440,11 +440,12 @@ public class SplineController : MonoBehaviour
             }
         }
 
-        currentSplineContainer_ = nextContainer;
-        NativeSpline currentNativeSpline = new NativeSpline(currentSplineContainer_.Spline, currentSplineContainer_.transform.localToWorldMatrix);
+        
+        NativeSpline nextNativeSpline = new NativeSpline(currentSplineContainer_.Spline, currentSplineContainer_.transform.localToWorldMatrix);
         float3 outPos;
         float outT;
-        SplineUtility.GetNearestPoint<NativeSpline>(currentNativeSpline, followTarget_.transform.position, out outPos, out outT);
+        SplineUtility.GetNearestPoint<NativeSpline>(nextNativeSpline, followTarget_.transform.position, out outPos, out outT);
+        float nextT = outT;
         T = outT;
     }
     private void MoveOtherSpline(Vector3 pos,Vector3 dir)

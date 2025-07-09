@@ -15,7 +15,9 @@ public abstract class SplineMovementBase : MonoBehaviour
 
     [Header("ÉåÉCÉÑÅ[ÇÃê›íË")]
     [SerializeField] protected SplineLayerSettings layerSettings_;
-    
+    [Header("OnDestroyÇ≈çƒê∂Ç≥ÇÍÇÈSE")]
+    [SerializeField] private AudioClip onDestroySE_ = null;
+
     public GameObject FollowTarget
     {
         get { return splineController_.FollowTarget; }
@@ -182,6 +184,10 @@ public abstract class SplineMovementBase : MonoBehaviour
         {
             splineController_.onMaxT -= OnReachMaxT;
             splineController_.onMinT -= OnReachMinT;
+        }
+        if(onDestroySE_ != null)
+        {
+            AudioSource.PlayClipAtPoint(onDestroySE_, FollowTarget.transform.position);
         }
     }
 

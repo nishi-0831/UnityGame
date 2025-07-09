@@ -3,8 +3,9 @@ using UnityEngine.Splines;
 
 public class BasicRigidBodyPush : MonoBehaviour
 {
-    public LayerMask hitLayer;
-    public LayerMask groundLayer;
+    [SerializeField] private SplineLayerSettings splineLayerSettings;
+    //public LayerMask hitLayer;
+    //public LayerMask groundLayer;
     public bool canPush;
     [Range(0.5f, 5f)] public float strength = 1.1f;
     [Range(0.0f, 2.0f)] public float stompThreshold = 0.5f; // 踏みつけ判定の閾値
@@ -12,12 +13,9 @@ public class BasicRigidBodyPush : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var bodyLayerMask = 1 << other.gameObject.layer;
-        if ((bodyLayerMask & hitLayer.value) == 0) return;
+        if ((bodyLayerMask & splineLayerSettings.activeLayer.value) == 0) return;
         
         Debug.Log($"{other.gameObject.name}と{this.name}が衝突しました");
-
-       
-
         // プレイヤーとSplineMovementBaseオブジェクトの相互作用を処理
         IPlayerInteractable interactable = other.gameObject.GetComponent<IPlayerInteractable>();
         if (interactable != null)
@@ -67,7 +65,7 @@ public class BasicRigidBodyPush : MonoBehaviour
 
         // make sure we only push desired layers
         var bodyLayerMask = 1 << body.gameObject.layer;
-        if ((bodyLayerMask & hitLayer.value) == 0) return;
+        if ((bodyLayerMask & splineLayerSettings.activeLayer.value) == 0) return;
 
         // We dont want to push objects below us
         if (hit.moveDirection.y < -0.3f) return;
