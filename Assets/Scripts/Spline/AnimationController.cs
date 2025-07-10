@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using StarterAssets;
 
 /// <summary>
 /// プレイヤーのアニメーション制御を行うクラス
@@ -26,7 +27,7 @@ public class AnimationController : MonoBehaviour
     private int _animIDTakeDamage;
     private int _animIDDying;
     private int _animIDCanInputReact;
-
+    private int _animIDIsAir;
     // Components
     private Animator _animator;
     private bool _hasAnimator;
@@ -34,10 +35,11 @@ public class AnimationController : MonoBehaviour
     // State
     [SerializeField] private bool grounded_ = true;
     [SerializeField] private float verticalVelocity_;
-    private bool _isAir;
+    [SerializeField] private bool _isAir;
     private float _jumpTimeoutDelta;
-    private float _fallTimeoutDelta;
-
+    [SerializeField] private float _fallTimeoutDelta;
+    public bool jump;
+    [SerializeField] private StarterAssetsInputs inputs_;
     // Properties
     public bool Grounded 
     { 
@@ -45,11 +47,11 @@ public class AnimationController : MonoBehaviour
         set 
         { 
             grounded_ = value;
-            if (_hasAnimator)
-            {
-                _animator.SetBool(_animIDGrounded, grounded_);
-            }
         } 
+    }
+    public bool IsAir
+    {
+        get { return _isAir; }
     }
 
     public float VerticalVelocity => verticalVelocity_;
@@ -65,7 +67,7 @@ public class AnimationController : MonoBehaviour
     private void Start()
     {
         _hasAnimator = TryGetComponent(out _animator);
-        
+        //inputs_.GetComponent<StarterAssetsInputs>();
         if (_hasAnimator)
         {
             AssignAnimationIDs();
@@ -80,6 +82,7 @@ public class AnimationController : MonoBehaviour
     {
         JumpAndGravity();
         UpdateAnimations();
+        jump = _animator.GetBool(_animIDJump);
     }
 
     private void AssignAnimationIDs()
@@ -92,6 +95,7 @@ public class AnimationController : MonoBehaviour
         _animIDTakeDamage = Animator.StringToHash("TakeDamage");
         _animIDCanInputReact = Animator.StringToHash("CanInputReact");
         _animIDDying = Animator.StringToHash("Dying");
+        _animIDIsAir = Animator.StringToHash("IsAir");
     }
 
     private void UpdateAnimations()
@@ -101,9 +105,15 @@ public class AnimationController : MonoBehaviour
         // Air state check
         if (_isAir && grounded_)
         {
-            Debug.Log("Landed");
+            Debug.Log("grounded_");
+            _animator.SetBool(_animIDGrounded, true);
             _isAir = false;
         }
+        else
+        {
+            _animator.SetBool(_animIDGrounded, false);
+        }
+        _animator.SetBool(_animIDIsAir, _isAir);
     }
 
     private void JumpAndGravity()
@@ -112,11 +122,15 @@ public class AnimationController : MonoBehaviour
         {
             _fallTimeoutDelta = fallTimeout_;
 
-            if (_hasAnimator)
+            if (verticalVelocity_ > 0.1f)
+            {
+                _animator.SetBool(_animIDJump, true);
+            }
+            else
             {
                 _animator.SetBool(_animIDJump, false);
-                _animator.SetBool(_animIDFreeFall, false);
             }
+            _animator.SetBool(_animIDFreeFall, false);
 
             if (verticalVelocity_ < 0.0f)
             {
@@ -127,6 +141,7 @@ public class AnimationController : MonoBehaviour
             {
                 _jumpTimeoutDelta -= Time.deltaTime;
             }
+            
         }
         else
         {
@@ -141,13 +156,15 @@ public class AnimationController : MonoBehaviour
                 if (_hasAnimator)
                 {
                     _animator.SetBool(_animIDFreeFall, true);
+                    Debug.Log("freefall");
                 }
                 _isAir = true;
             }
+            inputs_.jump = false;
         }
 
         // Apply gravity
-        if (!grounded_)
+        if (_isAir)
         {
             verticalVelocity_ += gravity_ * Time.deltaTime;
         }
@@ -190,11 +207,8 @@ public class AnimationController : MonoBehaviour
     {
         if (IsStunned) return;
 
-        if (_hasAnimator)
-        {
-            _animator.SetBool(_animIDJump, true);
-        }
         
+        _animator.SetBool(_animIDJump, true);
         verticalVelocity_ = Mathf.Sqrt(height * -2f * gravity_);
     }
 

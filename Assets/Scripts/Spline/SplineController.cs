@@ -406,17 +406,30 @@ public class SplineController : MonoBehaviour
 
         ft.position += move * ft.forward;
 
-        MoveOtherSpline(ft.position + (move* ft.forward) , -ft.up);
+        //MoveOtherSpline(ft.position + (move* ft.forward) , -ft.up);
     }
 
     public void ChangeOtherSpline(SplineContainer nextContainer)
     {
-        float3 currTangent = currentSplineContainer_.EvaluateTangent(t_);
-        float3 nextTangent = nextContainer.EvaluateTangent(t_);
+        if(currentSplineContainer_ == nextContainer)
+        {
+            Debug.Log("SameSpline");
+            return;
+        }
+        NativeSpline nextNativeSpline = new NativeSpline(nextContainer.Spline, nextContainer.transform.localToWorldMatrix);
+        float3 outPos;
+        float outT;
+        SplineUtility.GetNearestPoint<NativeSpline>(nextNativeSpline, followTarget_.transform.position, out outPos, out outT);
+        float nextT = outT;
+        
+        float3 currTangent = math.normalize(currentSplineContainer_.EvaluateTangent(t_));
+        float3 nextTangent = math.normalize(nextContainer.EvaluateTangent(nextT));
+        
         float dot = math.dot(currTangent, nextTangent);
+        Debug.Log("dot:" + currTangent + " : " + nextTangent);
         if (dot > 0)
         {
-            Debug.Log("同じ向き");
+            //Debug.Log("同じ向き");
         }
         else if (dot < 0)
         {
@@ -443,14 +456,9 @@ public class SplineController : MonoBehaviour
         }
 
         
-        NativeSpline nextNativeSpline = new NativeSpline(nextContainer.Spline, nextContainer.transform.localToWorldMatrix);
-        float3 outPos;
-        float outT;
-        SplineUtility.GetNearestPoint<NativeSpline>(nextNativeSpline, followTarget_.transform.position, out outPos, out outT);
-        float nextT = outT;
         currentSplineContainer_ = nextContainer;
         T = outT;
-        Debug.Log("Change");
+        Debug.Log($"NewT{outT}");
     }
     private void MoveOtherSpline(Vector3 pos,Vector3 dir)
     {
@@ -542,27 +550,49 @@ public class SplineController : MonoBehaviour
             MoveAlongSpline(t_);
         }
     }
-    public bool RayUnderSpline(Vector3 pos, Vector3 dir)
+    public void RayUnderSpline(Vector3 pos, Vector3 dir)
     {
         RaycastHit hit;
 
         if (Physics.Raycast(pos + new Vector3(0, offsetRayStartPosY, 0), dir, out hit, Mathf.Infinity, splineLayerSettings_.groundLayer))
         {
             Debug.Log( "ray to "+hit.collider.gameObject.name);
-            return true;
+            SplineContainer foundSpline = hit.collider.gameObject.GetComponent<SplineContainer>();
+            if (foundSpline != null && foundSpline != currentSplineContainer_)
+            {
+                // PlayerControllerに新しいSplineの発見を通知
+                NotifyPlayerOfNewSpline(foundSpline);
+
+            }
+            else
+            {
+                //Debug.Log("No SplineContainer");
+            }
         }
         else
         {
             Debug.Log("no ray");
-            return false;
         }
     }
+
+    /// <summary>
+    /// 新しいSplineが見つかった時にPlayerControllerに通知
+    /// </summary>
+    /// <param name="newSplineContainer">発見されたSplineContainer</param>
+    private void NotifyPlayerOfNewSpline(SplineContainer newSplineContainer)
+    {
+        PlayerController playerController = followTarget_.GetComponent<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.OnFoundNewSpline(newSplineContainer);
+        }
+    }
+
     public void CheckUnderSpline()
     {
         if (followTarget_ != null)
         {
             RayUnderSpline(followTarget_.transform.position,-followTarget_.transform.up);
-            
         }
     }
 

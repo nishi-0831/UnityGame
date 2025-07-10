@@ -47,7 +47,7 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
         }
         //rb_.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
 
-        Debug.Log("Ball:Initialize");
+        //Debug.Log("Ball:Initialize");
         IsMovingLeft = false;
 
         radius_ = transform.localScale.x / 2f;
@@ -56,8 +56,8 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
 
     public void SetParam(SplineContainer splineContainer, float t, float moveSpeed, float rollSpeed, bool isLeft,float lifeSpan)
     {
-        Debug.Log("Ball:SetParam");
-        Debug.Log($"BallT:{t}");
+        //Debug.Log("Ball:SetParam");
+        //Debug.Log($"BallT:{t}");
         this.splineController_.currentSplineContainer_ = splineContainer;
         this.splineController_.T = t;
         this.speed_ = moveSpeed;
@@ -149,7 +149,7 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
         if (!IsActive_ && !canBeStomped)
             return false;
 
-        Debug.Log($"{gameObject.name} was stomped by player - Ball destroyed!");
+        //Debug.Log($"{gameObject.name} was stomped by player - Ball destroyed!");
 
         // プレイヤーに大きな跳ね返りを与える
         var playerThirdPerson = player.GetComponent<StarterAssets.ThirdPersonController>();
@@ -170,7 +170,7 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
         if (!IsActive_)
             return;
 
-        Debug.Log($"{gameObject.name} damaged player!");
+        //Debug.Log($"{gameObject.name} damaged player!");
 
         // プレイヤーにダメージを与える処理
         var playerController = player.GetComponent<PlayerController>();
@@ -178,7 +178,7 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
         {
             // ダメージ処理をここに実装
             playerController.OnDamage(damageToPlayer, splineController_.T);
-            Debug.Log($"Player took {damageToPlayer} damage!");
+            //Debug.Log($"Player took {damageToPlayer} damage!");
         }
     }
     public void OnTriggerEnter(Collider other)
@@ -187,14 +187,14 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
          
         if ((hitLayerMask == other.gameObject.layer))
         {
-            Debug.Log("OnTrigger");
+            //Debug.Log("OnTrigger");
             Disable();
             Fall();
         }
         else
         {
-            Debug.Log(hitLayerMask);
-            Debug.Log("OnNotTrigger");
+            //Debug.Log(hitLayerMask);
+            //Debug.Log("OnNotTrigger");
         }
     }
 }

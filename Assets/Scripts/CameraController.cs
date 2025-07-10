@@ -144,7 +144,7 @@ public class CameraController : MonoBehaviour
     {
         targetBaseY_ = newBaseY;
         forceYUpdate_ = true;
-        Debug.Log($"Camera: SplineContainer changed, new base Y: {newBaseY}");
+        //Debug.Log($"Camera: SplineContainer changed, new base Y: {newBaseY}");
     }
     
     private void interpolation(float a, float b)
