@@ -223,34 +223,7 @@ public class PlayerController : SplineMovementBase
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        GameObject groundObj = collision.gameObject;
-        Debug.Log("OnCollisionEnter");
-        if (groundObj.layer == (int)Mathf.Log(splineController_.splineLayerSettings_.groundLayer, 2))
-        {
-            SplineContainer collisionContainer = groundObj.GetComponent<SplineContainer>();
-            //CheckSpline(collisionContainer);
-            //animController_.Grounded = true;
-        }
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        GameObject groundObj = collision.gameObject;
-        Debug.Log("OnCollisionStay");
-
-        if (groundObj.layer == (int)Mathf.Log(splineController_.splineLayerSettings_.groundLayer, 2))
-        {
-            //animController_.Grounded = true;
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        Debug.Log("OnCollisionExit");
-        //animController_.Grounded = false;
-    }
+   
 
     private void InputMovement()
     {
