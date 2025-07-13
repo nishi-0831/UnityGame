@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -11,7 +15,9 @@ namespace StarterAssets
 		public Vector2 move;
 		public Vector2 look;
 		public bool jump;
+		public bool prevJump;
 		public bool sprint;
+		public bool releaseJumpBtn;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -20,32 +26,50 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+		public Action onReleaseJumpBtn;
+        private void Update()
+        {
+			
+        }
 #if ENABLE_INPUT_SYSTEM
-		public void OnMove(InputValue value)
+        //public void OnMove(InputValue value)
+        public void OnMove(InputAction.CallbackContext context)
 		{
-			MoveInput(value.Get<Vector2>());
+			MoveInput(context.ReadValue<Vector2>());
 		}
 
-		public void OnLook(InputValue value)
-		{
+		//public void OnLook(InputValue value)
+		public void OnLook(InputAction.CallbackContext context)
+        {
 			if(cursorInputForLook)
 			{
-				LookInput(value.Get<Vector2>());
+				LookInput(context.ReadValue<Vector2>());
 			}
 		}
 
-		public void OnJump(InputValue value)
+		public void OnJump(InputAction.CallbackContext context)
 		{
-			JumpInput(value.isPressed);
-			Debug.Log("OnJump");
-		}
+			//É{É^ÉìÇ™âüÇ≥ÇÍÇΩèuä‘
+			if(context.started)
+			{
+				JumpInput(true);
+				releaseJumpBtn = false;
+            }
+
+            //ó£Ç≥ÇÍÇΩèuä‘
+            if (context.canceled)
+			{
+				onReleaseJumpBtn?.Invoke();
+            }
+
+        }
 
 		public void OnSprint(InputValue value)
 		{
 			SprintInput(value.isPressed);
 		}
 #endif
-
+		
 
 		public void MoveInput(Vector2 newMoveDirection)
 		{
@@ -60,8 +84,8 @@ namespace StarterAssets
 		public void JumpInput(bool newJumpState)
 		{
 			jump = newJumpState;
-		}
 
+        }
 		public void SprintInput(bool newSprintState)
 		{
 			sprint = newSprintState;

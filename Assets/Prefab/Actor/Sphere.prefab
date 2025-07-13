@@ -2317,6 +2317,7 @@ MonoBehaviour:
   offsetRayStartPosY: 1
   enableEditorPreview: 0
   firstT_: 0.465
+  splineMeshRadius_: 0
   offsetY_: 0
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
@@ -2333,10 +2334,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp_: 1
-  speed_: 0.5
+  speed_: 10
   autoInitialize_: 1
   splineController_: {fileID: 1421127866671353073}
   layerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
+  onDestroySE_: {fileID: 0}
   lifespan_: 5
   destroyDelay_: 3
   rollSpeed: 360

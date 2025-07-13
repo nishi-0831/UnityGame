@@ -1,3 +1,4 @@
+using UnityEditor.UIElements;
 using UnityEngine;
 
 
@@ -8,9 +9,9 @@ public abstract class SplineMovementBase : MonoBehaviour
     [SerializeField] protected int hp_ = 1;
     [SerializeField] protected float speed_ = 1.0f;
     [SerializeField] protected bool autoInitialize_ = true;
-    
+    [SerializeField] protected string wallTag_ = "Wall";
     [SerializeField]protected SplineController splineController_;
-    protected bool isActive_ = true;
+    [SerializeField]protected bool isActive_ = true;
     protected Collider targetCollider_;
 
     [Header("レイヤーの設定")]
@@ -23,6 +24,13 @@ public abstract class SplineMovementBase : MonoBehaviour
         get { return splineController_.FollowTarget; }
         set { splineController_.FollowTarget = value; }
     }
+
+    public bool isOffSpline_
+    {
+        get { return splineController_.isOffSpline_; }
+        set { splineController_.isOffSpline_ = value; }
+    }
+
     public bool IsActive_
     {
         get { return isActive_; }
@@ -34,17 +42,7 @@ public abstract class SplineMovementBase : MonoBehaviour
         protected set { splineController_.isMovingLeft = value; }
     }
 
-    public float FirstT
-    {
-        get { return splineController_.FirstT; }
-        protected set
-        {
-            if (splineController_ != null)
-            {
-                splineController_.FirstT = value;
-            }
-        }
-    }
+ 
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -60,14 +58,14 @@ public abstract class SplineMovementBase : MonoBehaviour
         Initialize();
     }
     
-    private  void Start()
+    protected virtual  void Start()
     {
         if (autoInitialize_)
         {
             if (splineController_ != null)
             {
                 //初期位置設定
-                splineController_.MoveAlongSpline(FirstT);
+                splineController_.MoveAlongSpline(splineController_.T);
 
                 // イベントの登録
                 splineController_.onMaxT += OnReachMaxT;
@@ -131,7 +129,31 @@ public abstract class SplineMovementBase : MonoBehaviour
     {
        
     }
+
+    /// <summary>
+    /// WallTagのColliderに衝突した時の処理 (派生クラスでオーバーライド）
+    /// </summary>
+    protected virtual void OnCollideWall()
+    {
+        Debug.Log($"{gameObject.name}: Collide Wall");
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag(wallTag_))
+        {
+            OnCollideWall();
+        }
+    }
+    //private void OnTriggerStay(Collider other)
+    //{
+    //    if (other.gameObject.CompareTag(wallTag_))
+    //    {
+    //        OnCollideWall();
+    //    }
+    //    Debug.Log(other.gameObject.name);
+    //}
     
+
     /// <summary>
     /// t値が1.0を超えた時の処理（派生クラスでオーバーライド）
     /// </summary>
@@ -173,6 +195,16 @@ public abstract class SplineMovementBase : MonoBehaviour
         Debug.Log($"Disable:{FollowTarget.name}");
         IsActive_ = false;
         FollowTarget.layer = (int)Mathf.Log(layerSettings_.disabledLayer.value, 2);
+    }
+
+    /// <summary>
+    /// 曲線上の移動、当たり判定を有効化
+    /// </summary>
+    protected void Enable()
+    {
+        Debug.Log($"Enable:{FollowTarget.name}");
+        IsActive_ = true;
+        FollowTarget.layer = (int)Mathf.Log(layerSettings_.activeLayer.value, 2);
     }
 
     /// <summary>

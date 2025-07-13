@@ -216,6 +216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  splineLayerSettings_: {fileID: 0}
   followTarget_: {fileID: 4272168667981661040}
   currentSplineContainer_: {fileID: 0}
   t_: 0
@@ -223,10 +224,18 @@ MonoBehaviour:
   isMovingLeft: 0
   offsetRayStartPosY: 1
   enableEditorPreview: 1
-  firstT_: 0.411
+  onUpdateEditor_:
+    m_PersistentCalls:
+      m_Calls: []
+  splineMeshRadius_: 0
   offsetY_: 0
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
+  evaluationInfo_:
+    position: {x: 0, y: 0, z: 0}
+    tangent: {x: 0, y: 0, z: 0}
+    upVector: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &8668784602604618353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,11 +252,13 @@ MonoBehaviour:
   speed_: 1
   autoInitialize_: 1
   splineController_: {fileID: 7509334385762693493}
+  isActive_: 1
   layerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
+  onDestroySE_: {fileID: 0}
   attackInterval_: 5
-  ballMoveSpeed_: 0.1
+  ballMoveSpeed_: 10
   ballRollSpeed_: 360
-  ballOffset_: 30
+  ballOffsetT_: 0.1
   ballPrefab_: {fileID: 5900284842744972119, guid: fa4b07e48ed5c294cbb870e4ed47442f, type: 3}
   ballRadius_: 0.5
   easeInterpolator_: {fileID: 536357929650465464}
@@ -255,6 +266,7 @@ MonoBehaviour:
   damageToPlayer: 0
   animator: {fileID: 8728576206991912903}
   stompBounceForce: 5
+  ballLifeSpan_: 5
 --- !u!65 &7272133104683582006
 BoxCollider:
   m_ObjectHideFlags: 0

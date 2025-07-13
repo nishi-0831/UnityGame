@@ -6,6 +6,7 @@ TagManager:
   tags:
   - CinemachineTarget
   - RenderType
+  - Wall
   layers:
   - Default
   - TransparentFX

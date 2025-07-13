@@ -64,7 +64,6 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
         }
         //Debug.Log($"{this.gameObject.name}:attack");
         GameObject ball = Instantiate(ballPrefab_);
-
         //float offsetT = splineController_.GetSplineMovementT(Mathf.Abs(ballOffset_));
         //if(IsMovingLeft)
         //{
@@ -85,6 +84,7 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
             //Debug.Log($"{gameObject.name}:ballT = {ballT}");
 
             var ballMovement = ball.GetComponent<RollingBallSplineMovement>();
+        
         Debug.Assert( ballMovement != null );
 
         

@@ -106,6 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  splineLayerSettings_: {fileID: 0}
   followTarget_: {fileID: 605150527653573156}
   currentSplineContainer_: {fileID: 0}
   t_: 0
@@ -114,6 +115,7 @@ MonoBehaviour:
   offsetRayStartPosY: 1
   enableEditorPreview: 1
   firstT_: 0.238
+  splineMeshRadius_: 0
   offsetY_: 0
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
@@ -130,10 +132,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp_: 1
-  speed_: 0.2
+  speed_: 5
   autoInitialize_: 1
   splineController_: {fileID: 1403040952140553264}
   layerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
+  onDestroySE_: {fileID: 0}
   canBeStomped: 1
   damageToPlayer: 1
   animator: {fileID: 0}

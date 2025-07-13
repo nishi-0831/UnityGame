@@ -38,10 +38,13 @@ public class CameraController : MonoBehaviour
     private bool isTransitioning_ = false;
     private bool forceYUpdate_ = false;
     private float targetAzimuthalAngle_;
-    private EvaluationInfo evaluationInfo_;
+    [SerializeField]private EvaluationInfo evaluationInfo_;
     private Vector3 previousTangent_;
     private bool isFirstFrame_ = true;
     private float newY;
+
+    // スマッシュ中の処理停止用
+    [SerializeField] private bool isPlayerBeingSmashed_ = false;
 
     // デバッグ用
     [Header("Debug")]
@@ -66,6 +69,12 @@ public class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
+        // スマッシュ中はカメラの更新を停止
+        if (isPlayerBeingSmashed_)
+        {
+            return;
+        }
+
         if (target_ == null || evaluationInfo_.position == Vector3.zero) return;
 
         UpdateCameraAngles();
@@ -84,6 +93,12 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void UpdateCameraAngles()
     {
+        // スマッシュ中は角度更新を停止
+        if (isPlayerBeingSmashed_)
+        {
+            return;
+        }
+
         // 現在のタンジェントから目標方位角を計算
         Vector3 currentTangent = evaluationInfo_.tangent;
         
@@ -159,7 +174,7 @@ public class CameraController : MonoBehaviour
     private Vector3 GetRightVector()
     {
         Vector3 tangent = evaluationInfo_.tangent.normalized;
-        Vector3 up = Vector3.up;
+        Vector3 up = evaluationInfo_.upVector.normalized;
         Vector3 right = Vector3.Cross(up, tangent).normalized;
         
         // 左右の移動方向に応じて右ベクトルを調整
@@ -214,7 +229,7 @@ public class CameraController : MonoBehaviour
 
         Vector3 sphericalPosition = new Vector3(
             lookAtPos.x + distance_ * Mathf.Sin(polarRad) * Mathf.Cos(azimuthalRad),
-            //lookAtPos.y + distance_ * Mathf.Cos(polarRad),
+            //lookAtPos.y + backDistance_ * Mathf.Cos(polarRad),
             transform.position.y,
             lookAtPos.z + distance_ * Mathf.Sin(polarRad) * Mathf.Sin(azimuthalRad)
         );
@@ -237,6 +252,12 @@ public class CameraController : MonoBehaviour
     /// </summary>
     public void OnSplineContainerChanged(float newBaseY)
     {
+        // スマッシュ中はSplineContainer変更処理も停止
+        if (isPlayerBeingSmashed_)
+        {
+            return;
+        }
+
         forceYUpdate_ = true;
         Debug.Log($"Camera: SplineContainer changed, new base Y: {newBaseY}");
     }
@@ -246,7 +267,17 @@ public class CameraController : MonoBehaviour
     /// </summary>
     public void SetEvaluationInfo(EvaluationInfo info)
     {
+        // スマッシュ中でもEvaluationInfoの設定は許可（リスポーン時に必要）
         evaluationInfo_ = info;
+    }
+
+    /// <summary>
+    /// プレイヤーのスマッシュ状態を設定
+    /// </summary>
+    public void SetPlayerSmashState(bool isSmashed)
+    {
+        isPlayerBeingSmashed_ = isSmashed;
+        Debug.Log($"Camera: Player smash state set to {isSmashed}");
     }
 
     /// <summary>

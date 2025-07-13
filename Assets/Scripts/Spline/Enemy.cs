@@ -30,6 +30,12 @@ public class Enemy : SplineMovementBase, IPlayerInteractable
         splineController_.Move(speed_);
     }
 
+    protected override void OnCollideWall()
+    {
+        base.OnCollideWall();
+        splineController_.Reverse();
+    }
+
     // Update is called once per frame
     protected override void OnReachMaxT()
     {
@@ -93,4 +99,5 @@ public class Enemy : SplineMovementBase, IPlayerInteractable
             Debug.Log($"Player took {damageToPlayer} damage!");
         }
     }
+   
 }

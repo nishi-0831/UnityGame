@@ -9,7 +9,12 @@ public class AnimationController : MonoBehaviour
 {
     [Header("Animation Settings")]
     [SerializeField] private float jumpHeight_ = 1.2f;
-    [SerializeField] private float gravity_ = -15.0f;
+
+    [SerializeField] private float nowGravity_ = 0.0f;
+    [SerializeField] private float jumpingGravity_ = -60.0f;
+    [SerializeField] private float fallingGravity_ = -90.0f;
+
+
     [SerializeField] private float jumpTimeout_ = 0.50f;
     [SerializeField] private float fallTimeout_ = 0.15f;
 
@@ -28,11 +33,13 @@ public class AnimationController : MonoBehaviour
     private int _animIDDying;
     private int _animIDCanInputReact;
     private int _animIDIsAir;
+    private int _animIDOnSmashed;
     // Components
     private Animator _animator;
     private bool _hasAnimator;
 
     // State
+    [SerializeField] public bool smashed_ = false;
     [SerializeField] private bool grounded_ = true;
     [SerializeField] private float verticalVelocity_;
     [SerializeField] private bool _isAir;
@@ -76,15 +83,36 @@ public class AnimationController : MonoBehaviour
         // Reset timeouts
         _jumpTimeoutDelta = jumpTimeout_;
         _fallTimeoutDelta = fallTimeout_;
-    }
 
+        inputs_.onReleaseJumpBtn += ChangeGravity;
+        
+    }
+    private void ChangeGravity()
+    {
+        if(!grounded_)
+        {
+            nowGravity_ = fallingGravity_;
+        }
+    }
     private void Update()
     {
         JumpAndGravity();
         UpdateAnimations();
         jump = _animator.GetBool(_animIDJump);
     }
-
+    
+    public void ResetVerticalVelocity()
+    {
+        verticalVelocity_ = 0;
+    }
+    public void OnSmash()
+    {
+        _animator.SetBool(_animIDOnSmashed, true);
+    }
+    public void FinishSmash()
+    {
+        _animator.SetBool(_animIDOnSmashed, false);
+    }
     private void AssignAnimationIDs()
     {
         _animIDSpeed = Animator.StringToHash("Speed");
@@ -96,6 +124,7 @@ public class AnimationController : MonoBehaviour
         _animIDCanInputReact = Animator.StringToHash("CanInputReact");
         _animIDDying = Animator.StringToHash("Dying");
         _animIDIsAir = Animator.StringToHash("IsAir");
+        _animIDOnSmashed = Animator.StringToHash("Smash");
     }
 
     private void UpdateAnimations()
@@ -114,6 +143,7 @@ public class AnimationController : MonoBehaviour
             _animator.SetBool(_animIDGrounded, false);
         }
         _animator.SetBool(_animIDIsAir, _isAir);
+        _animator.SetBool(_animIDJump, inputs_.jump);
     }
 
     private void JumpAndGravity()
@@ -161,12 +191,17 @@ public class AnimationController : MonoBehaviour
                 _isAir = true;
             }
             inputs_.jump = false;
-        }
 
+            if(verticalVelocity_ < 0.0f)
+            {
+                ChangeGravity();
+            }
+        }
+        
         // Apply gravity
         if (_isAir)
         {
-            verticalVelocity_ += gravity_ * Time.deltaTime;
+            verticalVelocity_ += nowGravity_ * Time.deltaTime;
         }
     }
 
@@ -207,9 +242,9 @@ public class AnimationController : MonoBehaviour
     {
         if (IsStunned) return;
 
-        
         _animator.SetBool(_animIDJump, true);
-        verticalVelocity_ = Mathf.Sqrt(height * -2f * gravity_);
+        nowGravity_ = jumpingGravity_;
+        verticalVelocity_ = Mathf.Sqrt(height * -2f * jumpingGravity_);
     }
 
     // Animation Events

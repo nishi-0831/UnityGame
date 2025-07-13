@@ -15,10 +15,10 @@ public enum MoveState
 public class LerpPingPong : MonoBehaviour
 {
     [Header("補間の始点")]
-    [SerializeField] private Transform _from;
+    [SerializeField] public Vector3 _from;
 
     [Header("線形補間の終点")]
-    [SerializeField] private Transform _to;
+    [SerializeField] public Vector3 _to;
     
     [Header("行きに掛かる時間")]
     [SerializeField] private float goingTime = 1;
@@ -47,24 +47,23 @@ public class LerpPingPong : MonoBehaviour
     //行きだけ吹き飛ばすか否か
     private bool addForceOnlyGoing = true;
 
-    EaseInterpolator interpolator;
-    private void Start()
+    [SerializeField]EaseInterpolator interpolator;
+
+    private void Awake()
     {
         power = power * this.GetComponent<Rigidbody>().mass;
         rb = this.GetComponent<Rigidbody>();
         interpolator = GetComponent<EaseInterpolator>();
-        interpolator.onFinished_ += OnFinished;
-        interpolator.from_ = _from.TransformPoint(_from.position);
-        interpolator.to_ = _to.TransformPoint(_to.position);
-        
-        InitializeStateMachine();
+        stateMachine_ = new StateMachine<MoveState>();
+    }
+    private void Start()
+    {
 
-        stateMachine_.Start(MoveState.WAIT);
         
+        //StartPingPong();
     }
     private void InitializeStateMachine()
     {
-        stateMachine_ = new StateMachine<MoveState>();
 
         //WAIT状態の設定
         /*何もしない*/
@@ -149,32 +148,14 @@ public class LerpPingPong : MonoBehaviour
     }
     
     
-    private void Initialize()
+    public void StartPingPong()
     {
-        Debug.Log("Initialize");
-        interpolator.Reset();
-        Vector3 from = new Vector3();
-        Vector3 to = new Vector3();
-        float duration = 0;
-        switch (currentState_)
-        {
-            case MoveState.GOING:
-                from = _from.position;
-                to = _to.position;
-                duration = goingTime;
+        InitializeStateMachine();
+        interpolator.onFinished_ += OnFinished;
+        interpolator.from_ = _from;
+        interpolator.to_ = _to;
 
-                break;
-            case MoveState.COMBACKING:
-                from = _to.position;
-                to = _from.position;
-                duration = comeBackTime;
-                break;
-            default:
-                break;
-        }
-        interpolator.from_ = from;
-        interpolator.to_ = to;
-        interpolator.duration = duration;
+        stateMachine_.Start(MoveState.WAIT);
     }
     private void Update()
     {

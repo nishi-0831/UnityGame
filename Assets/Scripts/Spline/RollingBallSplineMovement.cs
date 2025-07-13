@@ -47,13 +47,16 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
         }
         //rb_.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
 
-        //Debug.Log("Ball:Initialize");
-        IsMovingLeft = false;
+        //Debug.Log("Ball:StartPingPong");
+        //IsMovingLeft = false;
 
         radius_ = transform.localScale.x / 2f;
+    }
+    protected override void Start()
+    {
+        base.Start();
         FollowTarget.transform.rotation = splineController_.EvaluationInfo.rotation;
     }
-
     public void SetParam(SplineContainer splineContainer, float t, float moveSpeed, float rollSpeed, bool isLeft,float lifeSpan)
     {
         //Debug.Log("Ball:SetParam");
@@ -197,4 +200,6 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
             //Debug.Log("OnNotTrigger");
         }
     }
+
+
 }

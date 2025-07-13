@@ -12,6 +12,7 @@ public interface IPlayerInteractable
     /// <returns>“¥‚İ‚Â‚¯‚ª¬Œ÷‚µ‚½‚©‚Ç‚¤‚©</returns>
     bool OnStompedByPlayer(GameObject player);
     
+    
     /// <summary>
     /// ƒvƒŒƒCƒ„[‚Æ‰¡‚©‚çÕ“Ë‚µ‚½‚Ìˆ—
     /// </summary>

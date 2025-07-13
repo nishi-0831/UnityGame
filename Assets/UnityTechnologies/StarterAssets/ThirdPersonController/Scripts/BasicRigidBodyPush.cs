@@ -12,10 +12,10 @@ public class BasicRigidBodyPush : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        //Debug.Log($"{other.gameObject.name}と{this.name}が衝突しました");
         var bodyLayerMask = 1 << other.gameObject.layer;
         if ((bodyLayerMask & splineLayerSettings.activeLayer.value) == 0) return;
         
-        Debug.Log($"{other.gameObject.name}と{this.name}が衝突しました");
         // プレイヤーとSplineMovementBaseオブジェクトの相互作用を処理
         IPlayerInteractable interactable = other.gameObject.GetComponent<IPlayerInteractable>();
         if (interactable != null)

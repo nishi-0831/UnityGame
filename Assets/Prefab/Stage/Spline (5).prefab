@@ -1713,7 +1713,7 @@ MonoBehaviour:
   m_UpdateColliders: 1
   m_Sides: 8
   m_SegmentsPerUnit: 0.4
-  m_Capped: 1
+  m_Capped: 0
   m_Radius: 3
   m_Range: {x: 0, y: 1}
   m_FlipNormals: 0
@@ -80812,7 +80812,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 0943543efbe0efa4cb3f8ba8203f0b46, type: 2}
+  m_Mesh: {fileID: 0}
 --- !u!1 &8043391376404776124
 GameObject:
   m_ObjectHideFlags: 0

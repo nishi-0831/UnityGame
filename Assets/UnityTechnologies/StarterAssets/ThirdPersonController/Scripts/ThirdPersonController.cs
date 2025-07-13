@@ -105,15 +105,10 @@ namespace StarterAssets
         private float _cinemachineTargetPitch;
 
         // player
-        private float _speed;
-        private float _animationBlend;
-        private float _targetRotation = 0.0f;
-        private float _rotationVelocity;
         [SerializeField] private float _verticalVelocity;
         [SerializeField] 
         float stunDuration_ = 0.5f; // スタン時間
         public float VerticalVelocity => _verticalVelocity;
-        private float _terminalVelocity = 53.0f;
 
         // timeout deltatime
         //
