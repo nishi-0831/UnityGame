@@ -59,6 +59,8 @@ public class PlayerController : SplineMovementBase
     [SerializeField] private CharacterController characterController_;
     [SerializeField]Vector3 jumpVerticalMovement;
     [SerializeField] Vector3 newPosition;
+    [SerializeField] Vector3 actualNoVerticalMovementPos;
+    
     protected override void Initialize()
     {
         if (animController_ == null)
@@ -148,23 +150,27 @@ public class PlayerController : SplineMovementBase
             // 現在のプレイヤー位置から水平方向の成分を取得
             Vector3 currentHorizontalPosition = new Vector3(currentSplinePosition.x, transform.position.y, currentSplinePosition.z);
 
+
+            
+
             // 新しい位置 = 現在位置 + Splineの垂直変化 + ジャンプの垂直移動 + 入力による移動 + ノックバック移動
-            newPosition = currentHorizontalPosition + splineVerticalDelta + jumpVerticalMovement + inputMovement + knockbackMovement;
+            newPosition = currentHorizontalPosition + splineVerticalDelta + jumpVerticalMovement + inputMovement + knockbackMovement ;
 
             desiredMovement = newPosition - transform.position;
             
             // CharacterControllerで移動
             Vector3 startPos = transform.position;
-            //if(desiredMovement != Vector3.zero)
-            //{
-            //}
             characterController_.Move(desiredMovement);
             actualMovement = transform.position - startPos;
 
-            // Splineに沿った水平移動のみでt値を更新
+            actualNoVerticalMovementPos = transform.position - jumpVerticalMovement;
             //splineHorizontalMovementだとactualMovement、実際の移動量が考慮されない
             //actualMovementからジャンプの移動量だけ取り除いて渡したい
-            splineController_.UpdateTFromMovement(splineHorizontalMovement);
+            splineController_.UpdateTFromMovement(actualNoVerticalMovementPos - startPos);
+
+            
+
+            
         }
         // Spline範囲外の場合
         else
@@ -370,7 +376,7 @@ public class PlayerController : SplineMovementBase
 
         // 地面判定をAnimationControllerに反映
         animController_.Grounded = Physics.CheckBox(transform.position + center_, halfExtends_, transform.rotation, groundLayer_);
-
+        
         // 前フレームの位置を更新
         if (!isOffSpline_)
         {
@@ -580,6 +586,7 @@ public class PlayerController : SplineMovementBase
             Gizmos.color = transparentRed;
 
         // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
+        //Vector3 worldCenter = transform.TransformPoint(center_);
         Gizmos.DrawCube(transform.position + center_, halfExtends_);
     }
 }

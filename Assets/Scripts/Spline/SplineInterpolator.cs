@@ -20,7 +20,7 @@ public class SplineInterpolator : MonoBehaviour
     void Update()
     {
 
-        splineAnimate_.Completed += WaitInterpolator;
+        //splineAnimate_.Completed += WaitInterpolator;
     }
 
     void WaitInterpolator()

@@ -311,25 +311,27 @@ public class SplineController : MonoBehaviour
     /// <param name="actualMovement">CharacterController.Moveによって実際に移動したベクトル</param>
     public void UpdateTFromMovement(Vector3 actualMovement)
     {
-        if (currentSplineContainer_ == null || actualMovement.sqrMagnitude < 0.0001f)
+        if (currentSplineContainer_ == null || actualMovement.sqrMagnitude < 0.001f)
         {
             return;
         }
 
         // 現在の接線方向（水平成分のみ使用）
         Vector3 tangent = EvaluationInfo.tangent.normalized;
-        
-        // tangentの水平成分のみを使用（Y成分を除去）
-        Vector3 horizontalTangent = new Vector3(tangent.x, 0, tangent.z).normalized;
-        
-        // actualMovementの水平成分のみ使用
-        Vector3 horizontalMovement = new Vector3(actualMovement.x, 0, actualMovement.z);
-        
-        // 水平移動量をSplineの水平接線方向に射影
-        float projectedDistance = Vector3.Dot(horizontalMovement, horizontalTangent);
 
+        //// tangentの水平成分のみを使用（Y成分を除去）
+        //Vector3 horizontalTangent = new Vector3(tangent.x, 0, tangent.z).normalized;
+
+        //// actualMovementの水平成分のみ使用
+        //Vector3 horizontalMovement = new Vector3(actualMovement.x, 0, actualMovement.z);
+
+        //// 水平移動量をSplineの水平接線方向に射影
+        //float projectedDistance = Vector3.Dot(horizontalMovement, horizontalTangent);
+
+        float projDistance = Vector3.Dot(actualMovement, tangent);
         // 移動距離をt値の変化量に変換
-        float deltaT = projectedDistance / currentSplineContainer_.CalculateLength();
+        //float deltaT = projectedDistance / currentSplineContainer_.CalculateLength();
+        float deltaT = projDistance / currentSplineContainer_.CalculateLength();
 
         prevT_ = t_;
         if (isMovingLeft)
