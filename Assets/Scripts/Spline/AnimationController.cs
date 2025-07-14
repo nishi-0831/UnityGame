@@ -8,7 +8,7 @@ using StarterAssets;
 public class AnimationController : MonoBehaviour
 {
     [Header("Animation Settings")]
-    [SerializeField] private float jumpHeight_ = 1.2f;
+    //[SerializeField] private float jumpHeight_ = 1.2f;
 
     [SerializeField] private float nowGravity_ = 0.0f;
     [SerializeField] private float jumpingGravity_ = -60.0f;

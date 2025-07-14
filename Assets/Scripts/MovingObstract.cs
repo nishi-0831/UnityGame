@@ -6,7 +6,7 @@ using UnityEngine;
 public class MovingObstract : MonoBehaviour
 {
     
-    [SerializeField] private float power=1f;
+    //[SerializeField] private float power=1f;
     [SerializeField] private Rigidbody rb;
     void Awake()
     {

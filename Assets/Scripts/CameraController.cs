@@ -26,8 +26,8 @@ public class CameraController : MonoBehaviour
     [Header("Movement Speed")]
     [SerializeField] private bool interpolateAzimuthalWhenNotTransitioning_ = false; // isTransitioning_がfalseの時に方位角を補間するか
     [SerializeField] private float azimuthalLerpSpeed_ = 2.0f; // 方位角補間速度
-    [SerializeField] private float polarLerpSpeed_ = 2.0f; // 極角補間速度
-    [SerializeField] private float distanceLerpSpeed_ = 2.0f; // 距離補間速度
+    //[SerializeField] private float polarLerpSpeed_ = 2.0f; // 極角補間速度
+    //[SerializeField] private float distanceLerpSpeed_ = 2.0f; // 距離補間速度
     [SerializeField] private float splineChangeHorizontalSpeed = 3.0f; // SplineContainer変更時の補間速度
     [SerializeField] private float splineChangeVerticalSpeed = 3.0f; // SplineContainer変更時の補間速度
 

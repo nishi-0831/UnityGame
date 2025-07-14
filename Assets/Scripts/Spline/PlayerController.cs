@@ -155,13 +155,15 @@ public class PlayerController : SplineMovementBase
             
             // CharacterControllerで移動
             Vector3 startPos = transform.position;
-            if(desiredMovement != Vector3.zero)
-            {
-                characterController_.Move(desiredMovement);
-            }
+            //if(desiredMovement != Vector3.zero)
+            //{
+            //}
+            characterController_.Move(desiredMovement);
             actualMovement = transform.position - startPos;
 
             // Splineに沿った水平移動のみでt値を更新
+            //splineHorizontalMovementだとactualMovement、実際の移動量が考慮されない
+            //actualMovementからジャンプの移動量だけ取り除いて渡したい
             splineController_.UpdateTFromMovement(splineHorizontalMovement);
         }
         // Spline範囲外の場合
@@ -264,6 +266,8 @@ public class PlayerController : SplineMovementBase
             // 新しいSplineに移行
             splineController_.ChangeOtherSpline(newSplineContainer);
 
+            //新しいSplineMeshのRadiusを取得
+            splineController_.SetSplineMeshRadius();
             // 位置を新しいSplineに合わせて調整
             Vector3 newSplinePosition = splineController_.GetSplineMeshPos();
             transform.position = new Vector3(newSplinePosition.x, transform.position.y, newSplinePosition.z);

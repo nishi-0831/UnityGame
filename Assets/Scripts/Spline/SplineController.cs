@@ -71,7 +71,7 @@ public class SplineController : MonoBehaviour
     [SerializeField] private bool autoFindParentSplineContainer_ = true;
     [Header("Šù‘¶‚ÌcurrentSplineContainer‚ğã‘‚«‚µ‚Äe‚ÌSplineContainer‚ğæ“¾‚·‚é‚©”Û‚©")]
     [SerializeField] private bool overwriteCurrentWithParentSplineContainer_ = false;
-    [SerializeField] public bool isOffSpline_ = false; // Spline”ÍˆÍŠO‚É‚¢‚é‚©‚Ç‚¤‚©
+    //[SerializeField] public bool isOffSpline_ = false; // Spline”ÍˆÍŠO‚É‚¢‚é‚©‚Ç‚¤‚©
     private bool onceAction_ = false;
     public Action onMaxT;
     public Action onMinT;
@@ -215,7 +215,7 @@ public class SplineController : MonoBehaviour
         //evaluationInfo_.ToString();
         prevEvaluationInfo_ = evaluationInfo_;
     }
-    private void SetSplineMeshRadius()
+    public void SetSplineMeshRadius()
     {
         SplineExtrude splineExtrude = currentSplineContainer_.GetComponent<SplineExtrude>();
         if (splineExtrude != null)

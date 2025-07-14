@@ -15,7 +15,7 @@ public class ScoreItemSplineMovement : SplineMovementBase, IPlayerInteractable
     [SerializeField] private float initialOffsetY = 1.0f;
     [SerializeField] private float endPosOffsetY = 1.0f;
     [SerializeField] private SimpleGemsAnim simpleGemsAnim;
-    [SerializeField] private bool useSimpleGemsAnim = true;
+    //[SerializeField] private bool useSimpleGemsAnim = true;
 
     protected override void Initialize()
     {

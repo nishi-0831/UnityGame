@@ -37,19 +37,19 @@ public class FollowingCamera : MonoBehaviour
     [SerializeField] public float scrollSensitivity = 5.0f;
 
     
-    [SerializeField] private float movedFoV = 65.0f;
-    [SerializeField] private float FoV = 50.0f;
-    [SerializeField] private float waitTime = 2;
+    //[SerializeField] private float movedFoV = 65.0f;
+    //[SerializeField] private float FoV = 50.0f;
+    //[SerializeField] private float waitTime = 2;
     [SerializeField] private float FovIncreaseDuration;
     [SerializeField] private float FovDecreaseDuration;
-    private float changeTime = 2.5f;
+    //private float changeTime = 2.5f;
     [SerializeField] private bool isCalled = false;
-    [SerializeField] private bool isIncreasingFoV = true;
-    [SerializeField] float elapsedTime = 0f;
+    //[SerializeField] private bool isIncreasingFoV = true;
+    //[SerializeField] float elapsedTime = 0f;
     [SerializeField] float nextFoV;
     [SerializeField] float currFoV;
     
-    private Camera camera;
+    //private Camera camera;
     [SerializeField] Camera subCamera;
     public static FollowingCamera instance;
     void Start()
@@ -70,7 +70,7 @@ public class FollowingCamera : MonoBehaviour
         {
             Destroy(this);
         }
-        camera = GetComponent<Camera>();
+        //camera = GetComponent<Camera>();
     }
     public void Init()
     {

@@ -25,11 +25,11 @@ public abstract class SplineMovementBase : MonoBehaviour
         set { splineController_.FollowTarget = value; }
     }
 
-    public bool isOffSpline_
-    {
-        get { return splineController_.isOffSpline_; }
-        set { splineController_.isOffSpline_ = value; }
-    }
+    //public bool isOffSpline_
+    //{
+    //    get { return splineController_.isOffSpline_; }
+    //    set { splineController_.isOffSpline_ = value; }
+    //}
 
     public bool IsActive_
     {

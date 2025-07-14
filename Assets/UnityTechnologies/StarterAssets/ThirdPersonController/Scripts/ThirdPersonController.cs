@@ -107,7 +107,7 @@ namespace StarterAssets
         // player
         [SerializeField] private float _verticalVelocity;
         [SerializeField] 
-        float stunDuration_ = 0.5f; // スタン時間
+        //float stunDuration_ = 0.5f; // スタン時間
         public float VerticalVelocity => _verticalVelocity;
 
         // timeout deltatime
