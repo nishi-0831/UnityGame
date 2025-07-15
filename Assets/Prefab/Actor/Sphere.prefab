@@ -33,7 +33,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -12.344505, y: 10.780001, z: 7.0348215}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2316,11 +2316,19 @@ MonoBehaviour:
   isMovingLeft: 1
   offsetRayStartPosY: 1
   enableEditorPreview: 0
-  firstT_: 0.465
+  onUpdateEditor_:
+    m_PersistentCalls:
+      m_Calls: []
   splineMeshRadius_: 0
   offsetY_: 0
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
+  evaluationInfo_:
+    position: {x: 0, y: 0, z: 0}
+    tangent: {x: 0, y: 0, z: 0}
+    upVector: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  autoUpdateInfo_: 1
 --- !u!114 &3936872027912104542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2336,17 +2344,20 @@ MonoBehaviour:
   hp_: 1
   speed_: 10
   autoInitialize_: 1
+  wallTag_: Wall
   splineController_: {fileID: 1421127866671353073}
+  isActive_: 1
   layerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
   onDestroySE_: {fileID: 0}
   lifespan_: 5
   destroyDelay_: 3
   rollSpeed: 360
   bounceOnBounds: 0
-  bounceForce: 5
+  bounceForce: 14
   destroyTriggerLayer_:
     serializedVersion: 2
     m_Bits: 256
   radius_: 0
   canBeStomped: 1
   damageToPlayer: 1
+  stompForce: 5

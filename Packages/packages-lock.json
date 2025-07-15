@@ -7,38 +7,11 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.chaser324.unity-wireframe": {
-      "version": "https://github.com/insominx/unity-wireframe.git?path=/Packages/unity-wireframe",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "46a40dfa1c1ce7f0144041f6b69adda131da3241"
-    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
       "source": "builtin",
       "dependencies": {}
-    },
-    "com.unity.2d.tilemap": {
-      "version": "1.0.0",
-      "depth": 1,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.modules.tilemap": "1.0.0",
-        "com.unity.modules.uielements": "1.0.0"
-      }
-    },
-    "com.unity.2d.tilemap.extras": {
-      "version": "4.1.0",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.2d.tilemap": "1.0.0",
-        "com.unity.modules.tilemap": "1.0.0",
-        "com.unity.modules.jsonserialize": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
     },
     "com.unity.burst": {
       "version": "1.8.19",

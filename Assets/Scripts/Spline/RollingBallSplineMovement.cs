@@ -26,7 +26,7 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
 
     [SerializeField] private bool canBeStomped = true;
     [SerializeField] private int damageToPlayer = 1;
-
+    [SerializeField] float stompForce = 5.0f;
     public float Radius
     {
         get { return radius_; }
@@ -155,10 +155,10 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
         //Debug.Log($"{gameObject.name} was stomped by player - Ball destroyed!");
 
         // プレイヤーに大きな跳ね返りを与える
-        var playerThirdPerson = player.GetComponent<StarterAssets.ThirdPersonController>();
+        var playerThirdPerson = player.GetComponent<AnimationController>();
         if (playerThirdPerson != null)
         {
-            playerThirdPerson.AddVerticalForce(8f); // 高くジャンプ
+            playerThirdPerson.AddVerticalForce(stompForce); // 高くジャンプ
         }
 
         // ボールを破壊

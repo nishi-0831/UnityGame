@@ -12,8 +12,7 @@ using UnityEngine.UIElements;
 using JetBrains.Annotations;
 using MySpline;
 using TMPro;
-using static UnityEditor.Rendering.CameraUI;
-using static UnityEditor.PlayerSettings;
+
 using UnityEngine.Events;
 
 
@@ -598,7 +597,8 @@ public class SplineController : MonoBehaviour
             }
             else
             {
-                splineDirection_ = -1;
+                //splineDirectionÇÕïœÇ¶Ç»Ç¢
+                splineDirection_ = 1;
                 Debug.Log("ç∂");
             }
         }
@@ -689,6 +689,7 @@ public class SplineController : MonoBehaviour
                     }
                     else
                     {
+                        //splineDirection_ÇÃïœçXÇÕÇµÇ»Ç¢
                         splineDirection_ = -1;
                         Debug.Log("ç∂");
                     }

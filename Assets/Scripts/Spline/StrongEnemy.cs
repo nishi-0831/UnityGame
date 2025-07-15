@@ -125,7 +125,7 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
         OnDamage();
 
         // プレイヤーに跳ね返り効果を与える
-        var playerThirdPerson = player.GetComponent<ThirdPersonController>();
+        var playerThirdPerson = player.GetComponent<AnimationController>();
         if (playerThirdPerson != null)
         {
             playerThirdPerson.AddVerticalForce(stompBounceForce); // 少しジャンプさせる

@@ -1,4 +1,4 @@
-using UnityEditor.UIElements;
+
 using UnityEngine;
 
 
@@ -239,4 +239,6 @@ public abstract class SplineMovementBase : MonoBehaviour
     {
 
     }
+    public virtual void OnDamage(int damageValue,Vector3 enemyPos)
+    { }
 }

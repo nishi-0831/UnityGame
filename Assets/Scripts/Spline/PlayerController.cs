@@ -11,7 +11,7 @@ using UnityEngine.Splines;
 public class PlayerController : SplineMovementBase
 {
     [SerializeField] float takeDamageInterval_ = 1.0f; // ダメージを受ける間隔
-    private bool canTakeDamage_ = true; // ダメージを受けられるかどうか
+    [SerializeField] private bool canTakeDamage_ = true; // ダメージを受けられるかどうか
 
     [SerializeField] private float knockbackLength_ = 5f; // ノックバックする距離
     [SerializeField] private float knockbackForce = 0;
@@ -55,12 +55,16 @@ public class PlayerController : SplineMovementBase
     [SerializeField]
     Vector3 actualMovement;
     [SerializeField]Vector3 desiredMovement = Vector3.zero;
-    [SerializeField]Vector3 splineVerticalDelta = Vector3.zero;
+    Vector3 splineVerticalDelta = Vector3.zero;
+    [SerializeField] Vector3 splineDelta;
     [SerializeField] private CharacterController characterController_;
     [SerializeField]Vector3 jumpVerticalMovement;
     [SerializeField] Vector3 newPosition;
     [SerializeField] Vector3 actualNoVerticalMovementPos;
-    
+    [SerializeField]Vector3 inputMovement;
+    [SerializeField]Vector3 currentHorizontalPosition;
+    [SerializeField]Vector3 knockbackMovement = Vector3.zero;
+    public float T { get { return splineController_.T; } }
     protected override void Initialize()
     {
         if (animController_ == null)
@@ -94,15 +98,16 @@ public class PlayerController : SplineMovementBase
 
             Vector3 currentSplinePosition = splineController_.GetSplineMeshPos();
 
-            // Splineの垂直方向の変化量を計算
+            // Splineの垂直方向の変化量を計算（前フレームの位置と比較）
             if (!isFirstFrame_)
             {
-                Vector3 splineDelta = currentSplinePosition - previousSplinePosition_;
+                splineDelta = currentSplinePosition - previousSplinePosition_;
                 splineVerticalDelta = new Vector3(0, splineDelta.y, 0);
             }
             else
             {
                 splineVerticalDelta = Vector3.zero;
+                splineDelta = Vector3.zero;
             }
 
             // ジャンプによる垂直方向の移動量を計算
@@ -119,7 +124,6 @@ public class PlayerController : SplineMovementBase
             }
 
             // ノックバックによる移動量を計算
-            Vector3 knockbackMovement = Vector3.zero;
             if (knockbackForce > 0)
             {
                 Vector3 knockbackDirection = splineController_.EvaluationInfo.tangent.normalized;
@@ -130,9 +134,13 @@ public class PlayerController : SplineMovementBase
                 knockbackDirection *= knockbackDir_;
                 knockbackMovement = knockbackDirection * knockbackForce * Time.deltaTime;
             }
+            else
+            {
+                knockbackMovement = Vector3.zero;
+            }
 
             // 入力による移動量を計算（Splineに沿った水平移動のみ）
-            Vector3 inputMovement = Vector3.zero;
+            inputMovement = Vector3.zero;
             if (inputDir != 0)
             {
                 Vector3 inputDirection = splineController_.EvaluationInfo.tangent.normalized;
@@ -144,33 +152,36 @@ public class PlayerController : SplineMovementBase
                 inputMovement = inputDirection * speed_ * Time.deltaTime;
             }
 
-            // Splineに沿った水平移動のみを計算（t値更新用）
-            Vector3 splineHorizontalMovement = inputMovement + knockbackMovement;
-
-            // 現在のプレイヤー位置から水平方向の成分を取得
-            Vector3 currentHorizontalPosition = new Vector3(currentSplinePosition.x, transform.position.y, currentSplinePosition.z);
-
-
+            // 実際の移動計算方法を変更
+            // 現在位置をベースに、各移動成分を加算
+            Vector3 horizontalSplineMovement = new Vector3(splineDelta.x, 0, splineDelta.z);
             
-
-            // 新しい位置 = 現在位置 + Splineの垂直変化 + ジャンプの垂直移動 + 入力による移動 + ノックバック移動
-            newPosition = currentHorizontalPosition + splineVerticalDelta + jumpVerticalMovement + inputMovement + knockbackMovement ;
+            newPosition = transform.position + 
+                         splineVerticalDelta + 
+                         jumpVerticalMovement + 
+                         inputMovement + 
+                         knockbackMovement + 
+                         horizontalSplineMovement;
 
             desiredMovement = newPosition - transform.position;
             
+            // 非常に小さい移動量は無視
+            if (desiredMovement.magnitude <= 0.001f)
+            {
+                desiredMovement = Vector3.zero;
+            }
+            
             // CharacterControllerで移動
             Vector3 startPos = transform.position;
-            characterController_.Move(desiredMovement);
-            actualMovement = transform.position - startPos;
+            if (desiredMovement != Vector3.zero)
+            {
+                characterController_.Move(desiredMovement);
+            }
+            actualMovement = transform.position - jumpVerticalMovement - startPos;
 
-            actualNoVerticalMovementPos = transform.position - jumpVerticalMovement;
-            //splineHorizontalMovementだとactualMovement、実際の移動量が考慮されない
-            //actualMovementからジャンプの移動量だけ取り除いて渡したい
-            splineController_.UpdateTFromMovement(actualNoVerticalMovementPos - startPos);
-
-            
-
-            
+            // Splineに沿った移動のみでt値更新（垂直移動を除外）
+            //Vector3 horizontalActualMovement = new Vector3(actualMovement.x, 0, actualMovement.z);
+            splineController_.UpdateTFromMovement(actualMovement);
         }
         // Spline範囲外の場合
         else
@@ -343,21 +354,17 @@ public class PlayerController : SplineMovementBase
             }
         }
 
-        // t値の更新は実際の移動量ベースで行うため、ここでは削除
-        // splineController_.UpdateT(speed_, dir);
-
         // アニメーション用の入力設定
         animController_.SetMoveInput(inputs_.move);
 
+        // ノックバック処理の減衰
         if (knockbackForce > 0)
         {
-            knockbackForce += attenuationDelta_ * Time.deltaTime;
-            // ノックバックによるt値更新も実際の移動量ベースで処理するため削除
-            // splineController_.UpdateT(knockbackForce, knockbackDir_);
-        }
-        else
-        {
-            knockbackForce = 0;
+            knockbackForce -= attenuationDelta_ * Time.deltaTime;
+            if (knockbackForce < 0)
+            {
+                knockbackForce = 0;
+            }
         }
     }
 
@@ -372,12 +379,7 @@ public class PlayerController : SplineMovementBase
 
         InputMovement();
 
-        HandleSplineMovement();
-
-        // 地面判定をAnimationControllerに反映
-        animController_.Grounded = Physics.CheckBox(transform.position + center_, halfExtends_, transform.rotation, groundLayer_);
-        
-        // 前フレームの位置を更新
+        // 前フレームの位置を移動処理前に更新
         if (!isOffSpline_)
         {
             previousSplinePosition_ = splineController_.GetSplineMeshPos();
@@ -386,6 +388,12 @@ public class PlayerController : SplineMovementBase
         {
             previousOffSplinePosition_ = transform.position;
         }
+
+        HandleSplineMovement();
+
+        // 地面判定をAnimationControllerに反映
+        animController_.Grounded = Physics.CheckBox(transform.position + center_, halfExtends_, transform.rotation, groundLayer_);
+        
         isFirstFrame_ = false;
 
         CheckSplineContainerChange();
@@ -466,6 +474,13 @@ public class PlayerController : SplineMovementBase
     public override void OnDamage(int damageValue, float enemyT)
     {
         knockbackDir_ = -(int)Mathf.Sign(enemyT - splineController_.T);
+        OnDamage(damageValue);
+        animController_.TakeDamage();
+    }
+    public override void OnDamage(int damageValue,Vector3 enemyPos)
+    {
+            float dot = Vector3.Dot(splineController_.EvaluationInfo.tangent.normalized, (enemyPos - transform.position).normalized);
+        knockbackDir_ = -(int)Mathf.Sign(dot);
         OnDamage(damageValue);
         animController_.TakeDamage();
     }
