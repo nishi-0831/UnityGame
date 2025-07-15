@@ -50,7 +50,8 @@ public class PressMachine : SplineMovementBase, IPlayerInteractable
     public bool OnStompedByPlayer(GameObject player)
     {
         var playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
+        
+        if (playerController != null && pingPong_.CurrentState == MoveState.GOING)
         {
             playerController.OnSmash(respawnPoint_);
         }
@@ -61,7 +62,7 @@ public class PressMachine : SplineMovementBase, IPlayerInteractable
     public void OnSideCollisionWithPlayer(GameObject player)
     {
         var playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
+        if (playerController != null && pingPong_.CurrentState == MoveState.GOING)
         {
             playerController.OnSmash(respawnPoint_);
         }

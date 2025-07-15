@@ -38,6 +38,10 @@ public class LerpPingPong : MonoBehaviour
     [SerializeField] private MoveState prevState_;
     [SerializeField] private MoveState currentState_;
 
+    public MoveState CurrentState
+    {
+        get { return currentState_; }
+    }
     public StateMachine<MoveState> stateMachine_;
     
     //Õ“Ë‚ÉŠ|‚©‚é—Í

@@ -47,7 +47,6 @@ GameObject:
   - component: {fileID: 1403040952140553264}
   - component: {fileID: -3343479510398985393}
   - component: {fileID: 7794550201704987470}
-  - component: {fileID: 3885498798322668620}
   m_Layer: 0
   m_Name: SlimePBR
   m_TagString: Untagged
@@ -114,11 +113,19 @@ MonoBehaviour:
   isMovingLeft: 0
   offsetRayStartPosY: 1
   enableEditorPreview: 1
-  firstT_: 0.238
+  onUpdateEditor_:
+    m_PersistentCalls:
+      m_Calls: []
   splineMeshRadius_: 0
   offsetY_: 0
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
+  evaluationInfo_:
+    position: {x: 0, y: 0, z: 0}
+    tangent: {x: 0, y: 0, z: 0}
+    upVector: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  autoUpdateInfo_: 1
 --- !u!114 &-3343479510398985393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,7 +141,9 @@ MonoBehaviour:
   hp_: 1
   speed_: 5
   autoInitialize_: 1
+  wallTag_: Wall
   splineController_: {fileID: 1403040952140553264}
+  isActive_: 1
   layerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
   onDestroySE_: {fileID: 0}
   canBeStomped: 1
@@ -162,27 +171,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.1502173, z: 1}
   m_Center: {x: 0, y: 0.55510867, z: 0}
---- !u!135 &3885498798322668620
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 605150527653573156}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0.44, z: 0}
 --- !u!1 &719107420720424627
 GameObject:
   m_ObjectHideFlags: 0

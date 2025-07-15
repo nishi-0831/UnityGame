@@ -135,7 +135,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// </summary>
     protected virtual void OnCollideWall()
     {
-        Debug.Log($"{gameObject.name}: Collide Wall");
+        //Debug.Log($"{gameObject.name}: Collide Wall");
     }
     private void OnTriggerEnter(Collider other)
     {

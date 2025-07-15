@@ -33,6 +33,7 @@ public class Enemy : SplineMovementBase, IPlayerInteractable
     protected override void OnCollideWall()
     {
         base.OnCollideWall();
+        //Debug.Log("EnemyOnCollideWall");
         splineController_.Reverse();
     }
 
