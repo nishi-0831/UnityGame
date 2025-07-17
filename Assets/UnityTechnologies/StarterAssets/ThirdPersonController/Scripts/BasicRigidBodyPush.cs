@@ -28,6 +28,14 @@ public class BasicRigidBodyPush : MonoBehaviour
             Debug.Log($"No interaction interface found on {other.gameObject.name}");
         }
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        
+    }
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        
+    }
     private void HandlePlayerInteraction(Collider other, IPlayerInteractable interactable)
     {
         Debug.Log($"{transform.position.y} > {other.transform.position.y}");

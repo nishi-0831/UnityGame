@@ -1,3 +1,4 @@
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 public class TransitionScene : MonoBehaviour
@@ -19,7 +20,7 @@ public class TransitionScene : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -47,5 +48,14 @@ public class TransitionScene : MonoBehaviour
     public void ToResult()
     {
         SceneManager.LoadScene(SceneName.result);
+    }
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+
+#endif
     }
 }

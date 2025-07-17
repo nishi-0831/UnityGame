@@ -110,6 +110,10 @@ public class SplineController : MonoBehaviour
         get { return prevT_; }
     }
 
+    public float SplineMeshRadius
+    {
+        get { return splineMeshRadius_; }
+    }
     #region EditModePreview
 #if UNITY_EDITOR
     /// <summary>
