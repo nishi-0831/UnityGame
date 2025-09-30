@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class DamageObject : MonoBehaviour, IPlayerInteractable
 {
-    [SerializeField] int damageToPlayer_;
-
+    PlayerInteractionProfile profile;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -16,27 +15,14 @@ public class DamageObject : MonoBehaviour, IPlayerInteractable
         
     }
 
-    public bool OnStompedByPlayer(GameObject player)
+    public void OnStomped(GameObject player)
     {
-        var playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
-        {
-            //ç∂ï˚å¸Ç÷îÚÇŒÇ∑
-            playerController.OnDamage(damageToPlayer_, playerController.T + 0.1f);
-            Debug.Log($"Player took {damageToPlayer_} damage!");
-        }
-
-        return true;
+        //PlayerInteractionUtils.ApplySideBounce(player, transform.position);
+        PlayerInteractionUtils.ApplyDamage(player, profile.damageToPlayer);
     }
 
-    public void OnSideCollisionWithPlayer(GameObject player)
+    public void OnSideHit(GameObject player)
     {
-        var playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
-        {
-            //ç∂ï˚å¸Ç÷îÚÇŒÇ∑
-            playerController.OnDamage(damageToPlayer_,playerController.T + 0.1f);
-            Debug.Log($"Player took {damageToPlayer_} damage!");
-        }
+        PlayerInteractionUtils.ApplyDamage(player, profile.damageToPlayer);
     }
 }

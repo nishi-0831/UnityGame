@@ -1,16 +1,15 @@
 using UnityEngine;
 
-public class ClearZone : SplineMovementBase, IPlayerInteractable
+public class ClearZone : PlayerInteractableBase
 {
-    public void OnSideCollisionWithPlayer(GameObject player)
+    public override void OnSideHitCore(GameObject player)
     {
         ClearGame();
     }
 
-    public bool OnStompedByPlayer(GameObject player)
+    public override void OnStompedCore(GameObject player)
     {
         ClearGame();
-        return true;
     }
     public void ClearGame()
     {

@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Splines;
 [RequireComponent(typeof(EaseInterpolator))]
-public class StrongEnemy : SplineMovementBase, IPlayerInteractable
+public class StrongEnemy : PlayerInteractableBase
 {
     [Header("球を転がして攻撃してくる敵")]
 
@@ -15,26 +15,16 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
     [SerializeField] private float attackInterval_ = 5.0f;
     [SerializeField] private float ballMoveSpeed_ = 0.1f;
     [SerializeField] private float ballRollSpeed_ = 360f;
-    //[SerializeField] private float ballOffset_ = 30.0f;
     [SerializeField] private float ballOffsetT_ = 0.1f;
 
     [SerializeField] private GameObject ballPrefab_;
     [SerializeField] private float ballRadius_ = 0.5f;
     [SerializeField]private EaseInterpolator easeInterpolator_;
 
-    [SerializeField] private bool canBeStomped = true;
-    [SerializeField] private int damageToPlayer = 0;
-    [SerializeField] private Animator animator;
-    [SerializeField] private float stompBounceForce = 5f;
     [SerializeField] private float ballLifeSpan_ = 5f;
-    private int animIDDie;
-    private int animIDAttack;
     protected override void Initialize()
     {
-        Animator animator = GetComponent<Animator>();
-        animIDDie = Animator.StringToHash("Die");
-        animIDAttack = Animator.StringToHash("Attack");
-
+        base.Initialize();
         if (ballPrefab_ != null)
         {
             //ProBuilderのSphereプリミティブの半径はデフォルトで直径1なので、2で割って半径を取得
@@ -47,7 +37,6 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
         easeInterpolator_.onFinished_ += GenerateBall;
         easeInterpolator_.Reset();
         easeInterpolator_.duration = attackInterval_;
-        //easeInterpolator_
     }
 
     protected override void UpdateMovement()
@@ -62,14 +51,7 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
         {
             return;
         }
-        //Debug.Log($"{this.gameObject.name}:attack");
         GameObject ball = Instantiate(ballPrefab_);
-        //float offsetT = splineController_.GetSplineMovementT(Mathf.Abs(ballOffset_));
-        //if(IsMovingLeft)
-        //{
-        //    offsetT = -offsetT;
-        //}
-        //float ballT = splineController_.T + offsetT;
 
         float ballT;
         if(IsMovingLeft)
@@ -81,9 +63,7 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
             ballT = splineController_.T + ballOffsetT_;
         }
 
-            //Debug.Log($"{gameObject.name}:ballT = {ballT}");
-
-            var ballMovement = ball.GetComponent<RollingBallSplineMovement>();
+        var ballMovement = ball.GetComponent<RollingBallSplineMovement>();
         
         Debug.Assert( ballMovement != null );
 
@@ -100,50 +80,22 @@ public class StrongEnemy : SplineMovementBase, IPlayerInteractable
         animator?.SetTrigger(animIDAttack);
     }
 
-    public override void OnDamage()
-    {
-        base.OnDamage();
-        // 敵を倒す処理
-        Debug.Log($"{gameObject.name} was defeated!");
-        Disable();
-        if(animator)
-        {
-            animator.SetTrigger(animIDDie);
-        }
-    }
+   
     public override void OnRequestDestroy()
     {
         Destroy(gameObject);
     }
     // IPlayerInteractable実装
-    public bool OnStompedByPlayer(GameObject player)
+    public override void OnStompedCore(GameObject player)
     {
-        if (!canBeStomped || !IsActive_)
-            return false;
-
-        Debug.Log($"{gameObject.name} was stomped by player!");
         OnDamage();
-
         // プレイヤーに跳ね返り効果を与える
-        var playerThirdPerson = player.GetComponent<AnimationController>();
-        if (playerThirdPerson != null)
-        {
-            playerThirdPerson.AddVerticalForce(stompBounceForce); // 少しジャンプさせる
-        }
-
-        return true; // 踏みつけ成功
+        PlayerInteractionUtils.ApplyStompBounce(player, StompBounceForce);
     }
 
-    public void OnSideCollisionWithPlayer(GameObject player)
+    public override void OnSideHitCore(GameObject player)
     {
-        if (!IsActive_)
-            return;
-        var playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
-        {
-            // ダメージ処理をここに実装
-            playerController.OnDamage(damageToPlayer, splineController_.T);
-            Debug.Log($"Player took {damageToPlayer} damage!");
-        }
+        PlayerInteractionUtils.ApplyDamage(player,DamageToPlayer);
+        PlayerInteractionUtils.ApplySideBounce(player, splineController_.T);
     }
 }

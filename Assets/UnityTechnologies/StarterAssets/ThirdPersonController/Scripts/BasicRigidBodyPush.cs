@@ -4,8 +4,6 @@ using UnityEngine.Splines;
 public class BasicRigidBodyPush : MonoBehaviour
 {
     [SerializeField] private SplineLayerSettings splineLayerSettings;
-    //public LayerMask hitLayer;
-    //public LayerMask groundLayer;
     public bool canPush;
     [Range(0.5f, 5f)] public float strength = 1.1f;
     [Range(0.0f, 2.0f)] public float stompThreshold = 0.5f; // 踏みつけ判定の閾値
@@ -15,7 +13,7 @@ public class BasicRigidBodyPush : MonoBehaviour
         //Debug.Log($"{other.gameObject.name}と{this.name}が衝突しました");
         var bodyLayerMask = 1 << other.gameObject.layer;
         if ((bodyLayerMask & splineLayerSettings.activeLayer.value) == 0) return;
-        
+
         // プレイヤーとSplineMovementBaseオブジェクトの相互作用を処理
         IPlayerInteractable interactable = other.gameObject.GetComponent<IPlayerInteractable>();
         if (interactable != null)
@@ -49,17 +47,12 @@ public class BasicRigidBodyPush : MonoBehaviour
         if (isStomping)
         {
             // 踏みつけ処理
-            bool stompSuccessful = interactable.OnStompedByPlayer(this.gameObject);
-            if (stompSuccessful)
-            {
-                Debug.Log($"踏みつけ成功: {other.gameObject.name}");
-
-            }
+            interactable.OnStomped(this.gameObject);
         }
         else
         {
             // 横からの衝突処理
-            interactable.OnSideCollisionWithPlayer(this.gameObject);
+            interactable.OnSideHit(this.gameObject);
         }
     }
 

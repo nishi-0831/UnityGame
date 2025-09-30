@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-public class PressMachine : SplineMovementBase, IPlayerInteractable
+public class PressMachine : PlayerInteractableBase
 {
     [SerializeField] private LerpPingPong pingPong_;
     [SerializeField] GameObject respawnPoint_;
@@ -22,8 +22,9 @@ public class PressMachine : SplineMovementBase, IPlayerInteractable
             
         }
     }
-    void Start()
+    override protected void Start()
     {
+        base.Start();
         SetLerpPos();
         pingPong_._from = from_;
         pingPong_._to = to_;
@@ -39,7 +40,6 @@ public class PressMachine : SplineMovementBase, IPlayerInteractable
         FollowTarget.transform.rotation = Quaternion.LookRotation(right, Vector3.up);
 
         var rot = Quaternion.LookRotation(right, Vector3.up);
-        Debug.Log(rot.eulerAngles);
 
         to_ = info.position + FollowTarget.transform.forward * forwardDistance_;
         from_ = info.position + -FollowTarget.transform.forward * backDistance_;
@@ -47,24 +47,19 @@ public class PressMachine : SplineMovementBase, IPlayerInteractable
 
 
 
-    public bool OnStompedByPlayer(GameObject player)
+    public override void OnStompedCore(GameObject player)
     {
-        var playerController = player.GetComponent<PlayerController>();
-        
-        if (playerController != null && pingPong_.CurrentState == MoveState.GOING)
+        if(pingPong_.CurrentState == MoveState.GOING)
         {
-            playerController.OnSmash(respawnPoint_);
+            PlayerInteractionUtils.GetPlayerController(player).OnSmash(respawnPoint_); 
         }
-
-        return true;
     }
 
-    public void OnSideCollisionWithPlayer(GameObject player)
+    public override void OnSideHitCore(GameObject player)
     {
-        var playerController = player.GetComponent<PlayerController>();
-        if (playerController != null && pingPong_.CurrentState == MoveState.GOING)
+        if (pingPong_.CurrentState == MoveState.GOING)
         {
-            playerController.OnSmash(respawnPoint_);
+            PlayerInteractionUtils.GetPlayerController(player).OnSmash(respawnPoint_);
         }
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 
 
 [RequireComponent (typeof(SimpleGemsAnim))]
-public class ScoreItemSplineMovement : SplineMovementBase, IPlayerInteractable
+public class ScoreItemSplineMovement : PlayerInteractableBase
 {
     [Header("Score Item Settings")]
     [SerializeField] private int scoreValue = 100;
@@ -103,14 +103,13 @@ public class ScoreItemSplineMovement : SplineMovementBase, IPlayerInteractable
     }
     
     // IPlayerInteractable実装
-    public bool OnStompedByPlayer(GameObject player)
+    public override void OnStompedCore(GameObject player)
     {
         // スコアアイテムは踏みつけでも普通の取得と同じ
         GiveScoreToPlayer(player);
-        return false; // 踏みつけエフェクトは不要
     }
     
-    public void OnSideCollisionWithPlayer(GameObject player)
+    public override void OnSideHitCore(GameObject player)
     {
         // 横からの衝突でも取得
         GiveScoreToPlayer(player);

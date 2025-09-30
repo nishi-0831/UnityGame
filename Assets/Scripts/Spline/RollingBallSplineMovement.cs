@@ -3,7 +3,7 @@ using UnityEngine.Splines;
 using UnityEngine.ProBuilder;
 using MySpline;
 
-public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
+public class RollingBallSplineMovement : PlayerInteractableBase
 {
     [Header("Rolling Ball Settings")]
     [Space(16)]
@@ -24,9 +24,6 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
     private float instantiatedTime_ = 0;
     [SerializeField] private float radius_;
 
-    [SerializeField] private bool canBeStomped = true;
-    [SerializeField] private int damageToPlayer = 1;
-    [SerializeField] float stompForce = 5.0f;
     public float Radius
     {
         get { return radius_; }
@@ -45,11 +42,6 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
         {
             rb_ = gameObject.AddComponent<Rigidbody>();
         }
-        //rb_.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
-
-        //Debug.Log("Ball:StartPingPong");
-        //IsMovingLeft = false;
-
         radius_ = transform.localScale.x / 2f;
     }
     protected override void Start()
@@ -59,8 +51,6 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
     }
     public void SetParam(SplineContainer splineContainer, float t, float moveSpeed, float rollSpeed, bool isLeft,float lifeSpan)
     {
-        //Debug.Log("Ball:SetParam");
-        //Debug.Log($"BallT:{t}");
         this.splineController_.currentSplineContainer_ = splineContainer;
         splineController_.SetSplineMeshRadius();
 
@@ -73,7 +63,6 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
 
     protected override void UpdateMovement()
     {
-
         splineController_.UpdateT(speed_);
         EvaluationInfo info = splineController_.EvaluationInfo;
         Vector3 splineMovement = splineController_.GetSplineMovementDelta();
@@ -149,42 +138,19 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
     }
 
     // IPlayerInteractable実装
-    public bool OnStompedByPlayer(GameObject player)
+    public override void OnStompedCore(GameObject player)
     {
-        if (!IsActive_ && !canBeStomped)
-            return false;
-
-        //Debug.Log($"{gameObject.name} was stomped by player - Ball destroyed!");
-
-        // プレイヤーに大きな跳ね返りを与える
-        var playerThirdPerson = player.GetComponent<AnimationController>();
-        if (playerThirdPerson != null)
-        {
-            playerThirdPerson.AddVerticalForce(stompForce); // 高くジャンプ
-        }
+        PlayerInteractionUtils.ApplyStompBounce(player, StompBounceForce);
 
         // ボールを破壊
         Disable();
         Destroy(gameObject,0.1f);
-
-        return true; // 踏みつけ成功
     }
 
-    public void OnSideCollisionWithPlayer(GameObject player)
+    public override void OnSideHitCore(GameObject player)
     {
-        if (!IsActive_)
-            return;
-
-        //Debug.Log($"{gameObject.name} damaged player!");
-
-        // プレイヤーにダメージを与える処理
-        var playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
-        {
-            // ダメージ処理をここに実装
-            playerController.OnDamage(damageToPlayer, splineController_.T);
-            //Debug.Log($"Player took {damageToPlayer} damage!");
-        }
+        PlayerInteractionUtils.ApplyDamage(player, DamageToPlayer);
+        PlayerInteractionUtils.ApplySideBounce(player, T);
     }
     public void OnTriggerEnter(Collider other)
     {
@@ -192,16 +158,8 @@ public class RollingBallSplineMovement : SplineMovementBase, IPlayerInteractable
          
         if ((hitLayerMask == other.gameObject.layer))
         {
-            //Debug.Log("OnTrigger");
             Disable();
             Fall();
         }
-        else
-        {
-            //Debug.Log(hitLayerMask);
-            //Debug.Log("OnNotTrigger");
-        }
     }
-
-
 }

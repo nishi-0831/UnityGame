@@ -49,6 +49,7 @@ public class SplineController : MonoBehaviour
 
 
     [SerializeField] public SplineLayerSettings splineLayerSettings_;
+    [Header("曲線に沿って動かす対象となるGameObject")]
     [SerializeField] public GameObject followTarget_;
     [SerializeField] public SplineContainer currentSplineContainer_;
     [Range(0f, 1f)]
@@ -88,7 +89,7 @@ public class SplineController : MonoBehaviour
             return evaluationInfo_; 
         }
     }
-    // followTarget_のプロパティアクセサを追加
+    
     public GameObject FollowTarget 
     { 
         get { return followTarget_; } 

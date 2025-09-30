@@ -34,7 +34,6 @@ public class PlayerController : SplineMovementBase
     public Vector3 vertical;
     [SerializeField] private StarterAssetsInputs inputs_;
     
-    [SerializeField] private CapsuleCollider capsuleCollider_;
 
     // Splineの垂直方向の変化とジャンプを統合するための変数
     [SerializeField]private Vector3 previousSplinePosition_;
@@ -334,11 +333,6 @@ public class PlayerController : SplineMovementBase
                 splineController_.isMovingLeft = false;
             }
 
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                animController_.TakeDamage();
-                OnDamage(0, splineController_.T + 0.5f);
-            }
             if (Input.GetKeyDown(KeyCode.K))
             {
                 clearZone_.ClearGame();
@@ -448,43 +442,31 @@ public class PlayerController : SplineMovementBase
             previousSplineContainer_ = splineController_.currentSplineContainer_;
         }
     }
-
-    
-
-    public override void OnDamage()
-    {
-        base.OnDamage();
-    }
-
-    public override void OnDamage(int damageValue)
+    public  void OnDamage(int damageValue)
     {
         if (!canTakeDamage_)
         {
             return; // ダメージを受けられない場合は何もしない
         }
+        animController_.TakeDamage();
+
         hp_ -= damageValue;
-        knockbackForce = Mathf.Sqrt(knockbackLength_ * -2f * attenuationDelta_);
         StartCoroutine(WaitCanTakeDamage());
         if (hp_ <= 0)
         {
             //OnTriggerDyingAnim();
         }
     }
-
-    public override void OnDamage(int damageValue, float enemyT)
+    public void SideBounce(float enemyT)
     {
+        knockbackForce = Mathf.Sqrt(knockbackLength_ * -2f * attenuationDelta_);
         knockbackDir_ = -(int)Mathf.Sign(enemyT - splineController_.T);
-        OnDamage(damageValue);
-        animController_.TakeDamage();
     }
-    public override void OnDamage(int damageValue,Vector3 enemyPos)
+    public void SideBounce(Vector3 enemyPos)
     {
-            float dot = Vector3.Dot(splineController_.EvaluationInfo.tangent.normalized, (enemyPos - transform.position).normalized);
+        float dot = Vector3.Dot(splineController_.EvaluationInfo.tangent.normalized, (enemyPos - transform.position).normalized);
         knockbackDir_ = -(int)Mathf.Sign(dot);
-        OnDamage(damageValue);
-        animController_.TakeDamage();
     }
-
     private IEnumerator WaitCanTakeDamage()
     {
         if (canTakeDamage_)
