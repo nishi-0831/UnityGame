@@ -1,9 +1,9 @@
 using UnityEngine;
 
 /// <summary>
-/// TestPlayerInteractableの説明をここに記述
+/// NewPlayerInteractableの説明をここに記述
 /// </summary>
-public class TestPlayerInteractable : PlayerInteractableBase
+public class NewPlayerInteractable : PlayerInteractableBase
 {
     
     // 独自のフィールドをここに追加

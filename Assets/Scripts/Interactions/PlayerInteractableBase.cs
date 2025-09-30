@@ -9,16 +9,43 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
 {
     [Header("Player Interaction")]
     [SerializeField] private PlayerInteractionProfile profile;
+    protected PlayerInteractionProfile Profile
+    {
+        get
+        {
+            if (profile == null)
+            {
+                // クラス名を取得
+                string className = GetType().Name;
+                profile = Resources.Load<PlayerInteractionProfile>($"PlayerInteractionProfiles/{className}");
+
+                if(profile == null)
+                {
+                    Debug.LogWarning($"{className} という名前のPlayerInteractionProfileが見当たりませんでした。" +
+                                  $"Resources/PlayerInteractionProfiles/{className}のように作ってください");
+                }
+
+                // フォールバック用のデフォルトの設定を読み込む
+                profile = Resources.Load<PlayerInteractionProfile>("PlayerInteractionProfiles/Default");
+
+                if (profile == null)
+                {
+                    Debug.LogError("Resources/PlayerInteractionProfiles/Default が見当たりませんでした");
+                }
+            }
+            return profile;
+        }
+    }
     [HideInInspector] protected int animIDDie;
     [HideInInspector] protected int animIDAttack;
     [HideInInspector] protected Animator animator;
 
     /// <summary>
-    /// スプライン上の現在位置T値を取得
+    /// スプライン上の現在位値を取得
     /// </summary>
-    public float T
+    public float Progress
     {
-        get => splineController_.T;
+        get => splineController_.Progress;
     }
 
     /// <summary>
@@ -26,8 +53,8 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     /// </summary>
     public bool CanBeStomped
     {
-        get => profile != null && profile.canBeStomped;
-        private set { if (profile != null) profile.canBeStomped = value; }
+        get => Profile != null && Profile.canBeStomped;
+        private set { if (Profile != null) Profile.canBeStomped = value; }
     }
 
     /// <summary>
@@ -35,17 +62,26 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     /// </summary>
     public int DamageToPlayer
     {
-        get => profile != null ? profile.damageToPlayer : 0;
-        private set { if (profile != null) profile.damageToPlayer = value; }
+        get => Profile != null ? Profile.damageToPlayer : 0;
+        private set { if (Profile != null) Profile.damageToPlayer = value; }
     }
 
     /// <summary>
-    /// 踏み潰し時のバウンド力を取得
+    /// 踏みつけ時にプレイヤーに加えられる+Y方向の力
     /// </summary>
     public float StompBounceForce
     {
-        get => profile != null ? profile.stompBounceForce : 0f;
-        private set { if (profile != null) profile.stompBounceForce = value; }
+        get => Profile != null ? Profile.stompBounceForce : 0f;
+        private set { if (Profile != null) Profile.stompBounceForce = value; }
+    }
+
+    /// <summary>
+    /// 撃破時のスコア加算値
+    /// </summary>
+    public int ScoreValue
+    {
+        get => Profile != null ? Profile.scoreValue : 0;
+        private set { if (Profile != null) Profile.stompBounceForce = value; }
     }
 
     ///// <summary>
@@ -53,8 +89,8 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     ///// </summary>
     //public float SideHitKnockbackForce
     //{
-    //    get => profile != null ? profile.sideHitKnockbackForce : 0f;
-    //    private set { if (profile != null) profile.sideHitKnockbackForce = value; }
+    //    get => Profile != null ? Profile.sideHitKnockbackForce : 0f;
+    //    private set { if (Profile != null) Profile.sideHitKnockbackForce = value; }
     //}
 
     /// <summary>
@@ -103,6 +139,7 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     public override void OnRequestDestroy()
     {
         Destroy(gameObject);
+
     }
 
     /// <summary>
@@ -112,7 +149,7 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     protected void OnDamage()
     {
         Disable();
-
+        ScoreManager.Instance.ReceiveScore(ScoreValue);
         animator?.SetTrigger(animIDDie);    
     }
 

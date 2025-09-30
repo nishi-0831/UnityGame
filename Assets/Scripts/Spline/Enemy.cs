@@ -9,7 +9,6 @@ public class Enemy : PlayerInteractableBase
     {
         base.Initialize();
     }
-
     protected override void UpdateMovement()
     {
         splineController_.Move(speed_);
@@ -31,8 +30,6 @@ public class Enemy : PlayerInteractableBase
         splineController_.Reverse();
     }
 
-   
-
     // IPlayerInteractableŽÀ‘•
     public override void OnStompedCore(GameObject player)
     {
@@ -45,7 +42,7 @@ public class Enemy : PlayerInteractableBase
     public override void OnSideHitCore(GameObject player)
     {
         PlayerInteractionUtils.ApplyDamage(player, DamageToPlayer);
-        PlayerInteractionUtils.ApplySideBounce(player, T);
+        PlayerInteractionUtils.ApplySideBounce(player, Progress);
     }
    
 }

@@ -8,12 +8,12 @@ using UnityEngine;
 [RequireComponent(typeof(SplineController))]
 public abstract class SplineMovementBase : MonoBehaviour
 {
-    [Header("Spline Movement Settings")]
+    //[Header("Spline Movement Settings")]
     /// <summary>
     /// <para>- 体力の初期値</para>
     /// <para>- 0 以下で破棄や無効化のトリガーに使う</para>
     /// </summary>
-    [SerializeField] protected int hp_ = 1;
+    //[SerializeField] protected int hp_ = 1;
 
     /// <summary>
     /// <para>- 基本移動速度</para>
@@ -27,12 +27,6 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// </summary>
     [SerializeField] protected bool autoInitialize_ = true;
 
-    [Header("壁として扱うゲームオブジェクトのタグ名")]
-    /// <summary>
-    /// <para>- 壁判定に用いるタグ名</para>
-    /// <para>- OnTriggerEnter で比較して壁衝突処理を呼ぶ</para>
-    /// </summary>
-    [SerializeField] protected string wallTag_ = "Wall";
 
     [Header("曲線上を動くために使うクラス")]
     /// <summary>
@@ -62,7 +56,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// </summary>
     public SplineLayerSettings LayerSettings
     {
-        get { return splineController_.splineLayerSettings_; }
+        get { return splineController_.SplineLayerSettings; }
 
     }
     [Header("破棄時に再生されるSE")]
@@ -136,7 +130,7 @@ public abstract class SplineMovementBase : MonoBehaviour
             if (splineController_ != null)
             {
                 //初期位置設定
-                splineController_.MoveAlongSpline(splineController_.T);
+                splineController_.MoveAlongSpline(splineController_.Progress);
 
                 // イベントの登録
                 splineController_.onMaxT += OnReachMaxT;
@@ -235,7 +229,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// </summary>
     protected virtual void OnReachMaxT()
     {
-        Debug.Log($"{gameObject.name}: Reached Max T");
+        Debug.Log($"{gameObject.name}: Reached Max Progress");
     }
     
     /// <summary>
@@ -244,7 +238,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// </summary>
     protected virtual void OnReachMinT()
     {
-        Debug.Log($"{gameObject.name}: Reached Min T");
+        Debug.Log($"{gameObject.name}: Reached Min Progress");
     }
    
     /// <summary>

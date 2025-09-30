@@ -10,6 +10,7 @@ using UnityEngine.Splines;
 [RequireComponent(typeof(AnimationController))]
 public class PlayerController : SplineMovementBase
 {
+    [SerializeField] private int hp_ = 3;
     [SerializeField] float takeDamageInterval_ = 1.0f; // ダメージを受ける間隔
     [SerializeField] private bool canTakeDamage_ = true; // ダメージを受けられるかどうか
 
@@ -63,7 +64,7 @@ public class PlayerController : SplineMovementBase
     [SerializeField]Vector3 inputMovement;
     [SerializeField]Vector3 currentHorizontalPosition;
     [SerializeField]Vector3 knockbackMovement = Vector3.zero;
-    public float T { get { return splineController_.T; } }
+    public float T { get { return splineController_.Progress; } }
     protected override void Initialize()
     {
         if (animController_ == null)
@@ -85,7 +86,7 @@ public class PlayerController : SplineMovementBase
 
     private void HandleSplineMovement()
     {
-        float currentT = splineController_.T;
+        float currentT = splineController_.Progress;
         desiredMovement = Vector3.zero;
         actualMovement = Vector3.zero;
         
@@ -180,7 +181,7 @@ public class PlayerController : SplineMovementBase
 
             // Splineに沿った移動のみでt値更新（垂直移動を除外）
             //Vector3 horizontalActualMovement = new Vector3(actualMovement.x, 0, actualMovement.z);
-            splineController_.UpdateTFromMovement(actualMovement);
+            splineController_.UpdateProgressFromMovement(actualMovement);
         }
         // Spline範囲外の場合
         else
@@ -195,7 +196,7 @@ public class PlayerController : SplineMovementBase
             actualMovement = transform.position - startPos;
             
             // オフSpline時は実際の移動量でt値更新
-            splineController_.UpdateTFromMovement(actualMovement);
+            splineController_.UpdateProgressFromMovement(actualMovement);
         }
     }
 
@@ -457,10 +458,10 @@ public class PlayerController : SplineMovementBase
             //OnTriggerDyingAnim();
         }
     }
-    public void SideBounce(float enemyT)
+    public void SideBounce(float enemyProgress)
     {
         knockbackForce = Mathf.Sqrt(knockbackLength_ * -2f * attenuationDelta_);
-        knockbackDir_ = -(int)Mathf.Sign(enemyT - splineController_.T);
+        knockbackDir_ = -(int)Mathf.Sign(enemyProgress - splineController_.Progress);
     }
     public void SideBounce(Vector3 enemyPos)
     {
@@ -553,7 +554,7 @@ public class PlayerController : SplineMovementBase
         var respawnPointSpline = respawnPoint_.GetComponent<SplineController>();
         if (respawnPointSpline == null) return;
 
-        splineController_.T = respawnPointSpline.T;
+        splineController_.Progress = respawnPointSpline.Progress;
         
         // 位置とフレーム状態をリセット
         isFirstFrame_ = true;

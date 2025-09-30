@@ -7,6 +7,24 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SplineLayerSettings", menuName = "Scriptable Objects/SplineLayerSettings")]
 public class SplineLayerSettings : ScriptableObject
 {
+    private static SplineLayerSettings instance;
+
+    public static SplineLayerSettings Instance
+    {
+        get
+        { 
+            if(instance == null)
+            {
+                instance = Resources.Load<SplineLayerSettings>("SplineLayerSettings");
+                if(instance == null)
+                {
+                    Debug.LogError("SplineLayerSettingsが見当たりません。Resources/SplineLayerSettingsに作ってください");
+                }
+            }
+            return instance;
+        }
+    }
+
     /// <summary>
     /// <para>- 当たり判定を有効とするレイヤー</para>
     /// <para>- ゲーム内でアクティブとして扱う対象レイヤー</para>

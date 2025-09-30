@@ -7,7 +7,6 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance { get; private set; }
     [SerializeField] private ScoreData scoreData_;
     
-
     private bool isStartedCountClearTime = false;
     [SerializeField] private float startTime_;
     [SerializeField] private float endTime_;

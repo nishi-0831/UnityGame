@@ -255,7 +255,7 @@ GameObject:
   - component: {fileID: 77734430}
   - component: {fileID: 77734429}
   m_Layer: 3
-  m_Name: GameObject (1)
+  m_Name: Spline2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -450,7 +450,47 @@ MonoBehaviour:
           y: 0
           z: 0
           w: 1
+    - Position:
+        x: -0.0000009536743
+        y: 0
+        z: 9.000001
+      TangentIn:
+        x: 0
+        y: 0
+        z: -1.0000001
+      TangentOut:
+        x: 0
+        y: 0
+        z: 1.0000001
+      Rotation:
+        value:
+          x: 0
+          y: 0
+          z: 0
+          w: 1
+    - Position:
+        x: -0.0000019073486
+        y: 0
+        z: 12.000001
+      TangentIn:
+        x: 0
+        y: 0
+        z: -1.0000002
+      TangentOut:
+        x: 0
+        y: 0
+        z: 1.0000002
+      Rotation:
+        value:
+          x: 0
+          y: 0
+          z: 0
+          w: 1
     m_MetaData:
+    - Mode: 2
+      Tension: 0.5
+    - Mode: 2
+      Tension: 0.5
     - Mode: 2
       Tension: 0.5
     - Mode: 2
@@ -940,7 +980,7 @@ GameObject:
   - component: {fileID: 587572554}
   - component: {fileID: 587572559}
   m_Layer: 3
-  m_Name: GameObject
+  m_Name: Spline1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1799,6 +1839,11 @@ MonoBehaviour:
     modifyNameEnabled: 1
   modified: 0
   modifiedChildren: 0
+--- !u!4 &1166022686 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+  m_PrefabInstance: {fileID: 1360237786}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1337074732
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1868,6 +1913,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1403040952140553264, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
+      propertyPath: t_
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403040952140553264, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
+      propertyPath: splineMeshRadius_
+      value: 1.81
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403040952140553264, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
       propertyPath: splineLayerSettings_
       value: 
       objectReference: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
@@ -1875,6 +1928,34 @@ PrefabInstance:
       propertyPath: currentSplineContainer_
       value: 
       objectReference: {fileID: 77734430}
+    - target: {fileID: 1403040952140553264, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
+      propertyPath: evaluationInfo_.tangent.x
+      value: 3.0000002
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403040952140553264, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
+      propertyPath: evaluationInfo_.tangent.z
+      value: -0.00000045169145
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403040952140553264, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
+      propertyPath: evaluationInfo_.position.x
+      value: 0.048000008
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403040952140553264, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
+      propertyPath: evaluationInfo_.position.z
+      value: 10.7699995
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403040952140553264, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
+      propertyPath: evaluationInfo_.rotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403040952140553264, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
+      propertyPath: evaluationInfo_.rotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403040952140553264, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
+      propertyPath: evaluationInfo_.upVector.y
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1914,7 +1995,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.78624
+      value: 5.8655996
       objectReference: {fileID: 0}
     - target: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1922,23 +2003,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.000000037915214
+      value: -0.0000007549652
       objectReference: {fileID: 0}
     - target: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071067
+      value: 0.7071069
       objectReference: {fileID: 0}
     - target: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7071068
+      value: 0.70710665
       objectReference: {fileID: 0}
     - target: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1953,9 +2034,69 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: SplineProgress_
+      value: 0.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: splineMeshRadius_
+      value: 1.81
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: currentSplineContainer_
       value: 
       objectReference: {fileID: 587572554}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.tangent.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.tangent.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.tangent.z
+      value: 0.0000007055851
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.position.x
+      value: 5.8655996
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.position.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.position.z
+      value: -0.0000007549652
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.rotation.w
+      value: 0.7071069
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.rotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.rotation.y
+      value: 0.70710665
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.rotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.upVector.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.upVector.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.upVector.z
+      value: -0
+      objectReference: {fileID: 0}
     - target: {fileID: 9091554052753675359, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_Name
       value: RobotKyle
@@ -2155,7 +2296,7 @@ MonoBehaviour:
     modifyNameEnabled: 1
   modified: 0
   modifiedChildren: 0
---- !u!1 &1915209675
+--- !u!1 &1814333726
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2163,24 +2304,76 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1915209679}
-  - component: {fileID: 1915209678}
-  - component: {fileID: 1915209677}
-  - component: {fileID: 1915209676}
+  - component: {fileID: 1814333732}
+  - component: {fileID: 1814333731}
+  - component: {fileID: 1814333730}
+  - component: {fileID: 1814333729}
+  - component: {fileID: 1814333728}
+  - component: {fileID: 1814333727}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1915209676
-BoxCollider:
+--- !u!114 &1814333727
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1915209675}
+  m_GameObject: {fileID: 1814333726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dd7d36b59366cc4bb79b0fb30f07fcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed_: 1
+  autoInitialize_: 1
+  splineController_: {fileID: 1814333728}
+  isActive_: 1
+  onDestroySE_: {fileID: 0}
+  profile: {fileID: 0}
+--- !u!114 &1814333728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1814333726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentSplineContainer_: {fileID: 587572554}
+  followTarget_: {fileID: 1814333726}
+  SplineProgress_: 0
+  splineDirection_: 1
+  isMovingLeft: 0
+  offsetRayStartPosY: 1
+  enableEditorPreview: 1
+  autoFindParentSplineContainer_: 1
+  overwriteCurrentWithParentSplineContainer_: 0
+  autoUpdateInfo_: 1
+  onUpdateEditor_:
+    m_PersistentCalls:
+      m_Calls: []
+  splineMeshRadius_: 1.81
+  offsetY_: 0
+  evaluationInfo_:
+    position: {x: 0, y: 0, z: 0}
+    tangent: {x: 3.0000005, y: 0, z: 0.0000010728836}
+    upVector: {x: 0, y: 1, z: 0}
+    rotation: {x: 0, y: 0.70710665, z: 0, w: 0.7071069}
+--- !u!136 &1814333729
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1814333726}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -2192,16 +2385,18 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &1915209677
+  serializedVersion: 2
+  m_Radius: 0.5000001
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!23 &1814333730
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1915209675}
+  m_GameObject: {fileID: 1814333726}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -2240,24 +2435,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1915209678
+--- !u!33 &1814333731
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1915209675}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &1915209679
+  m_GameObject: {fileID: 1814333726}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1814333732
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1915209675}
+  m_GameObject: {fileID: 1814333726}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.333121, y: -27.58873, z: 66.67802}
+  m_LocalRotation: {x: 0, y: 0.70710665, z: 0, w: 0.7071069}
+  m_LocalPosition: {x: 0, y: 0.905, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2315,6 +2510,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7629150879723737274, guid: b06f2f623bcfca84896086b70640e2df, type: 3}
+      propertyPath: target_
+      value: 
+      objectReference: {fileID: 1166022686}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2340,4 +2539,4 @@ SceneRoots:
   - {fileID: 77734434}
   - {fileID: 1360237786}
   - {fileID: 1916156726}
-  - {fileID: 1915209679}
+  - {fileID: 1814333732}

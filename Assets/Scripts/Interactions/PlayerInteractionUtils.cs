@@ -38,10 +38,10 @@ public static class PlayerInteractionUtils
         if (ac != null) ac.AddVerticalForce(force);
     }
 
-    public static void ApplySideBounce(GameObject player,float t)
+    public static void ApplySideBounce(GameObject player,float progress)
     {
         PlayerController pc = GetPlayerController(player);
-        if (pc != null) pc.SideBounce(t);
+        if (pc != null) pc.SideBounce(progress);
     }
     public static void ApplySideBounce(GameObject player,Vector3 pos)
     {
