@@ -222,7 +222,7 @@ public class {className} : PlayerInteractableBase
     {{
         // ‰¡Õ“Ë‚Ìˆ—‚ğ‚±‚±‚É‹Lq
         // —á:
-        // PlayerInteractionUtils.ApplyDamage(player, DamageToPlayer, Progress);
+        // PlayerInteractionUtils.ApplyDamage(player, DamageToPlayer);
     }}
 }}
 ";
