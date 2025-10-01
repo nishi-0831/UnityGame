@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -9,7 +10,8 @@ public class LaneChangeZone : PlayerInteractableBase
     // 独自のフィールドをここに追加    
     [Header("移動先")]
     [SerializeField] GameObject changeDestination;
-    SplineController changeController;
+    [SerializeField] private bool changed;
+    [SerializeField] SplineController changeController;
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -50,7 +52,9 @@ public class LaneChangeZone : PlayerInteractableBase
         var playerController = PlayerInteractionUtils.GetPlayerController(player);
         if (playerController != null)
         {
-            playerController.splineController_.SyncToSpline(changeController);
+            // 専用メソッドでSpline変更を強制実行
+            playerController.ForceSplineChange(changeController);
+            
         }
     }
 
@@ -103,7 +107,18 @@ public class LaneChangeZone : PlayerInteractableBase
     public override void OnSideHitCore(GameObject player)
     {
         // 横衝突時の処理をここに記述
-        // 例:
-        // PlayerInteractionUtils.ApplyDamage(player, DamageToPlayer);
+        var playerController = PlayerInteractionUtils.GetPlayerController(player);
+        if (playerController != null)
+        {
+            // 専用メソッドでSpline変更を強制実行
+            playerController.ForceSplineChange(changeController);
+            Debug.Log("LaneChangeZone");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        Debug.Log("OnTriggerExit");
+
     }
 }

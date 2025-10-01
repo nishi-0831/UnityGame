@@ -35,7 +35,10 @@ public class PlayerController : SplineMovementBase
     public Vector3 halfExtends_;
     public Vector3 vertical;
     [SerializeField] private StarterAssetsInputs inputs_;
-    
+
+    // LaneChangeZone用のSpline変更フラグ
+    [SerializeField] private bool hasSplineChangedThisFrame_ = false;
+    [SerializeField] private int splineChangeFrameCount_ = 0; // 複数フレーム保護用
 
     // Splineの垂直方向の変化とジャンプを統合するための変数
     [SerializeField]private Vector3 previousSplinePosition_;
@@ -94,6 +97,7 @@ public class PlayerController : SplineMovementBase
         // Spline範囲内の場合
         if (currentT >= 0f && currentT <= 1f && !isOffSpline_)
         {
+
             // 通常のSpline移動
             transform.rotation = splineController_.EvaluationInfo.rotation;
 
@@ -187,6 +191,7 @@ public class PlayerController : SplineMovementBase
         // Spline範囲外の場合
         else
         {
+
             desiredMovement = HandleOffSplineMovement(currentT);
             
             Vector3 startPos = transform.position;
@@ -275,10 +280,17 @@ public class PlayerController : SplineMovementBase
     // SplineControllerから呼ばれる落下時の新しいSpline発見処理
     public void OnFoundNewSpline(SplineContainer newSplineContainer)
     {
+        // LaneChangeZoneによる強制変更の場合はスキップ
+        if (hasSplineChangedThisFrame_)
+        {
+            Debug.Log($"[OnFoundNewSpline] Skipping due to forced change this frame. Found: {newSplineContainer?.name}");
+            return;
+        }
+
 #if true
         if ( newSplineContainer != null)
         {
-            Debug.Log($"Found new spline: {newSplineContainer.name}");
+            Debug.Log($"[OnFoundNewSpline] Processing new spline: {newSplineContainer.name}");
             isOffSpline_ = false;
 
             // 新しいSplineに移行
@@ -291,25 +303,10 @@ public class PlayerController : SplineMovementBase
             transform.position = new Vector3(newSplinePosition.x, transform.position.y, newSplinePosition.z);
 
             previousSplinePosition_ = newSplinePosition;
+            Debug.Log($"[OnFoundNewSpline] Completed spline change to: {newSplineContainer.name}");
         }
 #endif
     }
-
-    public void CheckSpline(SplineContainer splineContainer)
-    {
-        if (splineContainer == null)
-        {
-            Debug.Log("checksplineContainer==null");
-            return;
-        }
-        if (splineController_.currentSplineContainer_ != splineContainer)
-        {
-            splineController_.ChangeOtherSpline(splineContainer);
-        }
-    }
-
-   
-
     private void InputMovement()
     {
         // スマッシュ中は入力を完全に無効化
@@ -321,16 +318,16 @@ public class PlayerController : SplineMovementBase
         int dir = 0;
         if (!animController_.IsStunned)
         {
-            if(inputs_.move.x != 0)
+            if (inputs_.move.x != 0)
             {
                 dir = (int)Mathf.Sign(inputs_.move.x);
             }
 
-            if(dir == -1)
+            if (dir == -1)
             {
                 splineController_.isMovingLeft = true;
             }
-            else if(dir ==1)
+            else if (dir == 1)
             {
                 splineController_.isMovingLeft = false;
             }
@@ -373,6 +370,18 @@ public class PlayerController : SplineMovementBase
             return;
         }
 
+        // LaneChangeZoneによる強制変更が発生した場合は数フレーム保護
+        if (splineChangeFrameCount_ > 0)
+        {
+            splineChangeFrameCount_--;
+            Debug.Log($"[UpdateMovement] Protecting spline change, frames remaining: {splineChangeFrameCount_}");
+            if (splineChangeFrameCount_ == 0)
+            {
+                hasSplineChangedThisFrame_ = false;
+            }
+            return;
+        }
+
         InputMovement();
 
         // 前フレームの位置を移動処理前に更新
@@ -389,7 +398,7 @@ public class PlayerController : SplineMovementBase
 
         // 地面判定をAnimationControllerに反映
         animController_.Grounded = Physics.CheckBox(transform.position + center_, halfExtends_, transform.rotation, groundLayer_);
-        
+
         isFirstFrame_ = false;
 
         CheckSplineContainerChange();
@@ -417,6 +426,68 @@ public class PlayerController : SplineMovementBase
             cameraController_.SetEvaluationInfo(splineController_.EvaluationInfo);
         }
     }
+    public void CheckSpline(SplineContainer splineContainer)
+    {
+        if (splineContainer == null)
+        {
+            Debug.Log("checksplineContainer==null");
+            return;
+        }
+        if (splineController_.currentSplineContainer_ != splineContainer)
+        {
+            splineController_.ChangeOtherSpline(splineContainer);
+        }
+    }
+
+    /// <summary>
+    /// LaneChangeZone用の強制Spline変更処理
+    /// </summary>
+    /// <param name="targetSpline">変更先のSplineController</param>
+    public void ForceSplineChange(SplineController targetSpline)
+    {
+        if (targetSpline == null) return;
+
+        Debug.Log($"[ForceSplineChange] Starting force change to: {targetSpline.currentSplineContainer_?.name}");
+
+        // フラグを設定して、数フレーム間の他のSpline変更処理を無効化
+        hasSplineChangedThisFrame_ = true;
+        splineChangeFrameCount_ = 3; // 3フレーム保護
+
+        // 即座にSplineを変更
+        splineController_.currentSplineContainer_ = targetSpline.currentSplineContainer_;
+        splineController_.Progress = targetSpline.Progress;
+        
+        // EvaluationInfoを強制更新
+        splineController_.SetSplineMeshRadius();
+        
+        // 位置を即座に更新
+        Vector3 newPosition = splineController_.GetSplineMeshPos();
+        Debug.Log($"[ForceSplineChange] Completed. Prev position: {transform.position}, Container: {splineController_.currentSplineContainer_?.name}, Progress: {splineController_.Progress}");
+
+        transform.position = newPosition;
+        
+        // 前フレームの位置も更新
+        previousSplinePosition_ = newPosition;
+        previousSplineContainer_ = targetSpline.currentSplineContainer_;
+
+        // 入力と物理状態をリセット
+        inputs_.jump = false;
+        inputs_.move = Vector2.zero;
+        animController_.ResetVerticalVelocity();
+        animController_.Grounded = true;
+
+        // オフSpline状態をリセット
+        isOffSpline_ = false;
+        
+        // 移動関連の変数もリセット
+        desiredMovement = Vector3.zero;
+        actualMovement = Vector3.zero;
+        splineDelta = Vector3.zero;
+        splineVerticalDelta = Vector3.zero;
+        knockbackForce = 0;
+        
+        Debug.Log($"[ForceSplineChange] Completed. New position: {transform.position}, Container: {splineController_.currentSplineContainer_?.name}, Progress: {splineController_.Progress}");
+    }
 
     /// <summary>
     /// SplineContainer変更をチェックし、カメラに通知
@@ -431,6 +502,7 @@ public class PlayerController : SplineMovementBase
 
         if (splineController_.currentSplineContainer_ != previousSplineContainer_)
         {
+            
             Debug.Log("SplineContainer changed!");
 
             // カメラにSplineContainer変更を通知
@@ -531,7 +603,6 @@ public class PlayerController : SplineMovementBase
         
         // 入力状態を初期化
         inputs_.jump = false;
-        inputs_.move = Vector2.zero;
         
         // 物理状態を初期化
         animController_.ResetVerticalVelocity();
