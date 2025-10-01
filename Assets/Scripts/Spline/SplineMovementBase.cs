@@ -33,7 +33,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// <para>- スプライン上の移動を制御するコンポーネント</para>
     /// <para>- フォロー対象や t 値の更新を管理する</para>
     /// </summary>
-    [SerializeField] protected SplineController splineController_;
+    [SerializeField] public SplineController splineController_;
 
     [Header("他のSplineMovementBase派生クラスと相互作用を行うか否か")]
     /// <summary>
@@ -75,6 +75,10 @@ public abstract class SplineMovementBase : MonoBehaviour
         set { splineController_.FollowTarget = value; }
     }
 
+    public float Progress
+    {
+        get { return splineController_.Progress; }
+    }
     /// <summary>
     /// <para>- このオブジェクトが有効かどうか</para>
     /// <para>- 移動や相互作用の可否を表す</para>
@@ -169,6 +173,7 @@ public abstract class SplineMovementBase : MonoBehaviour
         //自身をfollowTargetとして使用
         FollowTarget = gameObject;
         targetCollider_ = FollowTarget.GetComponent<Collider>();
+        targetCollider_.isTrigger = true;
         //includelayer等を設定...
         //if(LayerSettings != null)
         {

@@ -3,6 +3,7 @@ using StarterAssets;
 using System.Collections;
 using TMPro;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -572,6 +573,8 @@ public class PlayerController : SplineMovementBase
         animController_.ResetVerticalVelocity();
         Disable();
     }
+
+    
 
     private void OnDrawGizmosSelected()
     {

@@ -443,7 +443,6 @@ public class SplineController : MonoBehaviour
         // tangentがゼロベクトルでないかチェック
         if (math.lengthsq(tangent) < 0.0001f)
         {
-            //Debug.LogWarning($"Tangent is zero at progress={progress} for spline {currentSplineContainer_.name}. Using default forward direction.");
             Debug.LogWarning($"Tangent is zero at progress={SplineProgress_} for spline {currentSplineContainer_.name}. Using Clamp01 Tangent");
             //tangent = new float3(0, 0, 1); // デフォルト方向
             
@@ -510,7 +509,13 @@ public class SplineController : MonoBehaviour
 
         ft.position += move * ft.forward;
 
-        //MoveOtherSpline(ft.position + (move* ft.forward) , -ft.up);
+    }
+
+    public void SyncToSpline(SplineController other)
+    {
+        if (other == null) return;
+        currentSplineContainer_ = other.currentSplineContainer_;
+        Progress = other.Progress;
     }
 
     public void ChangeOtherSpline(SplineContainer nextContainer)

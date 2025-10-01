@@ -1313,6 +1313,70 @@ MonoBehaviour:
     modifyNameEnabled: 1
   modified: 1
   modifiedChildren: 0
+--- !u!1 &603105713
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 603105715}
+  - component: {fileID: 603105714}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &603105714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603105713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentSplineContainer_: {fileID: 77734430}
+  followTarget_: {fileID: 603105713}
+  SplineProgress_: 0.407
+  splineDirection_: 1
+  isMovingLeft: 0
+  offsetRayStartPosY: 1
+  enableEditorPreview: 1
+  autoFindParentSplineContainer_: 1
+  overwriteCurrentWithParentSplineContainer_: 0
+  autoUpdateInfo_: 1
+  onUpdateEditor_:
+    m_PersistentCalls:
+      m_Calls: []
+  splineMeshRadius_: 1.81
+  offsetY_: 0
+  evaluationInfo_:
+    position: {x: 4.8840017, y: 0, z: 10.7699995}
+    tangent: {x: 3.000001, y: 0, z: -0.0000009536743}
+    upVector: {x: 0, y: 1, z: -0}
+    rotation: {x: 0, y: 0.7071069, z: 0, w: 0.70710665}
+--- !u!4 &603105715
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603105713}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.7071069, z: 0, w: 0.70710665}
+  m_LocalPosition: {x: 4.8840017, y: 0.905, z: 10.7699995}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &684333444
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2308,65 +2372,15 @@ GameObject:
   - component: {fileID: 1814333731}
   - component: {fileID: 1814333730}
   - component: {fileID: 1814333729}
-  - component: {fileID: 1814333728}
-  - component: {fileID: 1814333727}
+  - component: {fileID: 1814333734}
+  - component: {fileID: 1814333733}
   m_Layer: 0
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1814333727
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1814333726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dd7d36b59366cc4bb79b0fb30f07fcc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed_: 1
-  autoInitialize_: 1
-  splineController_: {fileID: 1814333728}
-  isActive_: 1
-  onDestroySE_: {fileID: 0}
-  profile: {fileID: 0}
---- !u!114 &1814333728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1814333726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentSplineContainer_: {fileID: 587572554}
-  followTarget_: {fileID: 1814333726}
-  SplineProgress_: 0
-  splineDirection_: 1
-  isMovingLeft: 0
-  offsetRayStartPosY: 1
-  enableEditorPreview: 1
-  autoFindParentSplineContainer_: 1
-  overwriteCurrentWithParentSplineContainer_: 0
-  autoUpdateInfo_: 1
-  onUpdateEditor_:
-    m_PersistentCalls:
-      m_Calls: []
-  splineMeshRadius_: 1.81
-  offsetY_: 0
-  evaluationInfo_:
-    position: {x: 0, y: 0, z: 0}
-    tangent: {x: 3.0000005, y: 0, z: 0.0000010728836}
-    upVector: {x: 0, y: 1, z: 0}
-    rotation: {x: 0, y: 0.70710665, z: 0, w: 0.7071069}
+  m_IsActive: 0
 --- !u!136 &1814333729
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2386,10 +2400,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
+  m_Radius: 0.5586849
+  m_Height: 3.0850658
   m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+  m_Center: {x: 0.00000005960465, y: 0.5425329, z: 0.05868471}
 --- !u!23 &1814333730
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2451,13 +2465,64 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1814333726}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.70710665, z: 0, w: 0.7071069}
-  m_LocalPosition: {x: 0, y: 0.905, z: 0}
+  m_LocalRotation: {x: 0, y: 0.7071069, z: 0, w: 0.70710665}
+  m_LocalPosition: {x: 1.64736, y: 0.905, z: -0.00000023117478}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1814333733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1814333726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f038e4dc1c928541b18fffd7850ad07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed_: 1
+  autoInitialize_: 1
+  splineController_: {fileID: 1814333734}
+  isActive_: 1
+  onDestroySE_: {fileID: 0}
+  profile: {fileID: 11400000, guid: b2642b0b27a43cb4292aad3643fd8864, type: 2}
+  changeDestination: {fileID: 603105713}
+--- !u!114 &1814333734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1814333726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentSplineContainer_: {fileID: 587572554}
+  followTarget_: {fileID: 1814333726}
+  SplineProgress_: 0.132
+  splineDirection_: 1
+  isMovingLeft: 0
+  offsetRayStartPosY: 1
+  enableEditorPreview: 0
+  autoFindParentSplineContainer_: 1
+  overwriteCurrentWithParentSplineContainer_: 0
+  autoUpdateInfo_: 1
+  onUpdateEditor_:
+    m_PersistentCalls:
+      m_Calls: []
+  splineMeshRadius_: 1.81
+  offsetY_: 0
+  evaluationInfo_:
+    position: {x: 1.64736, y: 0, z: -0.00000023117478}
+    tangent: {x: 3.0000007, y: 0, z: -0.0000010521748}
+    upVector: {x: -0, y: 1, z: 0}
+    rotation: {x: 0, y: 0.7071069, z: 0, w: 0.70710665}
 --- !u!1001 &1916156726
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2540,3 +2605,4 @@ SceneRoots:
   - {fileID: 1360237786}
   - {fileID: 1916156726}
   - {fileID: 1814333732}
+  - {fileID: 603105715}
