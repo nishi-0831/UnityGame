@@ -516,7 +516,6 @@ public class SplineController : MonoBehaviour
         if (other == null) return;
         currentSplineContainer_ = other.currentSplineContainer_;
         Progress = other.Progress;
-        MoveAlongSpline();
     }
 
     public void ChangeOtherSpline(SplineContainer nextContainer)

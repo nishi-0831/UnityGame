@@ -149,8 +149,8 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     protected void OnDamage()
     {
         Disable();
-        animator?.SetTrigger(animIDDie);    
         ScoreManager.Instance.ReceiveScore(ScoreValue);
+        animator?.SetTrigger(animIDDie);    
     }
 
     /// <summary>

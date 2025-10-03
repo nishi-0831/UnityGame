@@ -6,6 +6,7 @@ using UnityEngine.Splines;
 /// </summary>
 public class LaneChangeZone : PlayerInteractableBase
 {
+
     // 独自のフィールドをここに追加    
     [Header("移動先")]
     [SerializeField] GameObject changeDestination;
