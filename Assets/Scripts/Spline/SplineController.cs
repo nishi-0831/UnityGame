@@ -56,7 +56,7 @@ public class SplineController : MonoBehaviour
 
     [Header("スプライン上の正規化された進行度 (0:開始点, 1:終了点)")]
     [Range(0f, 1f)]
-    [SerializeField] private float SplineProgress_;
+    [SerializeField] public float SplineProgress_;
     [HideInInspector] public int splineDirection_ = 1;
     [HideInInspector] public bool isMovingLeft = false;
     [SerializeField] protected float offsetRayStartPosY = 1.0f;
@@ -322,16 +322,16 @@ public class SplineController : MonoBehaviour
         }
 
         // 現在の接線方向（水平成分のみ使用）
-        Vector3 tangent = EvaluationInfo.tangent.normalized;
+         Vector3 tangent = EvaluationInfo.tangent.normalized;
 
-        //// tangentの水平成分のみを使用（Y成分を除去）
-        //Vector3 horizontalTangent = new Vector3(tangent.x, 0, tangent.z).normalized;
+        //         //// tangentの水平成分のみを使用（Y成分を除去）
+        //         //Vector3 horizontalTangent = new Vector3(tangent.x, 0, tangent.z).normalized;
 
-        //// actualMovementの水平成分のみ使用
-        //Vector3 horizontalMovement = new Vector3(actualMovement.x, 0, actualMovement.z);
+        //         //// actualMovementの水平成分のみ使用
+        //         //Vector3 horizontalMovement = new Vector3(actualMovement.x, 0, actualMovement.z);
 
-        //// 水平移動量をSplineの水平接線方向に射影
-        //float projectedDistance = Vector3.Dot(horizontalMovement, horizontalTangent);
+        //         //// 水平移動量をSplineの水平接線方向に射影
+        // //         float projectedDistance = Vector3.Dot(horizontalMovement, horizontalTangent);
 
         float projDistance = Vector3.Dot(actualMovement, tangent);
         // 移動距離をt値の変化量に変換
@@ -476,6 +476,11 @@ public class SplineController : MonoBehaviour
     {
         MoveAlongSpline(SplineProgress_);
     }
+    public void SyncEvaluationInfo()
+    {
+        followTarget_.transform.rotation = evaluationInfo_.rotation;
+        followTarget_.transform.position = evaluationInfo_.position + new Vector3(0, splineMeshRadius_ / 2.0f, 0);
+    }
     public void MoveAlongSpline(float t)
     {
         //Debug.Log($"{followTarget_.name}:MoveAlongSpline");
@@ -514,8 +519,17 @@ public class SplineController : MonoBehaviour
     public void SyncToSpline(SplineController other)
     {
         if (other == null) return;
+        
         currentSplineContainer_ = other.currentSplineContainer_;
         Progress = other.Progress;
+        
+        // EvaluationInfoを強制的に更新
+        AutoUpdateEvaluationInfo();
+        
+        // 座標を即座に反映
+        SyncEvaluationInfo();
+        
+        Debug.Log($"SyncToSpline: Container={currentSplineContainer_?.name}, Progress={Progress}, Position={followTarget_?.transform.position}");
     }
 
     public void ChangeOtherSpline(SplineContainer nextContainer)
@@ -728,22 +742,24 @@ public class SplineController : MonoBehaviour
 
         if (Physics.Raycast(pos + new Vector3(0, offsetRayStartPosY, 0), dir, out hit, Mathf.Infinity, SplineLayerSettings.groundLayer))
         {
-            Debug.Log( "ray to "+hit.collider.gameObject.name);
+            Debug.Log($"[RayUnderSpline] Ray hit: {hit.collider.gameObject.name}, Current spline: {currentSplineContainer_?.name}");
             SplineContainer foundSpline = hit.collider.gameObject.GetComponent<SplineContainer>();
             if (foundSpline != null && foundSpline != currentSplineContainer_)
             {
+                Debug.Log($"[RayUnderSpline] Pos: {pos}");
+
+                Debug.Log($"[RayUnderSpline] Found different spline: {foundSpline.name}, notifying PlayerController");
                 // PlayerControllerに新しいSplineの発見を通知
                 NotifyPlayerOfNewSpline(foundSpline);
-
             }
             else
             {
-                //Debug.Log("No SplineContainer");
+                Debug.Log($"[RayUnderSpline] Same spline or no SplineContainer found");
             }
         }
         else
         {
-            Debug.Log("no ray");
+            Debug.Log("[RayUnderSpline] No ray hit");
         }
     }
 
@@ -764,7 +780,12 @@ public class SplineController : MonoBehaviour
     {
         if (followTarget_ != null)
         {
-            RayUnderSpline(followTarget_.transform.position,-followTarget_.transform.up);
+            RayUnderSpline(followTarget_.transform.position, -followTarget_.transform.up);
+        }
+        else
+        {
+            Debug.LogWarning("[CheckUnderSpline] followTarget_ is null, using SplineController position as fallback");
+            RayUnderSpline(transform.position, -transform.up);
         }
     }
 
