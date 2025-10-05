@@ -213,7 +213,7 @@ public class CameraController : MonoBehaviour
     {
         isTransitioning_ = true;
         targetAzimuthalAngle_ = newTargetAngle;
-        Debug.Log($"Camera: Starting transition to angle {newTargetAngle:F1}Åã");
+        //Debug.Log($"Camera: Starting transition to angle {newTargetAngle:F1}Åã");
     }
 
     /// <summary>

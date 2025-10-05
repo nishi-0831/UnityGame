@@ -34,8 +34,8 @@ public static class PlayerInteractionUtils
     /// </summary>
     public static void ApplyStompBounce(GameObject player, float force)
     {
-        AnimationController ac = GetAnimationController(player);
-        if (ac != null) ac.AddVerticalForce(force);
+        PlayerController pc = GetPlayerController(player);
+        if (pc != null) pc.ApplyStompBounce(force);
     }
 
     public static void ApplySideBounce(GameObject player,float progress)

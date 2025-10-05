@@ -41,12 +41,13 @@ public class AnimationController : MonoBehaviour
     // State
     [SerializeField] public bool smashed_ = false;
     [SerializeField] private bool grounded_ = true;
-    [SerializeField] private float verticalVelocity_;
+    [SerializeField] private float currentOffsetY;
     [SerializeField] private bool _isAir;
     private float _jumpTimeoutDelta;
     [SerializeField] private float _fallTimeoutDelta;
     public bool jump;
     [SerializeField] private StarterAssetsInputs inputs_;
+
     // Properties
     public bool Grounded 
     { 
@@ -61,7 +62,7 @@ public class AnimationController : MonoBehaviour
         get { return _isAir; }
     }
 
-    public float VerticalVelocity => verticalVelocity_;
+    public float CurrentJumpOffsetY => currentOffsetY;
 
     public bool IsStunned 
     { 
@@ -84,26 +85,20 @@ public class AnimationController : MonoBehaviour
         _jumpTimeoutDelta = jumpTimeout_;
         _fallTimeoutDelta = fallTimeout_;
 
-        inputs_.onReleaseJumpBtn += ChangeGravity;
+        // ƒ{ƒ^ƒ“‚ð—£‚µ‚½‚çd—Í‚ð‹­‚ß‚é
         
     }
-    private void ChangeGravity()
-    {
-        if(!grounded_)
-        {
-            nowGravity_ = fallingGravity_;
-        }
-    }
+   
     private void Update()
     {
         JumpAndGravity();
         UpdateAnimations();
-        jump = _animator.GetBool(_animIDJump);
+        //jump = _animator.GetBool(_animIDJump);
     }
     
     public void ResetVerticalVelocity()
     {
-        verticalVelocity_ = 0;
+        currentOffsetY = 0;
     }
     public void OnSmash()
     {
@@ -151,20 +146,12 @@ public class AnimationController : MonoBehaviour
         if (grounded_)
         {
             _fallTimeoutDelta = fallTimeout_;
-
-            if (verticalVelocity_ > 0.1f)
-            {
-                _animator.SetBool(_animIDJump, true);
-            }
-            else
-            {
-                _animator.SetBool(_animIDJump, false);
-            }
+            
             _animator.SetBool(_animIDFreeFall, false);
 
-            if (verticalVelocity_ < 0.0f)
+            if (currentOffsetY < 0.0f)
             {
-                verticalVelocity_ = 0.0f;
+                currentOffsetY = 0.0f;
             }
 
             if (_jumpTimeoutDelta >= 0.0f)
@@ -192,16 +179,7 @@ public class AnimationController : MonoBehaviour
             }
             inputs_.jump = false;
 
-            if(verticalVelocity_ < 0.0f)
-            {
-                ChangeGravity();
-            }
-        }
-        
-        // Apply gravity
-        if (_isAir)
-        {
-            verticalVelocity_ += nowGravity_ * Time.deltaTime;
+           
         }
     }
 
@@ -238,15 +216,8 @@ public class AnimationController : MonoBehaviour
         }
     }
 
-    public void AddVerticalForce(float height)
-    {
-        if (IsStunned) return;
-
-        _animator.SetBool(_animIDJump, true);
-        nowGravity_ = jumpingGravity_;
-        verticalVelocity_ = Mathf.Sqrt(height * -2f * jumpingGravity_);
-    }
-
+    
+    
     // Animation Events
     private void OnFootstep(AnimationEvent animationEvent)
     {

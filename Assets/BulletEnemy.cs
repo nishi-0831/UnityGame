@@ -61,6 +61,9 @@ public class BulletEnemy : PlayerInteractableBase
         Rigidbody rigidbody = bullet.GetComponent<Rigidbody>();
         rigidbody.AddForce(transform.forward * 500.0f);
         Destroy(bullet, 10.0f);
+
+        animator?.SetTrigger(animIDAttack);
+
     }
     /// <summary>
     /// 移動処理の更新
@@ -110,10 +113,14 @@ public class BulletEnemy : PlayerInteractableBase
     {
         // 踏みつけ時の処理をここに記述
         // 例: 
-        // OnDamage();
-        // PlayerInteractionUtils.ApplyStompBounce(player, StompBounceForce);
+         OnDamage();
+         PlayerInteractionUtils.ApplyStompBounce(player, StompBounceForce);
+        
     }
-
+    //public override void OnRequestDestroy()
+    //{
+    //    Destroy(gameObject);
+    //}
     /// <summary>
     /// プレイヤーと横から衝突した時の処理
     /// </summary>

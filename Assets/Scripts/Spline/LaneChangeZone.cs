@@ -13,6 +13,7 @@ public class LaneChangeZone : PlayerInteractableBase
     [SerializeField] GameObject changeDestination;
     [SerializeField] private bool changed;
     [SerializeField] SplineController changeController;
+    private LaneChangeZone changeDestZone;
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -23,6 +24,8 @@ public class LaneChangeZone : PlayerInteractableBase
         speed_ = 0f;
         // 移動先の GameObjectからSplineContainerを取得
         changeDestination.TryGetComponent<SplineController>(out changeController);
+        changeDestination.TryGetComponent<LaneChangeZone>(out changeDestZone);
+        
     }
 
     /// <summary>
@@ -51,11 +54,11 @@ public class LaneChangeZone : PlayerInteractableBase
         Debug.Log("LaneChangeZone");
         // 踏みつけ時の処理をここに記述
         var playerController = PlayerInteractionUtils.GetPlayerController(player);
-        if (playerController != null)
+        if ((playerController != null ) && !changed)
         {
             // 専用メソッドでSpline変更を強制実行
             playerController.ForceSplineChange(changeController);
-            
+            changeDestZone.changed = true;
         }
     }
 
@@ -109,17 +112,19 @@ public class LaneChangeZone : PlayerInteractableBase
     {
         // 横衝突時の処理をここに記述
         var playerController = PlayerInteractionUtils.GetPlayerController(player);
-        if (playerController != null)
+        if ((playerController != null) && !changed)
         {
             // 専用メソッドでSpline変更を強制実行
             playerController.ForceSplineChange(changeController);
             Debug.Log("LaneChangeZone");
+            changeDestZone.changed = true;
+
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("OnTriggerExit");
-
+        Debug.Log($"OnTriggerExit:{name}");
+        changed = false;
     }
 }
