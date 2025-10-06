@@ -81,10 +81,10 @@ public class StrongEnemy : PlayerInteractableBase
     }
 
    
-    public override void OnRequestDestroy()
-    {
-        Destroy(gameObject);
-    }
+    //public override void OnRequestDestroy()
+    //{
+    //    Destroy(gameObject);
+    //}
     // IPlayerInteractableŽÀ‘•
     public override void OnStompedCore(GameObject player)
     {

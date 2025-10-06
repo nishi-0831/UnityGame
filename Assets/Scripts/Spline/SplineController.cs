@@ -58,7 +58,8 @@ public class SplineController : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] public float SplineProgress_;
     [HideInInspector] public int splineDirection_ = 1;
-    [HideInInspector] public bool isMovingLeft = false;
+    [Header("左を向いているか否か")]
+    [SerializeField] public bool isMovingLeft = false;
     [SerializeField] protected float offsetRayStartPosY = 1.0f;
 
     [Header("エディターで初期位置表示")]

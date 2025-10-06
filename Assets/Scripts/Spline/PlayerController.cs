@@ -68,6 +68,7 @@ public class PlayerController : SplineMovementBase
     [SerializeField]Vector3 inputMovement;
     [SerializeField]Vector3 currentHorizontalPosition;
     [SerializeField]Vector3 knockbackMovement = Vector3.zero;
+    public JumpControllerVariableHeight jumpControllerVariableHeight_;
     public float T { get { return splineController_.Progress; } }
     protected override void Initialize()
     {
@@ -75,7 +76,6 @@ public class PlayerController : SplineMovementBase
         {
             animController_ = GetComponent<AnimationController>();
         }
-        
         characterController_ = GetComponent<CharacterController>();
         splineController_.splineDirection_ = 1;
 
@@ -84,6 +84,7 @@ public class PlayerController : SplineMovementBase
 
         // 初期Spline位置を記録
         previousSplinePosition_ = splineController_.GetSplineMeshPos();
+        inputs_.onReleaseJumpBtn += jumpControllerVariableHeight_.Release;
     }
 
     
@@ -101,92 +102,96 @@ public class PlayerController : SplineMovementBase
             // 通常のSpline移動
             transform.rotation = splineController_.EvaluationInfo.rotation;
 
-            Vector3 currentSplinePosition = splineController_.GetSplineMeshPos();
+            //Vector3 currentSplinePosition = splineController_.GetSplineMeshPos();
 
-            // Splineの垂直方向の変化量を計算（前フレームの位置と比較）
-            if (!isFirstFrame_)
-            {
-                splineDelta = currentSplinePosition - previousSplinePosition_;
-                splineVerticalDelta = new Vector3(0, splineDelta.y, 0);
-            }
-            else
-            {
-                splineVerticalDelta = Vector3.zero;
-                splineDelta = Vector3.zero;
-            }
+            //// Splineの垂直方向の変化量を計算（前フレームの位置と比較）
+            //if (!isFirstFrame_)
+            //{
+            //    splineDelta = currentSplinePosition - previousSplinePosition_;
+            //    splineVerticalDelta = new Vector3(0, splineDelta.y, 0);
+            //}
+            //else
+            //{
+            //    splineVerticalDelta = Vector3.zero;
+            //    splineDelta = Vector3.zero;
+            //}
 
-            // ジャンプによる垂直方向の移動量を計算
-            jumpVerticalMovement = Vector3.up * animController_.VerticalVelocity * Time.deltaTime;
+            //// ジャンプによる垂直方向の移動量を
+            //jumpVerticalMovement = Vector3.up * animController_.CurrentJumpOffsetY;
 
-            // 入力による水平移動量を計算
-            int inputDir = 0;
+            //// 入力による水平移動量を計算
+
+
+
+            //// ノックバックによる移動量を計算
+            //if (knockbackForce > 0)
+            //{
+            //    Vector3 knockbackDirection = splineController_.EvaluationInfo.tangent.normalized;
+            //    if (splineController_.isMovingLeft)
+            //    {
+            //        knockbackDirection *= -1;
+            //    }
+            //    knockbackDirection *= knockbackDir_;
+            //    knockbackMovement = knockbackDirection * knockbackForce * Time.deltaTime;
+            //}
+            //else
+            //{
+            //    knockbackMovement = Vector3.zero;
+            //}
+
+            //// 入力による移動量を計算（Splineに沿った水平移動のみ）
+            //inputMovement = Vector3.zero;
+            //if (inputDir != 0)
+            //{
+            //    Vector3 inputDirection = splineController_.EvaluationInfo.tangent.normalized;
+            //    if (splineController_.isMovingLeft)
+            //    {
+            //        inputDirection *= -1;
+            //    }
+            //    inputDirection *= inputDir * splineController_.splineDirection_;
+            //    inputMovement = inputDirection * speed_ * Time.deltaTime;
+            //}
+
+            //// 実際の移動計算方法を変更
+            //// 現在位置をベースに、各移動成分を加算
+            //Vector3 horizontalSplineMovement = new Vector3(splineDelta.x, 0, splineDelta.z);
+
+            //newPosition = transform.position + 
+            //             splineVerticalDelta + 
+            //             jumpVerticalMovement + 
+            //             inputMovement + 
+            //             knockbackMovement + 
+            //             horizontalSplineMovement;
+
+            //desiredMovement = newPosition - transform.position;
+
+            //// 非常に小さい移動量は無視
+            //if (desiredMovement.magnitude <= 0.001f)
+            //{
+            //    desiredMovement = Vector3.zero;
+            //}
+
+            //// CharacterControllerで移動
+            //Vector3 startPos = transform.position;
+            //if (desiredMovement != Vector3.zero)
+            //{
+            //    characterController_.Move(desiredMovement);
+            //}
+            //actualMovement = transform.position - jumpVerticalMovement - startPos;
+
             if (!animController_.IsStunned && !isBeingSmashed_)
             {
                 if (inputs_.move.x != 0)
                 {
-                    inputDir = (int)Mathf.Sign(inputs_.move.x);
+                    splineController_.Move(speed_);
+                    
                 }
             }
-
-            // ノックバックによる移動量を計算
-            if (knockbackForce > 0)
-            {
-                Vector3 knockbackDirection = splineController_.EvaluationInfo.tangent.normalized;
-                if (splineController_.isMovingLeft)
-                {
-                    knockbackDirection *= -1;
-                }
-                knockbackDirection *= knockbackDir_;
-                knockbackMovement = knockbackDirection * knockbackForce * Time.deltaTime;
-            }
-            else
-            {
-                knockbackMovement = Vector3.zero;
-            }
-
-            // 入力による移動量を計算（Splineに沿った水平移動のみ）
-            inputMovement = Vector3.zero;
-            if (inputDir != 0)
-            {
-                Vector3 inputDirection = splineController_.EvaluationInfo.tangent.normalized;
-                if (splineController_.isMovingLeft)
-                {
-                    inputDirection *= -1;
-                }
-                inputDirection *= inputDir * splineController_.splineDirection_;
-                inputMovement = inputDirection * speed_ * Time.deltaTime;
-            }
-
-            // 実際の移動計算方法を変更
-            // 現在位置をベースに、各移動成分を加算
-            Vector3 horizontalSplineMovement = new Vector3(splineDelta.x, 0, splineDelta.z);
-            
-            newPosition = transform.position + 
-                         splineVerticalDelta + 
-                         jumpVerticalMovement + 
-                         inputMovement + 
-                         knockbackMovement + 
-                         horizontalSplineMovement;
-
-            desiredMovement = newPosition - transform.position;
-            
-            // 非常に小さい移動量は無視
-            if (desiredMovement.magnitude <= 0.001f)
-            {
-                desiredMovement = Vector3.zero;
-            }
-            
-            // CharacterControllerで移動
-            Vector3 startPos = transform.position;
-            if (desiredMovement != Vector3.zero)
-            {
-                characterController_.Move(desiredMovement);
-            }
-            actualMovement = transform.position - jumpVerticalMovement - startPos;
-
             // Splineに沿った移動のみでt値更新（垂直移動を除外）
             //Vector3 horizontalActualMovement = new Vector3(actualMovement.x, 0, actualMovement.z);
-            splineController_.UpdateProgressFromMovement(actualMovement);
+            //splineController_.UpdateProgressFromMovement(actualMovement);
+            jumpControllerVariableHeight_.Tick(splineController_.EvaluationInfo.position);
+
         }
         // Spline範囲外の場合
         else
@@ -242,7 +247,7 @@ public class PlayerController : SplineMovementBase
         // Spline範囲外での移動
         Vector3 horizontalMovement = new Vector3(offSplineVelocity_.x, 0, offSplineVelocity_.z);
         
-        Vector3 verticalMovement = Vector3.up * animController_.VerticalVelocity * Time.deltaTime;
+        Vector3 verticalMovement = Vector3.up * animController_.CurrentJumpOffsetY;
 
         // 回転をタンジェント方向に設定
         if (lastValidTangent_ != Vector3.zero)
@@ -343,7 +348,7 @@ public class PlayerController : SplineMovementBase
             }
             if (inputs_.jump && animController_.Grounded)
             {
-                animController_.AddVerticalForce(verticalForce_);
+                jumpControllerVariableHeight_.StartJump(splineController_.EvaluationInfo.position.y);
             }
         }
 
@@ -397,10 +402,19 @@ public class PlayerController : SplineMovementBase
         HandleSplineMovement();
 
         // 地面判定をAnimationControllerに反映
-        animController_.Grounded = Physics.CheckBox(transform.position + center_, halfExtends_, transform.rotation, groundLayer_);
+        if(animController_.CurrentJumpOffsetY <= 0f && !inputs_.jump)
+        {
+            animController_.Grounded = Physics.CheckBox(transform.position + center_, halfExtends_, transform.rotation, groundLayer_);
+        }
+        else
+        {
+            animController_.Grounded = false;
+            Debug.Log("animController_.Grounded = false;");
+        }
 
         isFirstFrame_ = false;
 
+        jumpControllerVariableHeight_.Tick(splineController_.EvaluationInfo.position);
         CheckSplineContainerChange();
         UpdateCamera();
 
@@ -410,6 +424,23 @@ public class PlayerController : SplineMovementBase
         {
             splineController_.CheckUnderSpline();
         }
+    }
+
+    public void ApplyStompBounce(float force)
+    {
+        // 現在の足場位置（Spline位置）を取得
+        float currentPlatformY = splineController_.EvaluationInfo.position.y;
+        
+        // 踏みつけジャンプを開始（forceを高さとして使用）
+        jumpControllerVariableHeight_.StartStompJump(currentPlatformY, force);
+        
+        // アニメーション状態も更新
+        if (animController_ != null)
+        {
+            animController_.Grounded = false;
+        }
+        
+        Debug.Log($"Stomp bounce applied: force={force}, platformY={currentPlatformY}");
     }
 
     private void UpdateCamera()
@@ -462,7 +493,7 @@ public class PlayerController : SplineMovementBase
         
         // 位置を即座に更新
         Vector3 newPosition = splineController_.GetSplineMeshPos();
-        Debug.Log($"[ForceSplineChange] Completed. Prev position: {transform.position}, Container: {splineController_.currentSplineContainer_?.name}, Progress: {splineController_.Progress}");
+        //Debug.Log($"[ForceSplineChange] Completed. Prev position: {transform.position}, Container: {splineController_.currentSplineContainer_?.name}, Progress: {splineController_.Progress}");
 
         transform.position = newPosition;
         

@@ -23,10 +23,11 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
                 {
                     Debug.LogWarning($"{className} という名前のPlayerInteractionProfileが見当たりませんでした。" +
                                   $"Resources/PlayerInteractionProfiles/{className}のように作ってください");
+                    // フォールバック用のデフォルトの設定を読み込む
+                    profile = Resources.Load<PlayerInteractionProfile>("PlayerInteractionProfiles/Default");
                 }
 
-                // フォールバック用のデフォルトの設定を読み込む
-                profile = Resources.Load<PlayerInteractionProfile>("PlayerInteractionProfiles/Default");
+                
 
                 if (profile == null)
                 {
@@ -149,8 +150,12 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     protected void OnDamage()
     {
         Disable();
-        animator?.SetTrigger(animIDDie);    
         ScoreManager.Instance.ReceiveScore(ScoreValue);
+        if (animator)
+        {
+            animator.SetTrigger(animIDDie);
+        }
+
     }
 
     /// <summary>
