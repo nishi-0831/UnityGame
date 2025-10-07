@@ -53,14 +53,14 @@ public class ScoreManager : MonoBehaviour
     void Update()
     {
         //デバッグ
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            StartCountClearTime();
-        }
-        else if(Input.GetKeyDown(KeyCode.Y))
-        {
-            EndCountClearTime();
-        }
+        //if(Input.GetKeyDown(KeyCode.T))
+        //{
+        //    StartCountClearTime();
+        //}
+        //else if(Input.GetKeyDown(KeyCode.Y))
+        //{
+        //    EndCountClearTime();
+        //}
         scoreData_.clearTime = Time.time - startTime_;
     }
     
