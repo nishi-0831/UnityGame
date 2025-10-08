@@ -375,6 +375,10 @@ public class SplineController : MonoBehaviour
         
         Move(speed, dir);
     }
+
+    /// <summary>
+    /// 進行度(t)を0から1に Clampをして、向きを反転させる
+    /// </summary>
     public void Reverse()
     {
         ClampProgress();
@@ -382,6 +386,22 @@ public class SplineController : MonoBehaviour
             isMovingLeft = false;
         else
             isMovingLeft = true;
+    }
+
+    /// <summary>
+    /// 進行度(t)が0未満なら1へ、1を超えているなら0へループさせる
+    /// </summary>
+    public void Loop()
+    {
+        if (Progress < 0f)
+        {
+            Progress = 1f + Progress % 1f;
+        }
+        else if(Progress > 1f)
+        {
+            Progress = Progress % 1f;
+        }
+
     }
 
     public float GetCurrSplineLength()
