@@ -71,7 +71,7 @@ public class PlayerController : SplineMovementBase
     [SerializeField]Vector3 knockbackMovement = Vector3.zero;
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
     public float T { get { return splineController_.Progress; } }
-    public int Hp { get { return hp_; } }
+     public int Hp() { return hp_; }
     protected override void Initialize()
     {
         if (animController_ == null)
