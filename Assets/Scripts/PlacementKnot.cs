@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 using Unity.Mathematics;
+using UnityEditor.ShaderGraph.Internal;
 
 public class PlacementKnot : MonoBehaviour
 {
@@ -12,11 +13,13 @@ public class PlacementKnot : MonoBehaviour
     [SerializeField] private SplineContainer splineContainer;
     private Spline spline;
 
+    [Header("Knotの最低数。これより少ない場合は追加される")]
+    [SerializeField,Range(3,64)]private int minKnotNum = 6;
     [Header("等間隔配置のサンプリング精度")]
     [SerializeField, Range(4, 1024)] private int samplesPerSegment = 32;
 
     [ContextMenu("PlacementKnot (等距離)")]
-    public void Placement()
+    public void PlacementPerSeg()
     {
         splineContainer = GetComponent<SplineContainer>();
         if (splineContainer == null)
@@ -131,4 +134,52 @@ public class PlacementKnot : MonoBehaviour
 
         Debug.Log($"PlacementKnot: {knotCount} knots redistributed evenly along spline (totalLength={totalLength:F3})");
     }
+
+    [ContextMenu("PlacementKnot (等角度)")]
+    public void PlacementPerDeg()
+    {
+        splineContainer = GetComponent<SplineContainer>();
+        if (splineContainer == null)
+        {
+            Debug.LogError("SplineContainerが見つかりません");
+            return;
+        }
+
+        spline = splineContainer.Spline;
+        if (spline == null || spline.Count == 0)
+        {
+            Debug.LogError("Splineが空です");
+            return;
+        }
+        var knots = spline.Knots;
+
+        int knotCount = spline.Count;
+        if (knotCount < minKnotNum)
+        {
+            int addNum = minKnotNum - knotCount;
+            for (int i = 0; i < addNum; i++)
+            {
+                // 新しいKnotを適当な位置で追加
+                spline.Add(new BezierKnot(Vector3.zero));
+            }
+            // Knotの数を更新
+            knotCount = spline.Count; 
+        }
+
+        float degPerKnot = (360 / (float)knotCount);
+
+        for (int i = 0; i < knotCount; i++)
+        {
+            float rad = degPerKnot * i * Mathf.Deg2Rad;
+            float x = Mathf.Cos(rad) * radius;
+            float z = Mathf.Sin(rad) * radius;
+
+            var knot = spline[i];
+            knot.Position = new float3(x, transform.position.y, z);
+            
+            spline[i] = knot;
+        }
+        spline.SetTangentMode(TangentMode.AutoSmooth);
+    }
+
 }
