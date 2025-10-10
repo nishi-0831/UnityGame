@@ -15,11 +15,6 @@ using TMPro;
 
 using UnityEngine.Events;
 
-
-
-
-
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -48,29 +43,39 @@ public class SplineController : MonoBehaviour
 {
 
 
-    [SerializeField] public SplineLayerSettings splineLayerSettings_;
-    [Header("曲線に沿って動かす対象となるGameObject")]
-    [SerializeField] public GameObject followTarget_;
+    [SerializeField]
+    public SplineLayerSettings SplineLayerSettings
+    {
+        get {  return SplineLayerSettings.Instance; }
+    }
+    
+    [Header("現在このオブジェクトが属しているSplineContainer")]
     [SerializeField] public SplineContainer currentSplineContainer_;
+    [Header("曲線に沿って動かす対象となるGameObject")]
+    [HideInInspector] public GameObject followTarget_;
+
+    [Header("スプライン上の正規化された進行度 (0:開始点, 1:終了点)")]
     [Range(0f, 1f)]
-    [SerializeField] private float t_;
-    [SerializeField] public int splineDirection_ = 1;
+    [SerializeField] public float SplineProgress_;
+    [HideInInspector] public int splineDirection_ = 1;
+    [Header("左を向いているか否か")]
     [SerializeField] public bool isMovingLeft = false;
     [SerializeField] protected float offsetRayStartPosY = 1.0f;
 
     [Header("エディターで初期位置表示")]
     [SerializeField] private bool enableEditorPreview = false;
-    [SerializeField]
+    [Header("currentSplineContainerがnullの場合、親のSplineContainerを取得するか否か")]
+    [SerializeField] private bool autoFindParentSplineContainer_ = true;
+    [Header("既存のcurrentSplineContainerを上書きして親のSplineContainerを取得するか否か")]
+    [SerializeField] private bool overwriteCurrentWithParentSplineContainer_ = false;
+    [Header("自動でInfoをt_で更新する")]
+    [SerializeField] private bool autoUpdateInfo_ = true;
     
     //追加でエディターに反映させたいときにどうぞ
     public UnityEvent onUpdateEditor_;
     [Header("メッシュの半径(上方向)")]
     [SerializeField] private float splineMeshRadius_;
     [SerializeField] public float offsetY_ = 0f;
-    [Header("currentSplineContainerがnullの場合、親のSplineContainerを取得するか否か")]
-    [SerializeField] private bool autoFindParentSplineContainer_ = true;
-    [Header("既存のcurrentSplineContainerを上書きして親のSplineContainerを取得するか否か")]
-    [SerializeField] private bool overwriteCurrentWithParentSplineContainer_ = false;
     //[SerializeField] public bool isOffSpline_ = false; // Spline範囲外にいるかどうか
     private bool onceAction_ = false;
     public Action onMaxT;
@@ -80,8 +85,6 @@ public class SplineController : MonoBehaviour
     private bool isFirstFrame_ = true;
     private EvaluationInfo prevEvaluationInfo_;
     [SerializeField] private EvaluationInfo evaluationInfo_;
-    [Header("自動でInfoをt_で更新する")]
-    [SerializeField] private bool autoUpdateInfo_ = true;
     public EvaluationInfo EvaluationInfo 
     { get
         {
@@ -95,18 +98,18 @@ public class SplineController : MonoBehaviour
         get { return followTarget_; } 
         set { followTarget_ = value; } 
     }
-    public float T
+    public float Progress
     {
-        get { return t_; }
+        get { return SplineProgress_; }
         set 
         {
-            t_ = value;
+            SplineProgress_ = value;
             AutoUpdateEvaluationInfo();
             //AutoUpdateEvaluationInfo();
         }
     }
   
-    public float PrevT
+    public float PrevProgress
     {
         get { return prevT_; }
     }
@@ -174,14 +177,10 @@ public class SplineController : MonoBehaviour
         
         if(enableEditorPreview)
         {
-            //Debug.Log(t_);
-            //Debug.Log(T);
             AutoUpdateEvaluationInfo();
 
-            //AutoUpdateEvaluationInfo();
-            MoveAlongSplineEditorOnly(T);
+            MoveAlongSplineEditorOnly(Progress);
             onUpdateEditor_?.Invoke();
-            //MoveAlongSplineEditorOnly(firstT_);
             if (!Application.isPlaying)
             {
                 UnityEditor.SceneView.RepaintAll();
@@ -194,7 +193,7 @@ public class SplineController : MonoBehaviour
     private void MoveAlongSplineEditorOnly(float t)
     {
         SetSplineMeshRadius();
-        //followTarget_.transform.position = GetEvaluationInfo(t).position;
+        //followTarget_.transform.position = GetEvaluationInfo(progress).position;
         MoveAlongSpline(t);
         //Debug.Log("MoveAlongSplineEditorOnly");
     }
@@ -202,18 +201,21 @@ public class SplineController : MonoBehaviour
     #endregion
     private void Awake()
     {
-        //t_ = firstT_;
+        //SplineProgress_ = firstT_;
         if (CanFindSplineContainer())
         {
             FindParentSplineContainer();
         }
-
+        if(followTarget_ == null)
+        {
+            followTarget_ = this.gameObject;
+        }
         if (followTarget_ != null && currentSplineContainer_ != null)
         {
-            //MoveAlongSpline(t_);
+            //MoveAlongSpline(SplineProgress_);
             SetSplineMeshRadius();
         }
-        prevT_ = t_;
+        prevT_ = SplineProgress_;
         splineDirection_ = 1;
         evaluationInfo_ = new EvaluationInfo();
         //evaluationInfo_.ToString();
@@ -260,7 +262,7 @@ public class SplineController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(t_ < 0)
+        if(SplineProgress_ < 0)
         {
             onMinT?.Invoke();
             if(onceAction_)
@@ -271,7 +273,7 @@ public class SplineController : MonoBehaviour
                 }
             }
         }
-        else if(t_ > 1.0f)
+        else if(SplineProgress_ > 1.0f)
         {
             onMaxT?.Invoke();
             if (onceAction_)
@@ -286,16 +288,16 @@ public class SplineController : MonoBehaviour
         AutoUpdateEvaluationInfo();
 
     }
-    public void UpdateT(float speed)
+    public void UpdateProgress(float speed)
     {
         int dir = 1;
         if(isMovingLeft)
         {
             dir = -1;
         }
-        UpdateT(speed, dir);
+        UpdateProgress(speed, dir);
     }
-    public void UpdateT(float speed, int moveDir)
+    public void UpdateProgress(float speed, int moveDir)
     {
         //Math.Clamp(moveDir, -1, 1);
         if (currentSplineContainer_ == null) return;
@@ -303,8 +305,8 @@ public class SplineController : MonoBehaviour
         float movementT = (speed * Time.deltaTime) / currentSplineContainer_.CalculateLength();
         //float movementT = speed / currentSplineContainer_.CalculateLength();
 
-        prevT_ = t_;
-        t_ += (movementT * moveDir * splineDirection_);
+        prevT_ = SplineProgress_;
+        SplineProgress_ += (movementT * moveDir * splineDirection_);
 
         AutoUpdateEvaluationInfo();
     }
@@ -313,7 +315,7 @@ public class SplineController : MonoBehaviour
     /// 実際の移動量からt値を更新する
     /// </summary>
     /// <param name="actualMovement">CharacterController.Moveによって実際に移動したベクトル</param>
-    public void UpdateTFromMovement(Vector3 actualMovement)
+    public void UpdateProgressFromMovement(Vector3 actualMovement)
     {
         if (currentSplineContainer_ == null || actualMovement.sqrMagnitude < 0.001f)
         {
@@ -321,47 +323,47 @@ public class SplineController : MonoBehaviour
         }
 
         // 現在の接線方向（水平成分のみ使用）
-        Vector3 tangent = EvaluationInfo.tangent.normalized;
+         Vector3 tangent = EvaluationInfo.tangent.normalized;
 
-        //// tangentの水平成分のみを使用（Y成分を除去）
-        //Vector3 horizontalTangent = new Vector3(tangent.x, 0, tangent.z).normalized;
+        //         //// tangentの水平成分のみを使用（Y成分を除去）
+        //         //Vector3 horizontalTangent = new Vector3(tangent.x, 0, tangent.z).normalized;
 
-        //// actualMovementの水平成分のみ使用
-        //Vector3 horizontalMovement = new Vector3(actualMovement.x, 0, actualMovement.z);
+        //         //// actualMovementの水平成分のみ使用
+        //         //Vector3 horizontalMovement = new Vector3(actualMovement.x, 0, actualMovement.z);
 
-        //// 水平移動量をSplineの水平接線方向に射影
-        //float projectedDistance = Vector3.Dot(horizontalMovement, horizontalTangent);
+        //         //// 水平移動量をSplineの水平接線方向に射影
+        // //         float projectedDistance = Vector3.Dot(horizontalMovement, horizontalTangent);
 
         float projDistance = Vector3.Dot(actualMovement, tangent);
         // 移動距離をt値の変化量に変換
         //float deltaT = projectedDistance / currentSplineContainer_.CalculateLength();
         float deltaT = projDistance / currentSplineContainer_.CalculateLength();
 
-        prevT_ = t_;
+        prevT_ = SplineProgress_;
         if (isMovingLeft)
         {
-            t_ -= deltaT;
+            SplineProgress_ -= deltaT;
         }
         else
         {
-            t_ += deltaT;
+            SplineProgress_ += deltaT;
         }
 
         // t値更新後、evaluationInfoも更新
-        evaluationInfo_ = GetEvaluationInfo(t_);
+        evaluationInfo_ = GetEvaluationInfo(SplineProgress_);
     }
 
     private void AutoUpdateEvaluationInfo()
     {
         if(autoUpdateInfo_)
         {
-            evaluationInfo_ = GetEvaluationInfo(t_);
+            evaluationInfo_ = GetEvaluationInfo(SplineProgress_);
         }
     }
     public void Move(float speed, int moveDir)
     {
-        UpdateT(speed, moveDir);
-        MoveAlongSpline(t_);
+        UpdateProgress(speed, moveDir);
+        MoveAlongSpline(SplineProgress_);
     }
     public void Move(float speed)
     {
@@ -373,13 +375,33 @@ public class SplineController : MonoBehaviour
         
         Move(speed, dir);
     }
+
+    /// <summary>
+    /// 進行度(t)を0から1に Clampをして、向きを反転させる
+    /// </summary>
     public void Reverse()
     {
-        ClampT();
+        ClampProgress();
         if (isMovingLeft)
             isMovingLeft = false;
         else
             isMovingLeft = true;
+    }
+
+    /// <summary>
+    /// 進行度(t)が0未満なら1へ、1を超えているなら0へループさせる
+    /// </summary>
+    public void Loop()
+    {
+        if (Progress < 0f)
+        {
+            Progress = 1f + Progress % 1f;
+        }
+        else if(Progress > 1f)
+        {
+            Progress = Progress % 1f;
+        }
+
     }
 
     public float GetCurrSplineLength()
@@ -413,7 +435,7 @@ public class SplineController : MonoBehaviour
         return delta;
     }
 
-    public EvaluationInfo GetEvaluationInfo(float t)
+    public EvaluationInfo GetEvaluationInfo(float progress)
     {
         
         if (currentSplineContainer_ == null )
@@ -428,7 +450,7 @@ public class SplineController : MonoBehaviour
         }
         
         // t値を0-1の範囲にクランプ
-        t = Mathf.Clamp01(t);
+        progress = Mathf.Clamp01(progress);
 
         Spline spline = currentSplineContainer_.Spline;
         NativeSpline nativeSpline = new NativeSpline(spline, currentSplineContainer_.transform.localToWorldMatrix);
@@ -437,13 +459,12 @@ public class SplineController : MonoBehaviour
         float3 upVector;
 
         
-        SplineUtility.Evaluate<NativeSpline>(nativeSpline, t, out nearestPos, out tangent, out upVector);
+        SplineUtility.Evaluate<NativeSpline>(nativeSpline, progress, out nearestPos, out tangent, out upVector);
         
         // tangentがゼロベクトルでないかチェック
         if (math.lengthsq(tangent) < 0.0001f)
         {
-            //Debug.LogWarning($"Tangent is zero at t={t} for spline {currentSplineContainer_.name}. Using default forward direction.");
-            Debug.LogWarning($"Tangent is zero at t={t_} for spline {currentSplineContainer_.name}. Using Clamp01 Tangent");
+            Debug.LogWarning($"Tangent is zero at progress={SplineProgress_} for spline {currentSplineContainer_.name}. Using Clamp01 Tangent");
             //tangent = new float3(0, 0, 1); // デフォルト方向
             
             tangent = GetClamp01Tangent();
@@ -474,7 +495,12 @@ public class SplineController : MonoBehaviour
     
    public void MoveAlongSpline()
     {
-        MoveAlongSpline(t_);
+        MoveAlongSpline(SplineProgress_);
+    }
+    public void SyncEvaluationInfo()
+    {
+        followTarget_.transform.rotation = evaluationInfo_.rotation;
+        followTarget_.transform.position = evaluationInfo_.position + new Vector3(0, splineMeshRadius_ / 2.0f, 0);
     }
     public void MoveAlongSpline(float t)
     {
@@ -487,21 +513,21 @@ public class SplineController : MonoBehaviour
     {
         return EvaluationInfo.position + new Vector3(0, splineMeshRadius_ / 2.0f, 0);
     }
-    public void ClampT()
+    public void ClampProgress()
     {
-        T = Mathf.Clamp01(t_);
+        Progress = Mathf.Clamp01(SplineProgress_);
     }
     #region 他のSplineContainerへの移動関連
     public void MoveOtherSplineMinOrMax()
     {
         float t = 0.0f;
-       if(t_ < 0.0f)
+       if(SplineProgress_ < 0.0f)
         {
-            t = math.abs(t_);
+            t = math.abs(SplineProgress_);
         }
-       else if(t_ > 1.0f)
+       else if(SplineProgress_ > 1.0f)
        {
-            t = t_ - 1.0f;
+            t = SplineProgress_ - 1.0f;
        }
         
         var ft = followTarget_.transform;
@@ -509,7 +535,22 @@ public class SplineController : MonoBehaviour
 
         ft.position += move * ft.forward;
 
-        //MoveOtherSpline(ft.position + (move* ft.forward) , -ft.up);
+    }
+
+    public void SyncToSpline(SplineController other)
+    {
+        if (other == null) return;
+        
+        currentSplineContainer_ = other.currentSplineContainer_;
+        Progress = other.Progress;
+        
+        // EvaluationInfoを強制的に更新
+        AutoUpdateEvaluationInfo();
+        
+        // 座標を即座に反映
+        SyncEvaluationInfo();
+        
+        Debug.Log($"SyncToSpline: Container={currentSplineContainer_?.name}, Progress={Progress}, Position={followTarget_?.transform.position}");
     }
 
     public void ChangeOtherSpline(SplineContainer nextContainer)
@@ -537,8 +578,8 @@ public class SplineController : MonoBehaviour
         float nextT = outT;
 
         // t_値をクランプ
-        float currT = Mathf.Clamp01(t_);
-        Debug.Log($"Current t_: {currT}");
+        float currT = Mathf.Clamp01(SplineProgress_);
+        Debug.Log($"Current SplineProgress_: {currT}");
         
         // tangentを安全に取得
         float3 currTangent = currentSplineContainer_.EvaluateTangent(currT);
@@ -547,13 +588,13 @@ public class SplineController : MonoBehaviour
         // NaNチェック
         if (float.IsNaN(currTangent.x) || float.IsNaN(currTangent.y) || float.IsNaN(currTangent.z))
         {
-            Debug.LogError($"Current tangent is NaN at t={currT} for spline {currentSplineContainer_.name}");
+            Debug.LogError($"Current tangent is NaN at progress={currT} for spline {currentSplineContainer_.name}");
             currTangent = GetClamp01Tangent();
         }
         
         if (float.IsNaN(nextTangent.x) || float.IsNaN(nextTangent.y) || float.IsNaN(nextTangent.z))
         {
-            Debug.LogError($"Next tangent is NaN at t={nextT} for spline {nextContainer.name}");
+            Debug.LogError($"Next tangent is NaN at progress={nextT} for spline {nextContainer.name}");
             nextTangent = new float3(0, 0, 1); // デフォルト方向
         }
         
@@ -566,7 +607,7 @@ public class SplineController : MonoBehaviour
         
         if (math.lengthsq(nextTangent) < 0.0001f)
         {
-            Debug.LogWarning($"Next tangent is zero at t={nextT}. Using default direction.");
+            Debug.LogWarning($"Next tangent is zero at progress={nextT}. Using default direction.");
             nextTangent = new float3(0, 0, 1);
         }
         
@@ -609,7 +650,7 @@ public class SplineController : MonoBehaviour
         }
 
         currentSplineContainer_ = nextContainer;
-        T = outT;
+        Progress = outT;
         Debug.Log($"NewT: {outT}");
     }
 
@@ -629,12 +670,12 @@ public class SplineController : MonoBehaviour
     {
         RaycastHit hit;
         
-        if (Physics.Raycast(pos + new Vector3(0,offsetRayStartPosY,0), dir, out hit, Mathf.Infinity, splineLayerSettings_.groundLayer))
+        if (Physics.Raycast(pos + new Vector3(0,offsetRayStartPosY,0), dir, out hit, Mathf.Infinity, SplineLayerSettings.groundLayer))
         {
             GameObject hitObject = hit.collider.gameObject;
 
             SplineContainer nextContainer = hitObject.GetComponent<SplineContainer>();
-            var hitLayerMask = (int)Mathf.Log(splineLayerSettings_.groundLayer, 2);
+            var hitLayerMask = (int)Mathf.Log(SplineLayerSettings.groundLayer, 2);
             if ((hitLayerMask != hitObject.layer))
             {
                 Debug.Log(hitLayerMask);
@@ -643,8 +684,8 @@ public class SplineController : MonoBehaviour
             }
             if (nextContainer == null)
             {
-                ClampT();
-                MoveAlongSpline(t_);
+                ClampProgress();
+                MoveAlongSpline(SplineProgress_);
                 return;
             }
             if(nextContainer == currentSplineContainer_)
@@ -652,18 +693,18 @@ public class SplineController : MonoBehaviour
                 return;
             }
 
-            float3 currTangent = currentSplineContainer_.EvaluateTangent(t_);
-            float3 nextTangent = nextContainer.EvaluateTangent(t_);
+            float3 currTangent = currentSplineContainer_.EvaluateTangent(SplineProgress_);
+            float3 nextTangent = nextContainer.EvaluateTangent(SplineProgress_);
             float dot = math.dot(currTangent, nextTangent);
             {
                 //Spline currentSpline = currentSplineContainer_.Spline;
                 //NativeSpline currentNativeSpline = new NativeSpline(currentSpline, currentSplineContainer_.transform.localToWorldMatrix);
                 //float3 currPos, currTangent, currUp;
-                //SplineUtility.Evaluate<NativeSpline>(currentNativeSpline, t_, out currPos, out currTangent, out currUp);
+                //SplineUtility.Evaluate<NativeSpline>(currentNativeSpline, SplineProgress_, out currPos, out currTangent, out currUp);
 
                 //float3 outPos;
                 //float outT;
-                //Debug.Log("prevT:" + t_);
+                //Debug.Log("prevT:" + SplineProgress_);
 
                 //NativeSpline nextNativeSpline = new NativeSpline(nextContainer.Spline, nextContainer.transform.localToWorldMatrix);
                 //float3 nextTangent, nextUp;
@@ -705,39 +746,41 @@ public class SplineController : MonoBehaviour
                 float3 outPos;
                 float outT;
                 SplineUtility.GetNearestPoint<NativeSpline>(currentNativeSpline, hit.point, out outPos, out outT);
-                T = outT;
-                Debug.Log("currT:" + t_);
+                Progress = outT;
+                Debug.Log("currT:" + SplineProgress_);
             }
         }
         else
         {
             Debug.Log("Raycast == false");
-            ClampT();
-            MoveAlongSpline(t_);
+            ClampProgress();
+            MoveAlongSpline(SplineProgress_);
         }
     }
     public void RayUnderSpline(Vector3 pos, Vector3 dir)
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(pos + new Vector3(0, offsetRayStartPosY, 0), dir, out hit, Mathf.Infinity, splineLayerSettings_.groundLayer))
+        if (Physics.Raycast(pos + new Vector3(0, offsetRayStartPosY, 0), dir, out hit, Mathf.Infinity, SplineLayerSettings.groundLayer))
         {
-            Debug.Log( "ray to "+hit.collider.gameObject.name);
+            Debug.Log($"[RayUnderSpline] Ray hit: {hit.collider.gameObject.name}, Current spline: {currentSplineContainer_?.name}");
             SplineContainer foundSpline = hit.collider.gameObject.GetComponent<SplineContainer>();
             if (foundSpline != null && foundSpline != currentSplineContainer_)
             {
+                Debug.Log($"[RayUnderSpline] Pos: {pos}");
+
+                Debug.Log($"[RayUnderSpline] Found different spline: {foundSpline.name}, notifying PlayerController");
                 // PlayerControllerに新しいSplineの発見を通知
                 NotifyPlayerOfNewSpline(foundSpline);
-
             }
             else
             {
-                //Debug.Log("No SplineContainer");
+                Debug.Log($"[RayUnderSpline] Same spline or no SplineContainer found");
             }
         }
         else
         {
-            Debug.Log("no ray");
+            Debug.Log("[RayUnderSpline] No ray hit");
         }
     }
 
@@ -758,7 +801,12 @@ public class SplineController : MonoBehaviour
     {
         if (followTarget_ != null)
         {
-            RayUnderSpline(followTarget_.transform.position,-followTarget_.transform.up);
+            RayUnderSpline(followTarget_.transform.position, -followTarget_.transform.up);
+        }
+        else
+        {
+            Debug.LogWarning("[CheckUnderSpline] followTarget_ is null, using SplineController position as fallback");
+            RayUnderSpline(transform.position, -transform.up);
         }
     }
 

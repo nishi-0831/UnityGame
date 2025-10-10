@@ -56,11 +56,11 @@ public class StrongEnemy : PlayerInteractableBase
         float ballT;
         if(IsMovingLeft)
         {
-            ballT = splineController_.T - ballOffsetT_;
+            ballT = splineController_.Progress - ballOffsetT_;
         }
         else
         {
-            ballT = splineController_.T + ballOffsetT_;
+            ballT = splineController_.Progress + ballOffsetT_;
         }
 
         var ballMovement = ball.GetComponent<RollingBallSplineMovement>();
@@ -81,10 +81,10 @@ public class StrongEnemy : PlayerInteractableBase
     }
 
    
-    public override void OnRequestDestroy()
-    {
-        Destroy(gameObject);
-    }
+    //public override void OnRequestDestroy()
+    //{
+    //    Destroy(gameObject);
+    //}
     // IPlayerInteractableŽÀ‘•
     public override void OnStompedCore(GameObject player)
     {
@@ -96,6 +96,6 @@ public class StrongEnemy : PlayerInteractableBase
     public override void OnSideHitCore(GameObject player)
     {
         PlayerInteractionUtils.ApplyDamage(player,DamageToPlayer);
-        PlayerInteractionUtils.ApplySideBounce(player, splineController_.T);
+        PlayerInteractionUtils.ApplySideBounce(player, splineController_.Progress);
     }
 }

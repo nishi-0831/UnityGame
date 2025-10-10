@@ -123,10 +123,10 @@ namespace SAColliderHullReducer
 	
 	
 	
-	//template <class T>
-	//void Swap(T &a,T &b)
+	//template <class Progress>
+	//void Swap(Progress &a,Progress &b)
 	//{
-	//    T tmp = a;
+	//    Progress tmp = a;
 	//    a=b;
 	//    b=tmp;
 	//}

@@ -34,14 +34,14 @@ public static class PlayerInteractionUtils
     /// </summary>
     public static void ApplyStompBounce(GameObject player, float force)
     {
-        AnimationController ac = GetAnimationController(player);
-        if (ac != null) ac.AddVerticalForce(force);
+        PlayerController pc = GetPlayerController(player);
+        if (pc != null) pc.ApplyStompBounce(force);
     }
 
-    public static void ApplySideBounce(GameObject player,float t)
+    public static void ApplySideBounce(GameObject player,float progress)
     {
         PlayerController pc = GetPlayerController(player);
-        if (pc != null) pc.SideBounce(t);
+        if (pc != null) pc.SideBounce(progress);
     }
     public static void ApplySideBounce(GameObject player,Vector3 pos)
     {

@@ -54,7 +54,7 @@ public class RollingBallSplineMovement : PlayerInteractableBase
         this.splineController_.currentSplineContainer_ = splineContainer;
         splineController_.SetSplineMeshRadius();
 
-        this.splineController_.T = t;
+        this.splineController_.Progress = t;
         this.speed_ = moveSpeed;
         this.rollSpeed = rollSpeed;
         this.IsMovingLeft = isLeft;
@@ -63,7 +63,7 @@ public class RollingBallSplineMovement : PlayerInteractableBase
 
     protected override void UpdateMovement()
     {
-        splineController_.UpdateT(speed_);
+        splineController_.UpdateProgress(speed_);
         EvaluationInfo info = splineController_.EvaluationInfo;
         Vector3 splineMovement = splineController_.GetSplineMovementDelta();
         lastVelosity_ = splineMovement / Time.deltaTime;
@@ -150,7 +150,7 @@ public class RollingBallSplineMovement : PlayerInteractableBase
     public override void OnSideHitCore(GameObject player)
     {
         PlayerInteractionUtils.ApplyDamage(player, DamageToPlayer);
-        PlayerInteractionUtils.ApplySideBounce(player, T);
+        PlayerInteractionUtils.ApplySideBounce(player, Progress);
     }
     public void OnTriggerEnter(Collider other)
     {
