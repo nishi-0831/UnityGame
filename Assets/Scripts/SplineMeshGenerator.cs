@@ -25,7 +25,7 @@ namespace Assets.Scripts
 
         [Header("Collider 生成オプション")]
         [SerializeField] private bool addCollider = true;
-        [SerializeField] List<Collider> createdColliders = new List<Collider>();
+        private List<Collider> createdColliders = new List<Collider>();
 
         private ProBuilderMesh pbMesh;
 
@@ -82,10 +82,11 @@ namespace Assets.Scripts
             for (int i = 0; i < knotCount; i++)
             {
                 Vector3 pLocal = spline[i].Position; // 既にローカル座標
-                Vector3 A = pLocal + Vector3.left * (width / 2);
-                Vector3 B = pLocal + Vector3.right * (width / 2);
-                Vector3 C = A + Vector3.down * (height);
-                Vector3 D = B + Vector3.down * (height);
+                Quaternion rotLocal = spline[i].Rotation;
+                Vector3 A = pLocal + rotLocal * Vector3.left * (width / 2);
+                Vector3 B = pLocal + rotLocal * Vector3.right * (width / 2);
+                Vector3 C = B + rotLocal * Vector3.down * (height);
+                Vector3 D = A + rotLocal * Vector3.down * (height);
                 positions.Add(A); // index +0
                 positions.Add(B); // +1
                 positions.Add(C); // +2
@@ -114,21 +115,21 @@ namespace Assets.Scripts
                 // 上面 (法線 +Y) : A0, A1, B1, B0
                 AddQuadFace(faces, A0, A1, B1, B0);
                 // 下面 (法線 -Y) : C0, C1, D1, D0  (上面とは逆向きになるように)
-                AddQuadFace(faces, D0, D1, C1, C0);
+                AddQuadFace(faces, C0, C1, D1, D0);
                 // 側面1 (幅=0 平面) (法線 -X) : A0, C0, C1, A1
-                AddQuadFace(faces, A0, C0, C1, A1);
+                AddQuadFace(faces, A1, A0,D0, D1);
                 // 側面2 (幅=width 平面) (法線 +X) : B0, B1, D1, D0
-                AddQuadFace(faces, B0, B1, D1, D0);
+                AddQuadFace(faces, C1, C0,B0, B1);
 
                 // 始端に面を生成 (Open かつ 最初の辺のみ)
                 if (!closed && generateEndCaps && seg == 0)
                 {
-                    AddQuadFace(faces, A0, B0, D0, C0); // 始端
+                    AddQuadFace(faces, A0, B0, C0, D0); // 始端
                 }
                 // 終端に面を生成 (Open かつ 最後の辺のみ)
                 if (!closed && generateEndCaps && seg == segmentCount - 1)
                 {
-                    AddQuadFace(faces, A1, C1, D1, B1); // 終端
+                    AddQuadFace(faces, D1, C1, B1, A1); // 終端
                 }
             }
 
@@ -282,6 +283,9 @@ namespace Assets.Scripts
                 var box = child.AddComponent<BoxCollider>();
                 box.size = new Vector3(width, height, segmentLength);
                 box.center = new Vector3(0, -height * 0.5f, 0); // Y中心をメッシュに合わせて調整
+
+                // BoxColliderの参照を保持
+                createdColliders.Add(box);
             }
         }
 
