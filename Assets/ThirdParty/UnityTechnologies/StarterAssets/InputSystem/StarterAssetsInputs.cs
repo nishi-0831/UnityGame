@@ -36,10 +36,12 @@ namespace StarterAssets
         public void OnMove(InputAction.CallbackContext context)
 		{
 			MoveInput(context.ReadValue<Vector2>());
-		}
+            Debug.Log("OnMove");
 
-		//public void OnLook(InputValue value)
-		public void OnLook(InputAction.CallbackContext context)
+        }
+
+        //public void OnLook(InputValue value)
+        public void OnLook(InputAction.CallbackContext context)
         {
 			if(cursorInputForLook)
 			{
@@ -64,9 +66,18 @@ namespace StarterAssets
 
         }
 
-		public void OnSprint(InputValue value)
+		public void OnSprint(InputAction.CallbackContext context)
 		{
-			SprintInput(value.isPressed);
+			switch(context.phase)
+			{
+				case InputActionPhase.Performed:
+					SprintInput(true); 
+					break;
+				case InputActionPhase.Canceled:
+					SprintInput(false);
+					break;
+			}
+			Debug.Log("OnSprint");
 		}
 #endif
 		

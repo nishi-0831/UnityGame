@@ -12,6 +12,7 @@ using UnityEngine.Splines;
 [RequireComponent(typeof(AnimationController))]
 public class PlayerController : SplineMovementBase
 {
+    [SerializeField] private float runSpeed_ = 20;
     [SerializeField] private int hp_ = 3;
     [SerializeField] float takeDamageInterval_ = 1.0f; // ダメージを受ける間隔
     [SerializeField] private bool canTakeDamage_ = true; // ダメージを受けられるかどうか
