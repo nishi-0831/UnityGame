@@ -515,7 +515,11 @@ public class SplineController : MonoBehaviour
     }
     public void ClampProgress()
     {
-        Progress = Mathf.Clamp01(SplineProgress_);
+        // 1.0f‚ð’´‚¦‚Ä‚¢‚½ê‡‚Í0.99f‚É‚·‚é
+        if (SplineProgress_ > 1.0f)
+            Progress = 0.99f;
+        else
+            Progress = Mathf.Clamp01(SplineProgress_);
     }
     #region ‘¼‚ÌSplineContainer‚Ö‚ÌˆÚ“®ŠÖ˜A
     public void MoveOtherSplineMinOrMax()

@@ -22,7 +22,7 @@ public class FollowingCamera : MonoBehaviour
 
    
     [SerializeField] private float distance = 4.0f; // distance from following object
-    [SerializeField] private float polarAngle = 90.0f; // angle with y-vec ‹ÉŠp
+    [SerializeField] private float polarAngle = 90.0f; // angle with verticalSpacing-vec ‹ÉŠp
     [SerializeField] private float azimuthalAngle = 90.0f; // angle with x-vec •ûˆÊŠp
 
     [SerializeField] private float minDistance = 1.0f;
@@ -111,7 +111,7 @@ public class FollowingCamera : MonoBehaviour
          
         y = polarAngle + y;
         polarAngle = Mathf.Clamp(y, minPolarAngle, maxPolarAngle);
-        //polarAngle = Mathf.Repeat(y, 360);
+        //polarAngle = Mathf.Repeat(verticalSpacing, 360);
        
     }
 

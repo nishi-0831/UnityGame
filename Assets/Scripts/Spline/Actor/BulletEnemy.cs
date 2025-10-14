@@ -44,7 +44,7 @@ public class BulletEnemy : PlayerInteractableBase
         transform.LookAt(targetPlayer.transform);
         //ターゲットへの方向ベクトルの計算(横向きのみ)
         //Vector3 direction = targetPlayer.transform.position - transform.position;
-        //direction.y = 0;
+        //direction.verticalSpacing = 0;
         //Quaternion lookRotation = Quaternion.LookRotation(direction,Vector3.up);
         //transform.rotation = lookRotation;
         // 更新処理をここに記述

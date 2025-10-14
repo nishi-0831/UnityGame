@@ -150,6 +150,7 @@ namespace Assets.Scripts
             Debug.Log($"Spline Mesh Generated: Knots={knotCount}, Segments={segmentCount}, Vertices={positions.Count}, Faces={faces.Count}");
         }
 
+        
         private void AddQuadFace(List<Face> faces, int v0, int v1, int v2, int v3)
         {
             faces.Add(new Face(new int[] { v0, v1, v2, v0, v2, v3 }));
@@ -234,7 +235,7 @@ namespace Assets.Scripts
                 createdColliders.RemoveAt(i);
             }
         }
-
+        [ContextMenu("Generate Collider")]
         private void BuildSegmentChildColliders()
         {
             var spline = splineContainer.Spline;

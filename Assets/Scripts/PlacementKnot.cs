@@ -17,6 +17,8 @@ public class PlacementKnot : MonoBehaviour
     [SerializeField,Range(3,64)]private int minKnotNum = 6;
     [Header("等間隔配置のサンプリング精度")]
     [SerializeField, Range(4, 1024)] private int samplesPerSegment = 32;
+    [Header("螺旋状配置時のKnot間の垂直方向の間隔（Y軸方向の増分）")]
+    [SerializeField] private float verticalSpacing;
 
     [ContextMenu("PlacementKnot (等距離)")]
     public void PlacementPerSeg()
@@ -175,11 +177,12 @@ public class PlacementKnot : MonoBehaviour
             float z = Mathf.Sin(rad) * radius;
 
             var knot = spline[i];
-            knot.Position = new float3(x, transform.position.y, z);
+            knot.Position = new float3(x, transform.position.y + (i * verticalSpacing), z);
             
             spline[i] = knot;
         }
         spline.SetTangentMode(TangentMode.AutoSmooth);
+        spline.Closed = close;
     }
 
 }

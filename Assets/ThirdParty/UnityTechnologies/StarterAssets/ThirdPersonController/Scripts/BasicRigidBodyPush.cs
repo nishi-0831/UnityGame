@@ -29,6 +29,8 @@ public class BasicRigidBodyPush : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         
+
+
     }
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
@@ -36,13 +38,13 @@ public class BasicRigidBodyPush : MonoBehaviour
     }
     private void HandlePlayerInteraction(Collider other, IPlayerInteractable interactable)
     {
-        //Debug.Log($"{transform.position.y} > {other.transform.position.y}");
+        //Debug.Log($"{transform.position.verticalSpacing} > {other.transform.position.verticalSpacing}");
         // 踏みつけ判定：プレイヤーが相手より上にいるかチェック
         bool isStomping = transform.position.y > other.transform.position.y + stompThreshold;
         
         //// プレイヤーの速度も考慮（下向きに移動中かチェック）
         //var playerRigidbody = GetComponent<Rigidbody>();
-        //bool isMovingDown = playerRigidbody != null && playerRigidbody.linearVelocity.y < -1f;
+        //bool isMovingDown = playerRigidbody != null && playerRigidbody.linearVelocity.verticalSpacing < -1f;
         
         if (isStomping)
         {

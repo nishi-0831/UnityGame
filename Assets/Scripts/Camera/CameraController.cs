@@ -229,7 +229,7 @@ public class CameraController : MonoBehaviour
 
         Vector3 sphericalPosition = new Vector3(
             lookAtPos.x + distance_ * Mathf.Sin(polarRad) * Mathf.Cos(azimuthalRad),
-            //lookAtPos.y + backDistance_ * Mathf.Cos(polarRad),
+            //lookAtPos.verticalSpacing + backDistance_ * Mathf.Cos(polarRad),
             transform.position.y,
             lookAtPos.z + distance_ * Mathf.Sin(polarRad) * Mathf.Sin(azimuthalRad)
         );
