@@ -63,10 +63,6 @@ public class PlayerController : SplineMovementBase
     Vector3 actualMovement;
     [SerializeField]Vector3 desiredMovement = Vector3.zero;
     //[SerializeField] private CharacterController characterController_;
-    [SerializeField]Vector3 jumpVerticalMovement;
-    [SerializeField] Vector3 newPosition;
-    [SerializeField] Vector3 actualNoVerticalMovementPos;
-    [SerializeField]Vector3 inputMovement;
     [SerializeField]Vector3 currentHorizontalPosition;
     [SerializeField]Vector3 knockbackMovement = Vector3.zero;
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
@@ -101,19 +97,22 @@ public class PlayerController : SplineMovementBase
         // Spline”ÍˆÍ“à‚Ìê‡
         if (currentT >= 0f && currentT < 1f && !isOffSpline_)
         {
-
             // ’Êí‚ÌSplineˆÚ“®
             transform.rotation = splineController_.EvaluationInfo.rotation;
-
-            
-
+        
             if (!animController_.IsStunned && !isBeingSmashed_)
             {
                 if (inputs_.move.x != 0)
                 {
                     prevT = currentT;
-                    splineController_.Move(speed_);
-                    
+                    if(animController_.IsRunning)
+                    {
+                        splineController_.Move(runSpeed_);
+                    }
+                    else
+                    {
+                        splineController_.Move(speed_);
+                    }
                 }
             }
          
@@ -123,7 +122,6 @@ public class PlayerController : SplineMovementBase
         // Spline”ÍˆÍŠO‚Ìê‡
         else
         {
-
             desiredMovement = HandleOffSplineMovement(currentT);
             
             Vector3 startPos = transform.position;
@@ -250,15 +248,15 @@ public class PlayerController : SplineMovementBase
                 splineController_.isMovingLeft = false;
             }
 
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                clearZone_.ClearGame();
-            }
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                animController_.Dying();
-                OnTriggerDyingAnim();
-            }
+            //if (Input.GetKeyDown(KeyCode.K))
+            //{
+            //    clearZone_.ClearGame();
+            //}
+            //if (Input.GetKeyDown(KeyCode.L))
+            //{
+            //    animController_.Dying();
+            //    OnTriggerDyingAnim();
+            //}
             if (inputs_.jump && animController_.Grounded)
             {
                 jumpControllerVariableHeight_.StartJump(splineController_.EvaluationInfo.position.y);

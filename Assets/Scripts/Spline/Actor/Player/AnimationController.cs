@@ -43,6 +43,7 @@ public class AnimationController : MonoBehaviour
     [SerializeField] private bool grounded_ = true;
     [SerializeField] private float currentOffsetY;
     [SerializeField] private bool _isAir;
+    [SerializeField] private bool isRunning;
     private float _jumpTimeoutDelta;
     [SerializeField] private float _fallTimeoutDelta;
     public bool jump;
@@ -61,6 +62,7 @@ public class AnimationController : MonoBehaviour
     {
         get { return _isAir; }
     }
+    public bool IsRunning { get { return isRunning; } }
 
     public float CurrentJumpOffsetY => currentOffsetY;
 
@@ -93,7 +95,10 @@ public class AnimationController : MonoBehaviour
     {
         JumpAndGravity();
         UpdateAnimations();
-        //jump = _animator.GetBool(_animIDJump);
+        if(Grounded)
+        {
+            isRunning = inputs_.sprint;
+        }
     }
     
     public void ResetVerticalVelocity()

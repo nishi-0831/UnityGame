@@ -225,6 +225,10 @@ public class JumpControllerVariableHeight : MonoBehaviour
             isStompJump = false;
             velocityY = 0f;
         }
+        else
+        {
+            isJumping = true;
+        }
         // velocityY はワールド基準の鉛直速度なので基本的に維持する。
     }
 
