@@ -34,6 +34,7 @@ public class AnimationController : MonoBehaviour
     private int _animIDCanInputReact;
     private int _animIDIsAir;
     private int _animIDOnSmashed;
+    private int _animIDSprint;
     // Components
     private Animator _animator;
     private bool _hasAnimator;
@@ -98,6 +99,7 @@ public class AnimationController : MonoBehaviour
         if(Grounded)
         {
             isRunning = inputs_.sprint;
+            _animator.SetBool(_animIDSprint, inputs_.sprint);
         }
     }
     
@@ -125,6 +127,7 @@ public class AnimationController : MonoBehaviour
         _animIDDying = Animator.StringToHash("Dying");
         _animIDIsAir = Animator.StringToHash("IsAir");
         _animIDOnSmashed = Animator.StringToHash("Smash");
+        _animIDSprint = Animator.StringToHash("Sprint");
     }
 
     private void UpdateAnimations()
