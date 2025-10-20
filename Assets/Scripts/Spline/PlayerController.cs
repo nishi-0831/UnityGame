@@ -419,6 +419,7 @@ public class PlayerController : SplineMovementBase
         jumpControllerVariableHeight_.Tick(splineController_.EvaluationInfo.position);
         CheckSplineContainerChange();
         UpdateCamera();
+        PlayerDie();
 
         Debug.DrawRay(transform.position, offSplineVelocity_ * 1000f);
         // 空中にいる場合は下方向のSplineをチェック
@@ -566,6 +567,14 @@ public class PlayerController : SplineMovementBase
     /// HPが0以下か
     /// </summary>
     /// <returns>HPが0以下ならば true</returns>
+    
+    public void PlayerDie()
+    {
+        if(IsDying())
+        {
+            Debug.Log("RobotKyle is dead");
+        }
+    }
     public bool IsDying()
     {
         return hp_ <= 0;
