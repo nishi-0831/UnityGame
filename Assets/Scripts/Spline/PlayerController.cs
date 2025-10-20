@@ -72,6 +72,9 @@ public class PlayerController : SplineMovementBase
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
     public float T { get { return splineController_.Progress; } }
     public int Hp { get { return hp_; } }
+
+    
+
     protected override void Initialize()
     {
         if (animController_ == null)
