@@ -73,6 +73,8 @@ public class PlayerController : SplineMovementBase
     public float T { get { return splineController_.Progress; } }
     public int Hp { get { return hp_; } }
 
+    private AudioSource audioSource;
+
     
 
     protected override void Initialize()
@@ -351,11 +353,14 @@ public class PlayerController : SplineMovementBase
                 animController_.Dying();
                 OnTriggerDyingAnim();
             }
+
             if (inputs_.jump && animController_.Grounded)
             {
+               
                 jumpControllerVariableHeight_.StartJump(splineController_.EvaluationInfo.position.y);
             }
         }
+      
 
         // アニメーション用の入力設定
         animController_.SetMoveInput(inputs_.move);
