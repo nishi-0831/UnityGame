@@ -1,6 +1,9 @@
+using JetBrains.Annotations;
 using MySpline;
 using StarterAssets;
+using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
@@ -72,6 +75,7 @@ public class PlayerController : SplineMovementBase
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
     public float T { get { return splineController_.Progress; } }
     public int Hp { get { return hp_; } }
+    public Action GameOverCB_;
     protected override void Initialize()
     {
         if (animController_ == null)
@@ -87,9 +91,16 @@ public class PlayerController : SplineMovementBase
         // 初期Spline位置を記録
         previousSplinePosition_ = splineController_.GetSplineMeshPos();
         inputs_.onReleaseJumpBtn += jumpControllerVariableHeight_.Release;
+
+        //ゲームオーバー時に呼び出す関数
+        GameOverCB_ += Hoge;
+        GameOverCB_ += test;
     }
 
-    
+    public void test()
+    {
+        Debug.Log("test");
+    }
 
     private void HandleSplineMovement()
     {
@@ -104,82 +115,7 @@ public class PlayerController : SplineMovementBase
             // 通常のSpline移動
             transform.rotation = splineController_.EvaluationInfo.rotation;
 
-            //Vector3 currentSplinePosition = splineController_.GetSplineMeshPos();
-
-            //// Splineの垂直方向の変化量を計算（前フレームの位置と比較）
-            //if (!isFirstFrame_)
-            //{
-            //    splineDelta = currentSplinePosition - previousSplinePosition_;
-            //    splineVerticalDelta = new Vector3(0, splineDelta.y, 0);
-            //}
-            //else
-            //{
-            //    splineVerticalDelta = Vector3.zero;
-            //    splineDelta = Vector3.zero;
-            //}
-
-            //// ジャンプによる垂直方向の移動量を
-            //jumpVerticalMovement = Vector3.up * animController_.CurrentJumpOffsetY;
-
-            //// 入力による水平移動量を計算
-
-
-
-            //// ノックバックによる移動量を計算
-            //if (knockbackForce > 0)
-            //{
-            //    Vector3 knockbackDirection = splineController_.EvaluationInfo.tangent.normalized;
-            //    if (splineController_.isMovingLeft)
-            //    {
-            //        knockbackDirection *= -1;
-            //    }
-            //    knockbackDirection *= knockbackDir_;
-            //    knockbackMovement = knockbackDirection * knockbackForce * Time.deltaTime;
-            //}
-            //else
-            //{
-            //    knockbackMovement = Vector3.zero;
-            //}
-
-            //// 入力による移動量を計算（Splineに沿った水平移動のみ）
-            //inputMovement = Vector3.zero;
-            //if (inputDir != 0)
-            //{
-            //    Vector3 inputDirection = splineController_.EvaluationInfo.tangent.normalized;
-            //    if (splineController_.isMovingLeft)
-            //    {
-            //        inputDirection *= -1;
-            //    }
-            //    inputDirection *= inputDir * splineController_.splineDirection_;
-            //    inputMovement = inputDirection * speed_ * Time.deltaTime;
-            //}
-
-            //// 実際の移動計算方法を変更
-            //// 現在位置をベースに、各移動成分を加算
-            //Vector3 horizontalSplineMovement = new Vector3(splineDelta.x, 0, splineDelta.z);
-
-            //newPosition = transform.position + 
-            //             splineVerticalDelta + 
-            //             jumpVerticalMovement + 
-            //             inputMovement + 
-            //             knockbackMovement + 
-            //             horizontalSplineMovement;
-
-            //desiredMovement = newPosition - transform.position;
-
-            //// 非常に小さい移動量は無視
-            //if (desiredMovement.magnitude <= 0.001f)
-            //{
-            //    desiredMovement = Vector3.zero;
-            //}
-
-            //// CharacterControllerで移動
-            //Vector3 startPos = transform.position;
-            //if (desiredMovement != Vector3.zero)
-            //{
-            //    characterController_.Move(desiredMovement);
-            //}
-            //actualMovement = transform.position - jumpVerticalMovement - startPos;
+           
 
             if (!animController_.IsStunned && !isBeingSmashed_)
             {
@@ -567,13 +503,22 @@ public class PlayerController : SplineMovementBase
     /// HPが0以下か
     /// </summary>
     /// <returns>HPが0以下ならば true</returns>
-    
+
     public void PlayerDie()
     {
-        if(IsDying())
+        if (IsDying())
         {
-            Debug.Log("RobotKyle is dead");
+            GameOverCB_?.Invoke();
         }
+    }
+
+    void Hoge()
+    {
+        Debug.Log("hoge1");
+    }
+    public void GameOverEvent()
+    {
+        
     }
     public bool IsDying()
     {
