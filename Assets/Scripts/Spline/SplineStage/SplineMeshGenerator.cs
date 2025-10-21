@@ -22,6 +22,7 @@ namespace Assets.Scripts
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private bool generateEndCaps = true;  // Open Spline の両端に蓋を付ける
         [SerializeField] private bool autoGenerateOnPlay = false;
+        
 
         [Header("Collider 生成オプション")]
         [SerializeField] private bool addCollider = true;
@@ -146,7 +147,7 @@ namespace Assets.Scripts
                 BuildSegmentChildColliders();
             }
             //pbMesh.マテリアル...
-
+            EnsureDefaultMaterial();
             Debug.Log($"Spline Mesh Generated: Knots={knotCount}, Segments={segmentCount}, Vertices={positions.Count}, Faces={faces.Count}");
         }
 

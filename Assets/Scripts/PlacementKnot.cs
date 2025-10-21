@@ -1,11 +1,13 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.Mathematics;
+using Unity.VisualScripting;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.Splines;
-using Unity.Mathematics;
-using UnityEditor.ShaderGraph.Internal;
 
+[RequireComponent(typeof(SplineContainer))]
 public class PlacementKnot : MonoBehaviour
 {
     [SerializeField] private float radius;
@@ -150,8 +152,9 @@ public class PlacementKnot : MonoBehaviour
         spline = splineContainer.Spline;
         if (spline == null || spline.Count == 0)
         {
-            Debug.LogError("Spline‚ª‹ó‚Å‚·");
-            return;
+            splineContainer.AddSpline();
+            //Debug.LogError("Spline‚ª‹ó‚Å‚·");
+            //return;
         }
         var knots = spline.Knots;
 
@@ -159,6 +162,7 @@ public class PlacementKnot : MonoBehaviour
         if (knotCount < minKnotNum)
         {
             int addNum = minKnotNum - knotCount;
+            
             for (int i = 0; i < addNum; i++)
             {
                 // V‚µ‚¢Knot‚ð“K“–‚ÈˆÊ’u‚Å’Ç‰Á
@@ -168,7 +172,8 @@ public class PlacementKnot : MonoBehaviour
             knotCount = spline.Count; 
         }
 
-        float degPerKnot = (360 / (float)knotCount);
+        int segmentCount = close ? knotCount : Mathf.Max(1, knotCount - 1);
+        float degPerKnot = (360 / (float)segmentCount);
 
         for (int i = 0; i < knotCount; i++)
         {
@@ -177,8 +182,9 @@ public class PlacementKnot : MonoBehaviour
             float z = Mathf.Sin(rad) * radius;
 
             var knot = spline[i];
-            knot.Position = new float3(x, transform.position.y + (i * verticalSpacing), z);
-            
+            knot.Position = new float3(x, i * verticalSpacing, z);
+            knot.Rotation = Quaternion.LookRotation(knot.TangentOut, Vector3.up);
+
             spline[i] = knot;
         }
         spline.SetTangentMode(TangentMode.AutoSmooth);
