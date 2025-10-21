@@ -9,12 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46db505980735f4468304e60d16e5601, type: 3}
-  m_Name: ScoreData
+  m_Script: {fileID: 11500000, guid: abecc452c44e2d94f8fb616e13ddc5f8, type: 3}
+  m_Name: Stage2Setting
   m_EditorClassIdentifier: 
-  initScore: 0
-  maxScore: 999
-  minScore: 0
-  initTime: 0
-  score: 0
-  clearTime: 0.5397604
+  clearTimeLimit: 50
+  scoreTarget: 1500
+  hpTarget: 98

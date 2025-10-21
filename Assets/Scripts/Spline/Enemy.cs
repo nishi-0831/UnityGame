@@ -22,12 +22,26 @@ public class Enemy : PlayerInteractableBase
     // Update is called once per frame
     protected override void OnReachMaxT()
     {
-        splineController_.Reverse();
+        if(splineController_.currentSplineContainer_.Spline.Closed)
+        {
+            splineController_.Loop();
+        }
+        else
+        {
+            splineController_.Reverse();
+        }
     }
 
     protected override void OnReachMinT()
     {
-        splineController_.Reverse();
+        if (splineController_.currentSplineContainer_.Spline.Closed)
+        {
+            splineController_.Loop();
+        }
+        else
+        {
+            splineController_.Reverse();
+        }
     }
 
     // IPlayerInteractableŽÀ‘•

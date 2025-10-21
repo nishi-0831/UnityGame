@@ -29,6 +29,7 @@ public class PlayerController : SplineMovementBase
     private SplineContainer previousSplineContainer_;
     [SerializeField] private LayerMask groundLayer_;
     private int knockbackDir_;
+
     [Header("デバッグ用")]
     [SerializeField] private ClearZone clearZone_;
     public Vector3 center_;
@@ -70,6 +71,7 @@ public class PlayerController : SplineMovementBase
     [SerializeField]Vector3 knockbackMovement = Vector3.zero;
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
     public float T { get { return splineController_.Progress; } }
+     public int Hp() { return hp_; }
     protected override void Initialize()
     {
         if (animController_ == null)
@@ -557,10 +559,16 @@ public class PlayerController : SplineMovementBase
 
         hp_ -= damageValue;
         StartCoroutine(WaitCanTakeDamage());
-        if (hp_ <= 0)
-        {
-            //OnTriggerDyingAnim();
-        }
+        
+    }
+
+    /// <summary>
+    /// HPが0以下か
+    /// </summary>
+    /// <returns>HPが0以下ならば true</returns>
+    public bool IsDying()
+    {
+        return hp_ <= 0;
     }
     public void SideBounce(float enemyProgress)
     {
