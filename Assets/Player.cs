@@ -25,7 +25,8 @@ public class Player : MonoBehaviour
             //playerRb.AddForce(Vector3.up * 400);
 
             // ‰¹‚ð–Â‚ç‚·
-            audioSource.Play();
+            //audioSource.Play();
+            AudioManager.Instance.PlaySound(audioSource.clip);
         }
     }
 }

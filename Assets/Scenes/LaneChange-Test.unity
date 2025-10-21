@@ -831,6 +831,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 832821366}
+    - target: {fileID: 7800242400662634195, guid: 4f557c10b28a6f84798968c02309f882, type: 3}
+      propertyPath: m_VersionIndex
+      value: 352
+      objectReference: {fileID: 0}
     - target: {fileID: 8137196275131088919, guid: 4f557c10b28a6f84798968c02309f882, type: 3}
       propertyPath: SplineProgress_
       value: 0.711
