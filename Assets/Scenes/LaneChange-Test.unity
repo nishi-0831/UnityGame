@@ -1505,7 +1505,6 @@ MonoBehaviour:
   player: {fileID: 1490862562}
   stageName: Stage1Setting
   stageSetting: {fileID: 11400000, guid: 5461713f6e26850409abf3e89692e888, type: 2}
-  achievementChecker: {fileID: 165779542}
 --- !u!4 &165779543
 Transform:
   m_ObjectHideFlags: 0

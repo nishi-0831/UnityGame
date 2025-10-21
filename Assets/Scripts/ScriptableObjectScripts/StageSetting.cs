@@ -16,8 +16,8 @@ public class StageSetting : ScriptableObject
     public bool scoreAchieved;
     public bool hpAchieved;
 
+
+
     
-
-
     //‚±‚±‚Ébool‚Å’B¬‚µ‚Ä‚¢‚éƒJ‚ğ‘‚­
 }

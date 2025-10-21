@@ -15,3 +15,6 @@ MonoBehaviour:
   clearTimeLimit: 0
   scoreTarget: 0
   hpTarget: 99
+  clearTimeAchieved: 0
+  scoreAchieved: 0
+  hpAchieved: 0
