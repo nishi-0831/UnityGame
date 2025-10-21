@@ -1517,7 +1517,6 @@ MonoBehaviour:
   player: {fileID: 1490862562}
   stageName: Stage1Setting
   stageSetting: {fileID: 11400000, guid: 5461713f6e26850409abf3e89692e888, type: 2}
-  achievementChecker: {fileID: 165779542}
 --- !u!4 &165779543
 Transform:
   m_ObjectHideFlags: 0
@@ -3159,19 +3158,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
-  m_MeshLodInfo:
-    serializedVersion: 2
-    m_LodSelectionCurve:
-      serializedVersion: 1
-      m_LodSlope: 0
-      m_LodBias: 0
-    m_NumLevels: 1
-    m_SubMeshes:
-    - serializedVersion: 2
-      m_Levels:
-      - serializedVersion: 1
-        m_IndexStart: 0
-        m_IndexCount: 0
 --- !u!4 &797524054 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 878685388808868575, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
@@ -6278,3 +6264,4 @@ SceneRoots:
   - {fileID: 152818225}
   - {fileID: 165779543}
   - {fileID: 672556029}
+  - {fileID: 780736083}
