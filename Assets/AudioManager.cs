@@ -4,7 +4,7 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    [SerializeField] private AudioClip defaultClip; // テスト用(任意)
+    [SerializeField] private AudioClip defaultClip; //テスト用(任意)
 
     void Awake()
     {
@@ -12,20 +12,20 @@ public class AudioManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // シーンをまたいでも消えない
+            DontDestroyOnLoad(gameObject); //シーンをまたいでも消えない
         }
         else
         {
             Destroy(gameObject);
         }
     }
-    void Start()
-    {
-        PlayDefault(); // 起動時にdefaultClipを再生
-    }
-    /// <summary>
-    /// 指定したAudioClipを再生する
-    /// </summary>
+    //void Start()
+    //{
+    //    PlayDefault(); //起動時にdefaultClipを再生
+    //}
+    ///<summary>
+    ///指定したAudioClipを再生する
+    ///</summary>
     public void PlaySound(AudioClip clip, float volume = 1f)
     {
         if (clip == null)
@@ -34,14 +34,14 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        // 一時的なオブジェクトを生成して音を鳴らす
+        //一時的なオブジェクトを生成して音を鳴らす
         GameObject obj = new GameObject("Audio_" + clip.name);
         AudioSource source = obj.AddComponent<AudioSource>();
         source.clip = clip;
         source.volume = volume;
         source.Play();
 
-        // 再生が終わったら自動で削除
+        //再生が終わったら自動で削除
         Destroy(obj, clip.length);
     }
 
