@@ -3127,7 +3127,6 @@ GameObject:
   m_Component:
   - component: {fileID: 780736083}
   - component: {fileID: 780736082}
-  - component: {fileID: 780736084}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -3163,18 +3162,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &780736084
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 780736081}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ffe5d5d32fdf764485ba9a3bcf89a97, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &797524054 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 878685388808868575, guid: 02013088dbe656e409a8d46558936c9e, type: 3}
