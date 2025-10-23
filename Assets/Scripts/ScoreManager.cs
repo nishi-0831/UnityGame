@@ -71,11 +71,11 @@ public class ScoreManager : MonoBehaviour
         scoreData_.clearTime = Time.time - startTime_;
         if(remainingTime_ > 0) 
         {
-            CountDownTimer_();
+            CountDownTimer();
         }
     }
 
-    public void CountDownTimer_()
+    public void CountDownTimer()
     {
         remainingTime_ -= Time.deltaTime;
         if (remainingTime_ > 0)

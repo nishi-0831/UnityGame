@@ -1669,7 +1669,6 @@ GameObject:
   - component: {fileID: 372732517}
   - component: {fileID: 372732520}
   - component: {fileID: 372732519}
-  - component: {fileID: 372732518}
   - component: {fileID: 372732521}
   m_Layer: 5
   m_Name: timerText
@@ -1697,23 +1696,6 @@ RectTransform:
   m_AnchoredPosition: {x: -80, y: -15}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &372732518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 372732516}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35d79487804c3d84b8aa9e039a4de63e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoreData_: {fileID: 11400000, guid: 51960f99cbf94a74c865e108d36d38c4, type: 2}
-  startTime_: 0
-  remainingTime_: 20
-  endTime_: 0
-  timerText_: {fileID: 372732519}
 --- !u!114 &372732519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5614,9 +5596,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreData_: {fileID: 11400000, guid: 51960f99cbf94a74c865e108d36d38c4, type: 2}
   startTime_: 0
-  remainingTime_: 10
+  remainingTime_: 20
   endTime_: 0
-  timerText_: {fileID: 0}
+  timerText_: {fileID: 372732519}
 --- !u!4 &1709065433
 Transform:
   m_ObjectHideFlags: 0
