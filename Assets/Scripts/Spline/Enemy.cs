@@ -47,7 +47,7 @@ public class Enemy : PlayerInteractableBase
     // IPlayerInteractable実装
     public override void OnStompedCore(GameObject player)
     {
-        OnDamage();
+        OnDamage();//敵を倒したとき　ここに音を加えたい
 
         // プレイヤーに跳ね返り効果を与える
         PlayerInteractionUtils.ApplyStompBounce(player, StompBounceForce);
