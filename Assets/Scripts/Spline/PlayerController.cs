@@ -608,7 +608,7 @@ public class PlayerController : SplineMovementBase
     }
 
     private IEnumerator DyingAnim()
-    {
+    {       
         //‘JˆÚ‚É‚©‚©‚éŽžŠÔ
         float transitionDuration = 5.0f;
         float elapsed = 0f;

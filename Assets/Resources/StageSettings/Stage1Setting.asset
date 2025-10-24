@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clearTimeLimit: 0
   scoreTarget: 0
-  hpTarget: 99
+  hpTarget: 0
   clearTimeAchieved: 0
-  scoreAchieved: 0
-  hpAchieved: 0
+  scoreAchieved: 1
+  hpAchieved: 1

@@ -17,16 +17,16 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // スペースキーが押されたら
         if (Input.GetKeyDown(KeyCode.O))
         {
-            //Debug.Log("Jump Pressed!");
-            // 上向きの力を加える
-            //playerRb.AddForce(Vector3.up * 400);
-
-            // 音を鳴らす
-            //audioSource.Play();
-            AudioManager.Instance.PlaySound(audioSource.clip);
+            if (audioSource != null && audioSource.clip != null)
+            {
+                AudioManager.Instance.PlaySound(audioSource.clip);
+            }
+            else
+            {
+                Debug.LogWarning("AudioSourceまたはClipが設定されていません。");
+            }
         }
     }
 }
