@@ -27,7 +27,7 @@ public class Bullet : MonoBehaviour, IPlayerInteractable
     /// </summary>
     void Update()
     {
-
+       
     }
 
 }
