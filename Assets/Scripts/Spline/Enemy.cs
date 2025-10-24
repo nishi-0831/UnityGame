@@ -52,7 +52,7 @@ public class Enemy : PlayerInteractableBase
 
         if (AudioManager.Instance != null && enemyDieClip != null)
         {
-            AudioManager.Instance.PlaySound(enemyDieClip, 1f);
+            AudioManager.Instance.PlaySound(enemyDieClip, 0.3f);
         }
         OnDamage();//“G‚ğ“|‚µ‚½‚Æ‚«@‚±‚±‚É‰¹‚ğ‰Á‚¦‚½‚¢
 
