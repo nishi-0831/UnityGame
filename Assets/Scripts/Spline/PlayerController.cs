@@ -73,6 +73,7 @@ public class PlayerController : SplineMovementBase
     [SerializeField]Vector3 currentHorizontalPosition;
     [SerializeField]Vector3 knockbackMovement = Vector3.zero;
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
+    private bool isDead = false;
     public float T { get { return splineController_.Progress; } }
     public int Hp { get { return hp_; } }
 
@@ -80,9 +81,10 @@ public class PlayerController : SplineMovementBase
 
     
 
-    public Action GameOverCB_;
+    private Action GameOverCB_;
     protected override void Initialize()
     {
+        isDead = false;
         if (animController_ == null)
         {
             animController_ = GetComponent<AnimationController>();
@@ -105,6 +107,12 @@ public class PlayerController : SplineMovementBase
     public void test()
     {
         Debug.Log("test");
+    }
+
+    public void RegisterGameOverCallBack(Action gameOverAction)
+    {
+        GameOverCB_ += gameOverAction;
+
     }
 
     private void HandleSplineMovement()
@@ -363,7 +371,10 @@ public class PlayerController : SplineMovementBase
         jumpControllerVariableHeight_.Tick(splineController_.EvaluationInfo.position);
         CheckSplineContainerChange();
         UpdateCamera();
-        PlayerDie();
+        if (IsDying())
+        {
+            PlayerDie();
+        }
 
         Debug.DrawRay(transform.position, offSplineVelocity_ * 1000f);
         // 空中にいる場合は下方向のSplineをチェック
@@ -514,8 +525,10 @@ public class PlayerController : SplineMovementBase
 
     public void PlayerDie()
     {
-        if (IsDying())
+        
+        if (IsDying() && isDead == false)
         {
+            isDead = true;
             GameOverCB_?.Invoke();
         }
     }

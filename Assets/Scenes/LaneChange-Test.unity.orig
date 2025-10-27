@@ -4666,6 +4666,7 @@ GameObject:
   - component: {fileID: 1228460041}
   - component: {fileID: 1228460040}
   - component: {fileID: 1228460039}
+  - component: {fileID: 1228460043}
   m_Layer: 5
   m_Name: GameScene
   m_TagString: Untagged
@@ -4757,6 +4758,24 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1228460043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228460038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6b4c87b527e73a4e969659378a31f49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stageSetting: {fileID: 11400000, guid: 5461713f6e26850409abf3e89692e888, type: 2}
+  gameOverText: {fileID: 820153199}
+  gameClearText: {fileID: 370101241}
+  elapsedTime: 0
+  currentScore: 31
+  currentHP: 0
 --- !u!1 &1245127211
 GameObject:
   m_ObjectHideFlags: 0
@@ -6785,9 +6804,12 @@ SceneRoots:
   - {fileID: 1503481264}
   - {fileID: 1692501890}
   - {fileID: 152818225}
+<<<<<<< HEAD
   - {fileID: 165779543}
   - {fileID: 672556029}
   - {fileID: 1228460042}
   - {fileID: 1033124164}
   - {fileID: 798139695}
+=======
   - {fileID: 1775529588}
+>>>>>>> feature/PlayerDying
