@@ -3,3 +3,4 @@
 *.mat        merge=unityyamlmerge text eol=lf
 *.anim       merge=unityyamlmerge text eol=lf
 *.asset      merge=unityyamlmerge text eol=lf
+*.cs   merge=vsdiffmerge text eol=1f
