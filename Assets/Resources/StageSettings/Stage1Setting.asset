@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Stage1Setting
   m_EditorClassIdentifier: 
   clearTimeLimit: 0
-  scoreTarget: 0
-  hpTarget: 0
+  scoreTarget: 30
+  hpTarget: 1
   clearTimeAchieved: 0
   scoreAchieved: 1
-  hpAchieved: 1
+  hpAchieved: 0
