@@ -79,9 +79,8 @@ public class PlayerController : SplineMovementBase
 
     private AudioSource audioSource;
 
-    
-
     private Action GameOverCB_;
+    private Action GameClearCB_;
     protected override void Initialize()
     {
         isDead = false;
@@ -100,8 +99,14 @@ public class PlayerController : SplineMovementBase
         inputs_.onReleaseJumpBtn += jumpControllerVariableHeight_.Release;
 
         //ゲームオーバー時に呼び出す関数
-        GameOverCB_ += Hoge;
-        GameOverCB_ += test;
+        //GameOverCB_ += Hoge;
+        //GameOverCB_ += test;
+
+        ////ゲームオーバー／クリアのコールバック登録
+        //GameOverCB_ = StartGameOverAnimation;//ゲームオーバー時にUI表示などを行う関数を登録
+        //GameClearCB_ = StartGameClearAnimation;//ゲームクリア時にUI表示などを行う関数を登録
+
+
     }
 
     public void test()
@@ -109,12 +114,18 @@ public class PlayerController : SplineMovementBase
         Debug.Log("test");
     }
 
+
+
+
     public void RegisterGameOverCallBack(Action gameOverAction)
     {
         GameOverCB_ += gameOverAction;
-
     }
 
+    public void RegisterGameClearCallBack(Action gameClearAction)
+    {
+        GameClearCB_ += gameClearAction;
+    }
     private void HandleSplineMovement()
     {
         float currentT = splineController_.Progress;
@@ -531,6 +542,7 @@ public class PlayerController : SplineMovementBase
             isDead = true;
             GameOverCB_?.Invoke();
         }
+
     }
 
     void Hoge()
