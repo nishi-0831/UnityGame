@@ -1,41 +1,70 @@
+using System.Collections;
 using UnityEngine;
-using System;
-using System.Linq;
+using UnityEngine.UI;
 
 public class TextSetting : MonoBehaviour
 {
-    public static TextSetting Instance { get; private set; }
     [SerializeField] private GameObject gameOverUI_;
     [SerializeField] private GameObject gameClearUI_;
-    [SerializeField] PlayerController playerController;//PlayerControllerスクリプトへの参照
-    //ゲームオーバー／クリア用コールバック
+    [SerializeField] private PlayerController playerController;
+    [SerializeField] private Image blackPanel;
+
+    private void Start()
+    {
+        //ゲームオーバー時にフェードアウトとテキスト表示を登録
+        playerController.RegisterGameOverCallBack(StartFadeOut);
+        playerController.RegisterGameOverCallBack(StartGameOverUI);
+
+        //ゲームクリア時も同様に登録
+        playerController.RegisterGameClearCallBack(StartFadeOut);
+        playerController.RegisterGameClearCallBack(StartGameClearUI);
+    }
+
+    private void StartFadeOut()
+    {
+        blackPanel.transform.SetAsFirstSibling();
+        StartCoroutine(FadeOutCoroutine());
+    }
 
     private void StartGameOverUI()
     {
-        if (gameOverUI_ != null)
-        {
-            gameOverUI_.SetActive(true);
-        }
-           
-        //Debug.Log("ゲームオーバーUI表示！");
+        StartCoroutine(ShowUIAfterDelay(gameOverUI_));
     }
 
     private void StartGameClearUI()
     {
-        if (gameClearUI_ != null)
-        {
-            gameClearUI_.SetActive(true);
-        }
-           
-        //Debug.Log("ゲームクリアUI表示！");
+        StartCoroutine(ShowUIAfterDelay(gameClearUI_));
     }
 
-    private void Start()
+    private IEnumerator FadeOutCoroutine()
     {
-        //デフォルトでUI表示関数を登録
-        playerController.RegisterGameOverCallBack(StartGameOverUI);
-        playerController.RegisterGameClearCallBack(StartGameClearUI);
+        blackPanel.gameObject.SetActive(true);
+        Color c = blackPanel.color;
+        c.a = 0f;
+        blackPanel.color = c;
+
+        float t = 0f;
+        float duration = 1f;
+
+        //フェードアウト（黒くなる）
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            c.a = Mathf.Lerp(0f, 1f, t / duration);
+            blackPanel.color = c;
+            yield return null;
+        }
+
     }
 
-}
 
+    private IEnumerator ShowUIAfterDelay(GameObject ui)
+    {
+        //フェードアウトが完了するまで待つ
+        yield return new WaitForSeconds(1f);
+        if (ui != null)
+        {
+            ui.SetActive(true);
+        }
+    }
+}
