@@ -150,7 +150,10 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     protected void OnDamage()
     {
         Disable();
-        ScoreManager.Instance.ReceiveScore(ScoreValue);
+        if (ScoreManager.Instance)
+        {
+            ScoreManager.Instance.ReceiveScore(ScoreValue);
+        }
         if (animator)
         {
             animator.SetTrigger(animIDDie);

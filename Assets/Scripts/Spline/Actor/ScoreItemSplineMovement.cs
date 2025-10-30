@@ -79,7 +79,10 @@ public class ScoreItemSplineMovement : PlayerInteractableBase
             yield return null;
         }
         // ‚±‚±‚ÅScoreManager‚É’Ê’m‚·‚éˆ—‚ğ’Ç‰Á
-        ScoreManager.Instance.ReceiveScore(ScoreValue);
+        if(ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance?.ReceiveScore(ScoreValue);
+        }
         
         
         Destroy(this.gameObject);
