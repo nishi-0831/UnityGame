@@ -82,6 +82,7 @@ public class SplineController : MonoBehaviour
     public Action onMinT;
 
     private float prevT_;
+    [SerializeField] private float prevSplineLength = -1f;
     private bool isFirstFrame_ = true;
     private EvaluationInfo prevEvaluationInfo_;
     [SerializeField] private EvaluationInfo evaluationInfo_;
@@ -92,7 +93,7 @@ public class SplineController : MonoBehaviour
             return evaluationInfo_; 
         }
     }
-    
+   
     public GameObject FollowTarget 
     { 
         get { return followTarget_; } 
@@ -179,23 +180,30 @@ public class SplineController : MonoBehaviour
         {
             AutoUpdateEvaluationInfo();
 
-            MoveAlongSplineEditorOnly(Progress);
+            // Splineの長さが変わったときにProgressを調整
+            MaybeAdjustProgressForSplineLength();
+            MoveAlongSpline();
             onUpdateEditor_?.Invoke();
             if (!Application.isPlaying)
             {
+                Debug.Log("Paint");
                 UnityEditor.SceneView.RepaintAll();
             }
         }
 
     }
-    
 
-    private void MoveAlongSplineEditorOnly(float t)
+    /// <summary>
+    /// エディタでこの GameObject が選択されたときに呼ばれるラッパー
+    /// </summary>
+    [ContextMenu("EditorOnSelected")]
+    public void EditorOnSelected()
     {
-        SetSplineMeshRadius();
-        //followTarget_.transform.position = GetEvaluationInfo(progress).position;
-        MoveAlongSpline(t);
-        //Debug.Log("MoveAlongSplineEditorOnly");
+        // Splineの長さが変わったときだけProgressを調整
+        MaybeAdjustProgressForSplineLength();
+
+        // 選択時にInspector/Scene表示を即時反映
+        MoveAlongSpline();
     }
 #endif
     #endregion
@@ -324,15 +332,6 @@ public class SplineController : MonoBehaviour
 
         // 現在の接線方向（水平成分のみ使用）
          Vector3 tangent = EvaluationInfo.tangent.normalized;
-
-        //         //// tangentの水平成分のみを使用（Y成分を除去）
-        //         //Vector3 horizontalTangent = new Vector3(tangent.x, 0, tangent.z).normalized;
-
-        //         //// actualMovementの水平成分のみ使用
-        //         //Vector3 horizontalMovement = new Vector3(actualMovement.x, 0, actualMovement.z);
-
-        //         //// 水平移動量をSplineの水平接線方向に射影
-        // //         float projectedDistance = Vector3.Dot(horizontalMovement, horizontalTangent);
 
         float projDistance = Vector3.Dot(actualMovement, tangent);
         // 移動距離をt値の変化量に変換
@@ -670,97 +669,7 @@ public class SplineController : MonoBehaviour
     {
         return evaluationInfo_.upVector;
     }
-    private void MoveOtherSpline(Vector3 pos,Vector3 dir)
-    {
-        RaycastHit hit;
-        
-        if (Physics.Raycast(pos + new Vector3(0,offsetRayStartPosY,0), dir, out hit, Mathf.Infinity, SplineLayerSettings.groundLayer))
-        {
-            GameObject hitObject = hit.collider.gameObject;
-
-            SplineContainer nextContainer = hitObject.GetComponent<SplineContainer>();
-            var hitLayerMask = (int)Mathf.Log(SplineLayerSettings.groundLayer, 2);
-            if ((hitLayerMask != hitObject.layer))
-            {
-                Debug.Log(hitLayerMask);
-                Debug.Log($"{hitObject.name}:{hitObject.layer}");
-                return; 
-            }
-            if (nextContainer == null)
-            {
-                ClampProgress();
-                MoveAlongSpline(SplineProgress_);
-                return;
-            }
-            if(nextContainer == currentSplineContainer_)
-            {
-                return;
-            }
-
-            float3 currTangent = currentSplineContainer_.EvaluateTangent(SplineProgress_);
-            float3 nextTangent = nextContainer.EvaluateTangent(SplineProgress_);
-            float dot = math.dot(currTangent, nextTangent);
-            {
-                //Spline currentSpline = currentSplineContainer_.Spline;
-                //NativeSpline currentNativeSpline = new NativeSpline(currentSpline, currentSplineContainer_.transform.localToWorldMatrix);
-                //float3 currPos, currTangent, currUp;
-                //SplineUtility.Evaluate<NativeSpline>(currentNativeSpline, SplineProgress_, out currPos, out currTangent, out currUp);
-
-                //float3 outPos;
-                //float outT;
-                //Debug.Log("prevT:" + SplineProgress_);
-
-                //NativeSpline nextNativeSpline = new NativeSpline(nextContainer.Spline, nextContainer.transform.localToWorldMatrix);
-                //float3 nextTangent, nextUp;
-                //SplineUtility.GetNearestPoint<NativeSpline>(nextNativeSpline, hit.point, out outPos, out outT);
-                //SplineUtility.Evaluate<NativeSpline>(nextNativeSpline, outT, out outPos, out nextTangent, out nextUp);
-
-                //float dot = math.dot(math.normalize(currTangent), math.normalize(nextTangent));
-                if (dot > 0)
-                {
-                    Debug.Log("同じ向き");
-                }
-                else if (dot < 0)
-                {
-                    splineDirection_ *= -1;
-                    Debug.Log("逆向き");
-                }
-                else
-                {
-                    Debug.Log("直角");
-                    float rotY = math.atan2(currTangent.x, currTangent.z);
-                    UnityEngine.Quaternion rot = UnityEngine.Quaternion.Euler(0, rotY, 0);
-                    UnityEngine.Matrix4x4 rotMat = UnityEngine.Matrix4x4.Rotate(rot);
-                    float3 right = rotMat.MultiplyPoint3x4(new UnityEngine.Vector3(1, 0, 0));
-                    if (math.dot(right, nextTangent) > 0)
-                    {
-                        splineDirection_ = 1;
-                        Debug.Log("右");
-                    }
-                    else
-                    {
-                        //splineDirection_の変更はしない
-                        splineDirection_ = -1;
-                        Debug.Log("左");
-                    }
-                }
-
-                currentSplineContainer_ = nextContainer;
-                NativeSpline currentNativeSpline = new NativeSpline(currentSplineContainer_.Spline, currentSplineContainer_.transform.localToWorldMatrix);
-                float3 outPos;
-                float outT;
-                SplineUtility.GetNearestPoint<NativeSpline>(currentNativeSpline, hit.point, out outPos, out outT);
-                Progress = outT;
-                Debug.Log("currT:" + SplineProgress_);
-            }
-        }
-        else
-        {
-            Debug.Log("Raycast == false");
-            ClampProgress();
-            MoveAlongSpline(SplineProgress_);
-        }
-    }
+  
     public void RayUnderSpline(Vector3 pos, Vector3 dir)
     {
         RaycastHit hit;
@@ -814,5 +723,37 @@ public class SplineController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Splineの長さが変わった際に、オブジェクトの位置はそのままになるようProgressの値を更新する
+    /// </summary>
+    public void AdjustProgressForSplineLength()
+    {
+        NativeSpline nativeSpline = new NativeSpline(currentSplineContainer_.Spline, currentSplineContainer_.transform.localToWorldMatrix);
+        float3 outPos;
+        float outProgress;
+        SplineUtility.GetNearestPoint<NativeSpline>(nativeSpline, followTarget_.transform.position, out outPos, out outProgress);
+
+        Progress = outProgress;
+    }
+
+    private void MaybeAdjustProgressForSplineLength()
+    {
+        if (currentSplineContainer_ == null || followTarget_ == null) return;
+
+        float currentLength = currentSplineContainer_.CalculateLength();
+        const float EPSILON = 1e-4f;
+
+        if (prevSplineLength < 0f)
+        {
+            prevSplineLength = currentLength;
+            return;
+        }
+
+        if (Mathf.Abs(currentLength - prevSplineLength) > EPSILON)
+        {
+            AdjustProgressForSplineLength();
+            prevSplineLength = currentLength;
+        }
+    }
     #endregion
 }

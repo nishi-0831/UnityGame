@@ -59,14 +59,8 @@ public class PlayerController : SplineMovementBase
     // スマッシュ状態管理
     [SerializeField] private bool isBeingSmashed_ = false;
     [SerializeField] private GameObject respawnPoint_;
-    [SerializeField]
-    Vector3 actualMovement;
-    [SerializeField]Vector3 desiredMovement = Vector3.zero;
-    //[SerializeField] private CharacterController characterController_;
-    [SerializeField]Vector3 currentHorizontalPosition;
-    [SerializeField]Vector3 knockbackMovement = Vector3.zero;
+    
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
-    private float prevT;
     public float T { get { return splineController_.Progress; } }
     public int Hp { get { return hp_; } }
     protected override void Initialize()
@@ -91,8 +85,8 @@ public class PlayerController : SplineMovementBase
     private void HandleSplineMovement()
     {
         float currentT = splineController_.Progress;
-        desiredMovement = Vector3.zero;
-        actualMovement = Vector3.zero;
+        Vector3 desiredMovement = Vector3.zero;
+        Vector3 actualMovement = Vector3.zero;
         
         // Spline範囲内の場合
         if (currentT >= 0f && currentT < 1f && !isOffSpline_)
@@ -104,7 +98,6 @@ public class PlayerController : SplineMovementBase
             {
                 if (inputs_.move.x != 0)
                 {
-                    prevT = currentT;
                     if(animController_.IsRunning)
                     {
                         splineController_.Move(runSpeed_);
@@ -422,8 +415,6 @@ public class PlayerController : SplineMovementBase
         isOffSpline_ = false;
         
         // 移動関連の変数もリセット
-        desiredMovement = Vector3.zero;
-        actualMovement = Vector3.zero;
         knockbackForce = 0;
         
         Debug.Log($"[ForceSplineChange] Completed. New position: {transform.position}, Container: {splineController_.currentSplineContainer_?.name}, Progress: {splineController_.Progress}");
