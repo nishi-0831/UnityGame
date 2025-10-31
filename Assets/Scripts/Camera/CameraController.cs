@@ -242,8 +242,8 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void UpdateLookAt()
     {
-        //Vector3 lookAtPos = evaluationInfo_.position + Vector3.up * splineOffsetY_;
-        Vector3 lookAtPos = transform.position +  (-GetRightVector() * distance_);
+        Vector3 lookAtPos = evaluationInfo_.position + Vector3.up * splineOffsetY_;
+        //Vector3 lookAtPos = transform.position +  (-GetRightVector() * distance_);
         transform.LookAt(lookAtPos);
     }
 
