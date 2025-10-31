@@ -11,23 +11,23 @@ public class TextSetting : MonoBehaviour
 
     private void Start()
     {
-        //ゲームオーバー時にフェードアウトとテキスト表示を登録
+        // ゲームオーバー
         playerController.RegisterGameOverCallBack(StartFadeOut);
         playerController.RegisterGameOverCallBack(StartGameOverUI);
 
-        //ゲームクリア時も同様に登録
+        // ゲームクリア
         playerController.RegisterGameClearCallBack(StartFadeOut);
         playerController.RegisterGameClearCallBack(StartGameClearUI);
     }
 
     private void StartFadeOut()
     {
-        blackPanel.transform.SetAsFirstSibling();
         StartCoroutine(FadeOutCoroutine());
     }
 
     private void StartGameOverUI()
     {
+        blackPanel.transform.SetAsFirstSibling();
         StartCoroutine(ShowUIAfterDelay(gameOverUI_));
     }
 
@@ -38,7 +38,9 @@ public class TextSetting : MonoBehaviour
 
     private IEnumerator FadeOutCoroutine()
     {
+        Input.ResetInputAxes();
         blackPanel.gameObject.SetActive(true);
+
         Color c = blackPanel.color;
         c.a = 0f;
         blackPanel.color = c;
@@ -46,21 +48,24 @@ public class TextSetting : MonoBehaviour
         float t = 0f;
         float duration = 1f;
 
-        //フェードアウト（黒くなる）
         while (t < duration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime; //これ重要：停止中でも動く(停止するとフェードも終わるから)
             c.a = Mathf.Lerp(0f, 1f, t / duration);
             blackPanel.color = c;
             yield return null;
         }
 
+        // ここで全体停止！
+        Time.timeScale = 0f;
+
+        // ここでGameOver UI表示
+        gameOverUI_.SetActive(true);
     }
 
 
     private IEnumerator ShowUIAfterDelay(GameObject ui)
     {
-        //フェードアウトが完了するまで待つ
         yield return new WaitForSeconds(1f);
         if (ui != null)
         {
