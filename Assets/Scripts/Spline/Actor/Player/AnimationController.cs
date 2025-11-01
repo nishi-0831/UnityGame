@@ -181,7 +181,7 @@ public class AnimationController : MonoBehaviour
                 if (_hasAnimator)
                 {
                     _animator.SetBool(_animIDFreeFall, true);
-                    Debug.Log("freefall");
+                    //Debug.Log("freefall");
                 }
                 _isAir = true;
             }

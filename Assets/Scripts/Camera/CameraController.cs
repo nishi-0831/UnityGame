@@ -26,8 +26,12 @@ public class CameraController : MonoBehaviour
     [Header("Movement Speed")]
     [SerializeField] private bool interpolateAzimuthalWhenNotTransitioning_ = false; // isTransitioning_がfalseの時に方位角を補間するか
     [SerializeField] private float azimuthalLerpSpeed_ = 2.0f; // 方位角補間速度
-    //[SerializeField] private float polarLerpSpeed_ = 2.0f; // 極角補間速度
-    //[SerializeField] private float distanceLerpSpeed_ = 2.0f; // 距離補間速度
+    [Header("Camera Height Limit")]
+    [SerializeField] private float maxScreenHeightRatio_ = 0.6f;
+    [SerializeField] private float maxCameraWorldY = 15.0f;
+    private bool isYFollowingLocked = false;
+
+    private float lockedCameraY_;
     [SerializeField] private float splineChangeHorizontalSpeed = 3.0f; // SplineContainer変更時の補間速度
     [SerializeField] private float splineChangeVerticalSpeed = 3.0f; // SplineContainer変更時の補間速度
 
@@ -79,6 +83,9 @@ public class CameraController : MonoBehaviour
 
         UpdateCameraAngles();
         UpdateCameraPosition();
+
+        UpdateYFollowState();
+
         UpdateLookAt();
 
         if (showDebugInfo_)
@@ -88,6 +95,28 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    private void UpdateYFollowState()
+    {
+        Vector3 targetWorldPos = evaluationInfo_.position + Vector3.up * splineOffsetY_;
+
+        // ビュー空間での被写体のY座標を計算
+        Vector3 targetInViewSpace = camera_.WorldToViewportPoint(targetWorldPos);
+
+        // 画面上での被写体の高さが閾値を越えたらカメラのY軸の追従を停止
+        bool shouldLockY = targetInViewSpace.y > maxScreenHeightRatio_;
+
+        if (shouldLockY && !isYFollowingLocked)
+        {
+            // ロック開始
+            isYFollowingLocked = true;
+            lockedCameraY_ = camera_.transform.position.y;
+            
+        }
+        else if(!shouldLockY && isYFollowingLocked)
+        {
+            isYFollowingLocked = false;
+        }
+    }
     /// <summary>
     /// カメラの角度を更新
     /// </summary>
@@ -151,6 +180,11 @@ public class CameraController : MonoBehaviour
                 {
                     forceYUpdate_ = false;
                 }
+            }
+            else if (isYFollowingLocked)
+            {
+                // Y軸追従がロックされている場合、ロック時の高さを保持
+                newY = lockedCameraY_;
             }
             else
             {
@@ -242,9 +276,9 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void UpdateLookAt()
     {
-        Vector3 lookAtPos = evaluationInfo_.position + Vector3.up * splineOffsetY_;
-        //Vector3 lookAtPos = transform.position +  (-GetRightVector() * distance_);
-        transform.LookAt(lookAtPos);
+        Vector3 toTarget = Vector3.Normalize(target_.position - transform.position);
+        Vector3 projectionToTarget = Vector3.ProjectOnPlane(toTarget, Vector3.up);
+        transform.rotation = Quaternion.LookRotation(projectionToTarget, Vector3.up);
     }
 
     /// <summary>
@@ -257,6 +291,9 @@ public class CameraController : MonoBehaviour
         {
             return;
         }
+
+        // 足場変更時、Y軸追従ロックを解除
+        isYFollowingLocked = false;
 
         forceYUpdate_ = true;
         Debug.Log($"Camera: SplineContainer changed, new base Y: {newBaseY}");
@@ -298,10 +335,8 @@ public class CameraController : MonoBehaviour
         polarAngle_ = Mathf.Clamp(polarAngle_, minPolarAngle_, maxPolarAngle_);
     }
 
-    private void OnDrawGizmosSelected()
+    private void DrawCameraPerspective()
     {
-        if (target_ == null) return;
-
         // カメラ位置
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, 0.5f);
@@ -323,5 +358,19 @@ public class CameraController : MonoBehaviour
             Mathf.Sin(azimuthalAngle_ * Mathf.Deg2Rad)
         );
         Gizmos.DrawRay(lookAtPos, azimuthalDirection * 2f);
+    }
+    private void DrawCameraScreenHeightRatio()
+    {
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawLine(new Vector3(transform.position.x, lockedCameraY_, transform.position.z),
+                        new Vector3(transform.position.x + 2f, lockedCameraY_, transform.position.z));
+    }
+    private void OnDrawGizmosSelected()
+    {
+        if (target_ == null) return;
+
+
+        DrawCameraPerspective();
+        DrawCameraScreenHeightRatio();
     }
 }

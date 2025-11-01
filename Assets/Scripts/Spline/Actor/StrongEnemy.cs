@@ -15,7 +15,8 @@ public class StrongEnemy : PlayerInteractableBase
     [SerializeField] private float attackInterval_ = 5.0f;
     [SerializeField] private float ballMoveSpeed_ = 0.1f;
     [SerializeField] private float ballRollSpeed_ = 360f;
-    [SerializeField] private float ballOffsetT_ = 0.1f;
+    private float ballOffsetT_ = 0.1f;
+    [SerializeField] private float ballOffset_ = 5.0f;
 
     [SerializeField] private GameObject ballPrefab_;
     [SerializeField] private float ballRadius_ = 0.5f;
@@ -54,6 +55,7 @@ public class StrongEnemy : PlayerInteractableBase
         GameObject ball = Instantiate(ballPrefab_);
 
         float ballT;
+        ballOffsetT_ = ballOffset_ / splineController_.GetCurrSplineLength();
         if(IsMovingLeft)
         {
             ballT = splineController_.Progress - ballOffsetT_;

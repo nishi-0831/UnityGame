@@ -80,8 +80,6 @@ public class PlayerController : SplineMovementBase
         inputs_.onReleaseJumpBtn += jumpControllerVariableHeight_.Release;
     }
 
-    
-
     private void HandleSplineMovement()
     {
         float currentT = splineController_.Progress;
@@ -241,15 +239,6 @@ public class PlayerController : SplineMovementBase
                 splineController_.isMovingLeft = false;
             }
 
-            //if (Input.GetKeyDown(KeyCode.K))
-            //{
-            //    clearZone_.ClearGame();
-            //}
-            //if (Input.GetKeyDown(KeyCode.L))
-            //{
-            //    animController_.Dying();
-            //    OnTriggerDyingAnim();
-            //}
             if (inputs_.jump && animController_.Grounded)
             {
                 jumpControllerVariableHeight_.StartJump(splineController_.EvaluationInfo.position.y);
@@ -595,6 +584,8 @@ public class PlayerController : SplineMovementBase
         else
         {
             SplineContainer moveDistContainer;
+            NativeSpline moveDistNativeSpline;
+
             Vector3 knotPos;
             if (T < 0)
             {
@@ -604,7 +595,9 @@ public class PlayerController : SplineMovementBase
                     return;
                 }
                 moveDistContainer = link.prev;
-                knotPos = moveDistContainer.Spline.Knots.Last().Position;
+                moveDistNativeSpline = new NativeSpline(moveDistContainer.Spline, moveDistContainer.transform.localToWorldMatrix);
+                
+                knotPos = moveDistNativeSpline.Knots.Last().Position;
             }
             else
             {
@@ -614,7 +607,9 @@ public class PlayerController : SplineMovementBase
                     return;
                 }
                 moveDistContainer = link.next;
-                knotPos = moveDistContainer.Spline.Knots.First().Position;
+                moveDistNativeSpline = new NativeSpline(moveDistContainer.Spline, moveDistContainer.transform.localToWorldMatrix);
+
+                knotPos = moveDistNativeSpline.Knots.First().Position;
             }
 
             if (transform.position.y < knotPos.y)
@@ -623,34 +618,20 @@ public class PlayerController : SplineMovementBase
                 return;
             }
 
-            //splineController_.ChangeOtherSpline(moveDistContainer);
-            float outOfLength = splineController_.GetCurrSplineLength() * outOfT;
-            float moveDistLength;
-            float moveDistProgress;
-
-            if (T < 0)
-            {
-                moveDistLength = moveDistContainer.CalculateLength() - outOfLength;
-            }
-            else
-            {
-                moveDistLength = outOfLength;
-            }
-
-
             jumpControllerVariableHeight_.AdjustForPlatformChange(splineController_.EvaluationInfo.position.y, knotPos.y);
 
-            moveDistProgress = moveDistLength / moveDistContainer.CalculateLength();
-            splineController_.currentSplineContainer_ = moveDistContainer;
-            splineController_.Progress = moveDistProgress;
+            float3 outPos;
+            float outT;
+            SplineUtility.GetNearestPoint<NativeSpline>(moveDistNativeSpline, transform.position, out outPos, out outT);
 
+            
+            splineController_.currentSplineContainer_ = moveDistContainer;
+            splineController_.Progress = outT;
+
+            Debug.Log("Player.y," + transform.position.y + "knot.y," + knotPos.y);
+            Debug.Log("T:" + splineController_.Progress);
         }
 
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        
     }
 
     private void OnDrawGizmosSelected()

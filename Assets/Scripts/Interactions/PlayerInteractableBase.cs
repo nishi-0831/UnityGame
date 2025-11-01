@@ -140,7 +140,6 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     public override void OnRequestDestroy()
     {
         Destroy(gameObject);
-
     }
 
     /// <summary>

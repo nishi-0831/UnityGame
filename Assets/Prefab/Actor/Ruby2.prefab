@@ -155,7 +155,7 @@ MonoBehaviour:
   splineController_: {fileID: 3259444002943194460}
   isActive_: 1
   onDestroySE_: {fileID: 0}
-  profile: {fileID: 0}
+  profile: {fileID: 11400000, guid: b2642b0b27a43cb4292aad3643fd8864, type: 2}
   scoreValue: 100
   animDuration: 0.7
   jumpHeight: 8

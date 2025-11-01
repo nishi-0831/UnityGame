@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class DamageObject : MonoBehaviour, IPlayerInteractable
 {
-    PlayerInteractionProfile profile;
+    [SerializeField]private PlayerInteractionProfile profile;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        gameObject.layer = (int)Mathf.Log(SplineLayerSettings.Instance.activeLayer.value, 2);
     }
 
     // Update is called once per frame

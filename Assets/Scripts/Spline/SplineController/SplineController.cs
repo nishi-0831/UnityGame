@@ -104,7 +104,7 @@ public class SplineController : MonoBehaviour
         get { return SplineProgress_; }
         set 
         {
-            SplineProgress_ = value;
+            SplineProgress_ = Mathf.Clamp01(value);
             AutoUpdateEvaluationInfo();
             //AutoUpdateEvaluationInfo();
         }

@@ -36,7 +36,7 @@ namespace StarterAssets
         public void OnMove(InputAction.CallbackContext context)
 		{
 			MoveInput(context.ReadValue<Vector2>());
-            Debug.Log("OnMove");
+            //Debug.Log("OnMove");
 
         }
 
@@ -77,7 +77,7 @@ namespace StarterAssets
 					SprintInput(false);
 					break;
 			}
-			Debug.Log("OnSprint");
+			//Debug.Log("OnSprint");
 		}
 #endif
 		
