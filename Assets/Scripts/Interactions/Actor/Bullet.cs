@@ -4,7 +4,7 @@ using UnityEngine.ProBuilder.Shapes;
 /// <summary>
 /// Bulletの説明をここに記述
 /// </summary>
-public class Bullet : MonoBehaviour , IPlayerInteractable
+public class Bullet : MonoBehaviour, IPlayerInteractable
 {
     public PlayerInteractionProfile profile;
     // 独自のフィールドをここに追加
@@ -27,7 +27,7 @@ public class Bullet : MonoBehaviour , IPlayerInteractable
     /// </summary>
     void Update()
     {
-
+       
     }
 
 }

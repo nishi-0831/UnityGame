@@ -64,12 +64,18 @@ public class PlayerController : SplineMovementBase
     [SerializeField] private GameObject respawnPoint_;
     
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
+    private bool isDead = false;
     public float T { get { return splineController_.Progress; } }
     public int Hp { get { return hp_; } }
-    public Action GameOverCB_;
+
+    private AudioSource audioSource;
+
+    private Action GameOverCB_;
+    private Action GameClearCB_;
     private Action OnDamageCallback_;
     protected override void Initialize()
     {
+        isDead = false;
         if (animController_ == null)
         {
             animController_ = GetComponent<AnimationController>();
@@ -84,6 +90,21 @@ public class PlayerController : SplineMovementBase
         previousSplinePosition_ = splineController_.GetSplineMeshPos();
         inputs_.onReleaseJumpBtn += jumpControllerVariableHeight_.Release;
 
+    }
+
+    
+
+
+
+
+    public void RegisterGameOverCallBack(Action gameOverAction)
+    {
+        GameOverCB_ += gameOverAction;
+    }
+
+    public void RegisterGameClearCallBack(Action gameClearAction)
+    {
+        GameClearCB_ += gameClearAction;
     }
     private void HandleSplineMovement()
     {
@@ -256,9 +277,11 @@ public class PlayerController : SplineMovementBase
 
             if (inputs_.jump && animController_.Grounded)
             {
+               
                 jumpControllerVariableHeight_.StartJump(splineController_.EvaluationInfo.position.y);
             }
         }
+      
 
         // アニメーション用の入力設定
         animController_.SetMoveInput(inputs_.move);
@@ -325,7 +348,10 @@ public class PlayerController : SplineMovementBase
         jumpControllerVariableHeight_.Tick(splineController_.EvaluationInfo.position);
         CheckSplineContainerChange();
         UpdateCamera();
-        PlayerDie();
+        if (IsDying())
+        {
+            PlayerDie();
+        }
 
         Debug.DrawRay(transform.position, offSplineVelocity_ * 1000f);
         // 空中にいる場合は下方向のSplineをチェック
@@ -472,11 +498,14 @@ public class PlayerController : SplineMovementBase
 
     public void PlayerDie()
     {
-        if (IsDying())
+        
+        if (IsDying() && isDead == false)
         {
+            isDead = true;
             GameOverCB_?.Invoke();
             animController_.Dying();
         }
+
     }
 
   
@@ -514,7 +543,7 @@ public class PlayerController : SplineMovementBase
     }
 
     private IEnumerator DyingAnim()
-    {
+    {       
         //遷移にかかる時間
         float transitionDuration = 5.0f;
         float elapsed = 0f;

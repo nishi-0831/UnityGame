@@ -4,6 +4,8 @@ using StarterAssets;
 
 public class Enemy : PlayerInteractableBase
 {
+
+    [SerializeField] private AudioClip enemyDieClip;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Initialize()
     {
@@ -47,7 +49,12 @@ public class Enemy : PlayerInteractableBase
     // IPlayerInteractableÀ‘•
     public override void OnStompedCore(GameObject player)
     {
-        OnDamage();
+
+        if (AudioManager.Instance != null && enemyDieClip != null)
+        {
+            AudioManager.Instance.PlaySound(enemyDieClip, 0.3f);
+        }
+        OnDamage();//“G‚ğ“|‚µ‚½‚Æ‚«@‚±‚±‚É‰¹‚ğ‰Á‚¦‚½‚¢
 
         // ƒvƒŒƒCƒ„[‚É’µ‚Ë•Ô‚èŒø‰Ê‚ğ—^‚¦‚é
         PlayerInteractionUtils.ApplyStompBounce(player, StompBounceForce);

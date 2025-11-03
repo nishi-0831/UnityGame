@@ -85,6 +85,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
     public @GameInputs()
     {
         asset = InputActionAsset.FromJson(@"{
+    ""version"": 1,
     ""name"": ""StarterAssets"",
     ""maps"": [
         {
