@@ -67,6 +67,7 @@ public class PlayerController : SplineMovementBase
     public float T { get { return splineController_.Progress; } }
     public int Hp { get { return hp_; } }
     public Action GameOverCB_;
+    private Action OnDamageCallback_;
     protected override void Initialize()
     {
         if (animController_ == null)
@@ -83,16 +84,7 @@ public class PlayerController : SplineMovementBase
         previousSplinePosition_ = splineController_.GetSplineMeshPos();
         inputs_.onReleaseJumpBtn += jumpControllerVariableHeight_.Release;
 
-        //ゲームオーバー時に呼び出す関数
-        GameOverCB_ += Hoge;
-        GameOverCB_ += test;
     }
-
-    public void test()
-    {
-        Debug.Log("test");
-    }
-
     private void HandleSplineMovement()
     {
         float currentT = splineController_.Progress;
@@ -189,7 +181,14 @@ public class PlayerController : SplineMovementBase
 
         return horizontalMovement + verticalMovement;
     }
-
+    public void RegisterGameOverCallback(Action gameOverAction)
+    {
+        GameOverCB_ += gameOverAction;
+    }
+    public void RegisterOnDamageCallback(Action onDamageAction)
+    {
+        OnDamageCallback_ += onDamageAction;
+    }
     protected override void OnReachMaxT()
     {
         ChangeLinkedOtherSpline();
@@ -462,8 +461,8 @@ public class PlayerController : SplineMovementBase
         animController_.TakeDamage();
 
         hp_ -= damageValue;
+        OnDamageCallback_?.Invoke();
         StartCoroutine(WaitCanTakeDamage());
-        
     }
 
     /// <summary>
@@ -476,17 +475,11 @@ public class PlayerController : SplineMovementBase
         if (IsDying())
         {
             GameOverCB_?.Invoke();
+            animController_.Dying();
         }
     }
 
-    void Hoge()
-    {
-        Debug.Log("hoge1");
-    }
-    public void GameOverEvent()
-    {
-        
-    }
+  
     public bool IsDying()
     {
         return hp_ <= 0;
