@@ -1,6 +1,9 @@
+using JetBrains.Annotations;
 using MySpline;
 using StarterAssets;
+using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Linq;
 using TMPro;
 using Unity.Mathematics;
@@ -63,6 +66,7 @@ public class PlayerController : SplineMovementBase
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
     public float T { get { return splineController_.Progress; } }
     public int Hp { get { return hp_; } }
+    public Action GameOverCB_;
     protected override void Initialize()
     {
         if (animController_ == null)
@@ -78,6 +82,15 @@ public class PlayerController : SplineMovementBase
         // 初期Spline位置を記録
         previousSplinePosition_ = splineController_.GetSplineMeshPos();
         inputs_.onReleaseJumpBtn += jumpControllerVariableHeight_.Release;
+
+        //ゲームオーバー時に呼び出す関数
+        GameOverCB_ += Hoge;
+        GameOverCB_ += test;
+    }
+
+    public void test()
+    {
+        Debug.Log("test");
     }
 
     private void HandleSplineMovement()
@@ -91,6 +104,9 @@ public class PlayerController : SplineMovementBase
         {
             // 通常のSpline移動
             transform.rotation = splineController_.EvaluationInfo.rotation;
+
+           
+
         
             if (!animController_.IsStunned && !isBeingSmashed_)
             {
@@ -310,6 +326,7 @@ public class PlayerController : SplineMovementBase
         jumpControllerVariableHeight_.Tick(splineController_.EvaluationInfo.position);
         CheckSplineContainerChange();
         UpdateCamera();
+        PlayerDie();
 
         Debug.DrawRay(transform.position, offSplineVelocity_ * 1000f);
         // 空中にいる場合は下方向のSplineをチェック
@@ -453,6 +470,23 @@ public class PlayerController : SplineMovementBase
     /// HPが0以下か
     /// </summary>
     /// <returns>HPが0以下ならば true</returns>
+
+    public void PlayerDie()
+    {
+        if (IsDying())
+        {
+            GameOverCB_?.Invoke();
+        }
+    }
+
+    void Hoge()
+    {
+        Debug.Log("hoge1");
+    }
+    public void GameOverEvent()
+    {
+        
+    }
     public bool IsDying()
     {
         return hp_ <= 0;
