@@ -12,12 +12,12 @@ public class TextSetting : MonoBehaviour
     private void Start()
     {
         // ゲームオーバー
-        playerController.RegisterGameOverCallBack(StartFadeOut);
-        playerController.RegisterGameOverCallBack(StartGameOverUI);
+        GameOutcomeManager.Instance.RegisterGameOverCallback(StartFadeOut);
+        GameOutcomeManager.Instance.RegisterGameOverCallback(StartGameOverUI);
 
         // ゲームクリア
-        playerController.RegisterGameClearCallBack(StartFadeOut);
-        playerController.RegisterGameClearCallBack(StartGameClearUI);
+        GameOutcomeManager.Instance.RegisterGameClearCallback(StartFadeOut);
+        GameOutcomeManager.Instance.RegisterGameClearCallback(StartGameClearUI);
     }
 
     private void StartFadeOut()
@@ -29,11 +29,14 @@ public class TextSetting : MonoBehaviour
     {
         blackPanel.transform.SetAsFirstSibling();
         StartCoroutine(ShowUIAfterDelay(gameOverUI_));
+        Debug.Log("GameOverUI");
     }
 
     private void StartGameClearUI()
     {
         StartCoroutine(ShowUIAfterDelay(gameClearUI_));
+        Debug.Log("GameClearUI");
+
     }
 
     private IEnumerator FadeOutCoroutine()
@@ -57,10 +60,10 @@ public class TextSetting : MonoBehaviour
         }
 
         // ここで全体停止！
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
 
         // ここでGameOver UI表示
-        gameOverUI_.SetActive(true);
+        //gameOverUI_.SetActive(true);
     }
 
 

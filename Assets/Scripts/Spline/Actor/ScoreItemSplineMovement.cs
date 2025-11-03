@@ -8,7 +8,7 @@ using UnityEngine;
 public class ScoreItemSplineMovement : PlayerInteractableBase
 {
     [Header("Score Item Settings")]
-    [SerializeField] private int scoreValue = 100;
+    //[SerializeField] private int scoreValue = 100;
     
     [SerializeField] private float animDuration = 1.0f;
     [SerializeField] private float jumpHeight = 5.0f;

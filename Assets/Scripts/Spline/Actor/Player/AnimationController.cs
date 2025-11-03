@@ -8,12 +8,6 @@ using StarterAssets;
 public class AnimationController : MonoBehaviour
 {
     [Header("Animation Settings")]
-    //[SerializeField] private float jumpHeight_ = 1.2f;
-
-    [SerializeField] private float nowGravity_ = 0.0f;
-    [SerializeField] private float jumpingGravity_ = -60.0f;
-    [SerializeField] private float fallingGravity_ = -90.0f;
-
 
     [SerializeField] private float jumpTimeout_ = 0.50f;
     [SerializeField] private float fallTimeout_ = 0.15f;
@@ -35,6 +29,7 @@ public class AnimationController : MonoBehaviour
     private int _animIDIsAir;
     private int _animIDOnSmashed;
     private int _animIDSprint;
+    private int _animIDOnGameClear;
     // Components
     private Animator _animator;
     private bool _hasAnimator;
@@ -128,6 +123,7 @@ public class AnimationController : MonoBehaviour
         _animIDIsAir = Animator.StringToHash("IsAir");
         _animIDOnSmashed = Animator.StringToHash("Smash");
         _animIDSprint = Animator.StringToHash("Sprint");
+        _animIDOnGameClear = Animator.StringToHash("GameClear");
     }
 
     private void UpdateAnimations()
@@ -215,7 +211,15 @@ public class AnimationController : MonoBehaviour
             Debug.LogWarning("Animator is not assigned, cannot play Dying animation.");
         }
     }
-
+    public void GameClear()
+    {
+        Debug.Log("GameClear,AnimContro");
+        if (_hasAnimator)
+        {
+            _animator.SetTrigger(_animIDOnGameClear);
+            _animator.SetBool(_animIDCanInputReact, false);
+        }
+    }
     public void SetMoveInput(Vector2 moveInput)
     {
         if (_hasAnimator)

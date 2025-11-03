@@ -11,7 +11,7 @@ public class BulletEnemy : PlayerInteractableBase
     [SerializeField] private float attackInterval_ = 5.0f;
     [SerializeField] private EaseInterpolator easeInterpolator_;
     [SerializeField] private AudioClip enemyDieClip;
-    float bulletSpeed_ = 200.0f;
+    //float bulletSpeed_ = 200.0f;
     // 独自のフィールドをここに追加
     /// <summary>
     /// 初期化処理

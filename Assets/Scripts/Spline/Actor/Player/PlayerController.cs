@@ -70,11 +70,12 @@ public class PlayerController : SplineMovementBase
 
     private AudioSource audioSource;
 
-    private Action GameOverCB_;
-    private Action GameClearCB_;
+    
     private Action OnDamageCallback_;
     protected override void Initialize()
     {
+        GameOutcomeManager.Instance.RegisterGameClearCallback(() => animController_.GameClear());
+
         isDead = false;
         if (animController_ == null)
         {
@@ -92,20 +93,7 @@ public class PlayerController : SplineMovementBase
 
     }
 
-    
-
-
-
-
-    public void RegisterGameOverCallBack(Action gameOverAction)
-    {
-        GameOverCB_ += gameOverAction;
-    }
-
-    public void RegisterGameClearCallBack(Action gameClearAction)
-    {
-        GameClearCB_ += gameClearAction;
-    }
+   
     private void HandleSplineMovement()
     {
         float currentT = splineController_.Progress;
@@ -202,10 +190,7 @@ public class PlayerController : SplineMovementBase
 
         return horizontalMovement + verticalMovement;
     }
-    public void RegisterGameOverCallback(Action gameOverAction)
-    {
-        GameOverCB_ += gameOverAction;
-    }
+    
     public void RegisterOnDamageCallback(Action onDamageAction)
     {
         OnDamageCallback_ += onDamageAction;
@@ -498,17 +483,14 @@ public class PlayerController : SplineMovementBase
 
     public void PlayerDie()
     {
-        
         if (IsDying() && isDead == false)
         {
             isDead = true;
-            GameOverCB_?.Invoke();
+            GameOutcomeManager.Instance.TriggerGameOver();
             animController_.Dying();
         }
-
     }
 
-  
     public bool IsDying()
     {
         return hp_ <= 0;
