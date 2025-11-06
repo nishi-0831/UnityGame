@@ -11413,7 +11413,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreData_: {fileID: 11400000, guid: 51960f99cbf94a74c865e108d36d38c4, type: 2}
   startTime_: 0
-  remainingTime_: 10
+  remainingTime_: 20
   endTime_: 0
   timerText_: {fileID: 0}
 --- !u!4 &1709065433

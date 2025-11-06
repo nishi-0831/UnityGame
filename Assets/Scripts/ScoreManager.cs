@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using static ScoreManager;
 
 
 public class ScoreManager : MonoBehaviour
@@ -13,6 +15,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private float remainingTime_;
     [SerializeField] private float endTime_;
     [SerializeField] private Text timerText_;
+    public Action timeUp_;
     //クリア時間の計測を始める
     //[SerializeField] private 
 
@@ -33,6 +36,7 @@ public class ScoreManager : MonoBehaviour
         }
         scoreData_.Initialize();
         StartCountClearTime();
+        timeUp_ = testCallBack;
     }
     public void StartCountClearTime()
     {
@@ -65,19 +69,33 @@ public class ScoreManager : MonoBehaviour
         //    EndCountClearTime();
         //}
         scoreData_.clearTime = Time.time - startTime_;
+        if(remainingTime_ > 0) 
+        {
+            CountDownTimer();
+        }
+    }
+
+    public void CountDownTimer()
+    {
         remainingTime_ -= Time.deltaTime;
         if (remainingTime_ > 0)
         {
             //カウントダウンタイマーの時間表示
             timerText_.text = remainingTime_.ToString("Time：" + "0");
         }
-        //if(remainingTime_ < 0)
-        //{
-        //    //カウントダウンタイマーが０になった時の処理
-        //    Debug.Log("endTime");
-        //}
+        else if (remainingTime_ <= 0)
+        {
+            //カウントダウンタイマーが０になった時の処理
+            timeUp_?.Invoke();
+            //Debug.Log("endTime");
+        }
     }
-    
+
+    public void testCallBack()//動作確認用
+    {
+        Debug.Log("testCallBack");
+    }
+
     public void ReceiveScore(int value)
     {
         scoreData_.score += value;
