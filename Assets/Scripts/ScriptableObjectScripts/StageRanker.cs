@@ -5,9 +5,11 @@ public class StageAchievementChecker : MonoBehaviour
     [SerializeField] private ScoreData scoreData;
     [SerializeField] private PlayerController player;
     [SerializeField] private string stageName;
-
+    [SerializeField] private float checkInterval = 1.5f;
     [SerializeField] private StageSetting stageSetting;
 
+    private bool stageCleared = false;
+    private float checkTimer = 0f;
     void Awake()
     {
         stageSetting = Resources.Load<StageSetting>($"StageSettings/{stageName}");
@@ -42,8 +44,28 @@ public class StageAchievementChecker : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C))
+        if (stageSetting == null) return;
+
+        checkTimer += Time.deltaTime;
+        if (checkTimer < checkInterval) return; // インターバル待ち
+
+        checkTimer = 0f; // タイマーリセット
+
+        bool scoreOk = IsScoreAchieved();
+        bool hpOk = IsHpAchieved();
+        bool timeOk = IsTimeAchieved();
+
+        // 部分達成のログ
+        Debug.Log($"スコア: {scoreOk}, HP: {hpOk}, タイム: {timeOk}");
+
+       
+        stageSetting.scoreAchieved = scoreOk;
+        stageSetting.hpAchieved = hpOk;
+        stageSetting.clearTimeAchieved = timeOk;
+
+        if (!stageCleared && IsAllAchieved())
         {
+            stageCleared = true;
             OnStageClear();
         }
     }

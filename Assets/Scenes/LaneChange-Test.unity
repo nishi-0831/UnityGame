@@ -5833,7 +5833,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreData: {fileID: 11400000, guid: 51960f99cbf94a74c865e108d36d38c4, type: 2}
   player: {fileID: 1490862562}
-  stageName: Stage1
+  stageName: Stage1Setting
   stageSetting: {fileID: 11400000, guid: 5461713f6e26850409abf3e89692e888, type: 2}
 --- !u!1 &1503481262
 GameObject:
