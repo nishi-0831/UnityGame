@@ -55,12 +55,18 @@ public class TextSetting : MonoBehaviour
             blackPanel.color = c;
             yield return null;
         }
+       
 
         // ここで全体停止！
         Time.timeScale = 0f;
 
+
+
         // ここでGameOver UI表示
         gameOverUI_.SetActive(true);
+
+        // UI表示と同時にSE再生
+        AudioManager.Instance.PlayGameOver(0.3f);
     }
 
 

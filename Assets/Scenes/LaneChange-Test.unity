@@ -1481,7 +1481,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 165779543}
-  - component: {fileID: 165779542}
   m_Layer: 0
   m_Name: GameObject (1)
   m_TagString: Untagged
@@ -1489,22 +1488,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &165779542
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 165779541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ba03f62e2420d84fa1a6c437a13ef6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoreData: {fileID: 11400000, guid: 51960f99cbf94a74c865e108d36d38c4, type: 2}
-  player: {fileID: 1490862562}
-  stageName: Stage1Setting
-  stageSetting: {fileID: 11400000, guid: 5461713f6e26850409abf3e89692e888, type: 2}
 --- !u!4 &165779543
 Transform:
   m_ObjectHideFlags: 0
@@ -2851,7 +2834,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpSoundCooldown: 1
-  PlayerJumpSound: {fileID: 8300000, guid: 1134911da460ed14ea758168ac8ee3bc, type: 3}
+  PlayerJumpSound: {fileID: 8300000, guid: 72f526a6a9890f643a88e85a61c86c8a, type: 3}
 --- !u!1 &709238156
 GameObject:
   m_ObjectHideFlags: 0
@@ -3192,8 +3175,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultClip: {fileID: 8300000, guid: 1134911da460ed14ea758168ac8ee3bc, type: 3}
-  gameOverSE: {fileID: 8300000, guid: 72f526a6a9890f643a88e85a61c86c8a, type: 3}
-  gameClearSE: {fileID: 8300000, guid: 85016e0f2b01da248b9663dd49a161b0, type: 3}
+  gameOverSE: {fileID: 8300000, guid: 352158fa8c1d3ea41a220e10ce199713, type: 3}
+  gameClearSE: {fileID: 8300000, guid: 3b7c67b764550ad478b783c2b60c84a5, type: 3}
 --- !u!4 &798139695
 Transform:
   m_ObjectHideFlags: 0
@@ -5360,6 +5343,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9091554052753675359, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1490862572}
+    - targetCorrespondingSourceObject: {fileID: 9091554052753675359, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1490862582}
   m_SourcePrefab: {fileID: 100100000, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
 --- !u!1 &1365756705
 GameObject:
@@ -5805,7 +5791,7 @@ MonoBehaviour:
   fallGravityMultiplier: 1.5
   useVelocityClampOnRelease: 1
   groundEpsilon: 0.001
-  showDebug: 0
+  showDebug: 1
 --- !u!114 &1490862562 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 688552519666361199, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
@@ -5833,6 +5819,22 @@ MonoBehaviour:
   gameClearUI_: {fileID: 370101240}
   playerController: {fileID: 1490862562}
   blackPanel: {fileID: 1389934403}
+--- !u!114 &1490862582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1490862547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ba03f62e2420d84fa1a6c437a13ef6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreData: {fileID: 11400000, guid: 51960f99cbf94a74c865e108d36d38c4, type: 2}
+  player: {fileID: 1490862562}
+  stageName: Stage1
+  stageSetting: {fileID: 11400000, guid: 5461713f6e26850409abf3e89692e888, type: 2}
 --- !u!1 &1503481262
 GameObject:
   m_ObjectHideFlags: 0

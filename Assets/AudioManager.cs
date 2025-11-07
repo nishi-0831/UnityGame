@@ -52,6 +52,14 @@ public class AudioManager : MonoBehaviour
     /// テスト用：defaultClipを鳴らす
     /// </summary>
     public void PlayDefault() => PlaySound(defaultClip);
-    public void PlayGameOver() => PlaySound(gameOverSE); // 追加
-    public void PlayGameClear() => PlaySound(gameClearSE); // 追加
+
+    public void PlayGameOver(float volume = 1f)
+    {
+        PlaySound(gameOverSE, volume);
+    }
+
+    public void PlayGameClear(float volume = 1f)
+    {
+        PlaySound(gameClearSE, volume);
+    }
 }
