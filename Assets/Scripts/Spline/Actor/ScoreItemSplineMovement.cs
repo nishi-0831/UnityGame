@@ -15,7 +15,7 @@ public class ScoreItemSplineMovement : PlayerInteractableBase
     [SerializeField] private float initialOffsetY = 1.0f;
     [SerializeField] private float endPosOffsetY = 1.0f;
     [SerializeField] private SimpleGemsAnim simpleGemsAnim;
-
+    [SerializeField] private bool animateSpline = false;
     protected override void Initialize()
     {
         FollowTarget.transform.position = FollowTarget.transform.position + new Vector3(0f, initialOffsetY, 0f);
@@ -28,6 +28,8 @@ public class ScoreItemSplineMovement : PlayerInteractableBase
     
     protected override void UpdateMovement()
     {
+        if (animateSpline)
+            return;
         simpleGemsAnim.UpdateRot();
         simpleGemsAnim.UpdatePos();
         simpleGemsAnim.UpdateScale();
@@ -78,12 +80,10 @@ public class ScoreItemSplineMovement : PlayerInteractableBase
 
             yield return null;
         }
-        // Ç±Ç±Ç≈ScoreManagerÇ…í ímÇ∑ÇÈèàóùÇí«â¡
         if(ScoreManager.Instance != null)
         {
             ScoreManager.Instance?.ReceiveScore(ScoreValue);
         }
-        
         
         Destroy(this.gameObject);
     }

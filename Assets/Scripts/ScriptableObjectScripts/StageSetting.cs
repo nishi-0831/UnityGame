@@ -3,6 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "StageSetting", menuName = "Scriptable Objects/StageSetting")]
 public class StageSetting : ScriptableObject
 {
+    [Header("制限時間:ゲームオーバーまでのカウントダウン")]
+    public float timeLimit;
     [Header("クリア評価用：制限時間（秒単位）")]
     public float clearTimeLimit;
 
@@ -15,9 +17,4 @@ public class StageSetting : ScriptableObject
     public bool clearTimeAchieved;
     public bool scoreAchieved;
     public bool hpAchieved;
-
-
-
-    
-    //ここにboolで達成しているカを書く
 }

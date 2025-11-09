@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Splines;
-using static UnityEditor.Experimental.GraphView.GraphView;
+//using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class SplineColliderReference : MonoBehaviour
 {

@@ -8,7 +8,7 @@ public class TextSetting : MonoBehaviour
     [SerializeField] private GameObject gameClearUI_;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private Image blackPanel;
-
+    [SerializeField] private float animDuration;
     private void Start()
     {
         // ゲームオーバー
@@ -49,7 +49,7 @@ public class TextSetting : MonoBehaviour
         blackPanel.color = c;
 
         float t = 0f;
-        float duration = 1f;
+        float duration = animDuration;
 
         while (t < duration)
         {
@@ -69,7 +69,7 @@ public class TextSetting : MonoBehaviour
 
     private IEnumerator ShowUIAfterDelay(GameObject ui)
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(animDuration);
         if (ui != null)
         {
             ui.SetActive(true);

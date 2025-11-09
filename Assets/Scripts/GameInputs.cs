@@ -121,7 +121,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Sprint"",
-                    ""type"": ""Value"",
+                    ""type"": ""Button"",
                     ""id"": ""980e881e-182c-404c-8cbf-3d09fdb48fef"",
                     ""expectedControlType"": """",
                     ""processors"": """",
@@ -298,7 +298,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""c8fcd86e-dcfd-4f88-8e93-b638cdbf3320"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""path"": ""<Gamepad>/leftStickPress"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",

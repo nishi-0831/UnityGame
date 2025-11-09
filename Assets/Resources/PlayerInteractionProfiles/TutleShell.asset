@@ -15,4 +15,4 @@ MonoBehaviour:
   canBeStomped: 1
   damageToPlayer: 1
   stompBounceForce: 5
-  sideHitKnockbackForce: 0
+  scoreValue: 300

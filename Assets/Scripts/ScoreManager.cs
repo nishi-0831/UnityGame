@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static ScoreManager;
@@ -14,8 +15,9 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private float startTime_;
     [SerializeField] private float remainingTime_;
     [SerializeField] private float endTime_;
-    [SerializeField] private Text timerText_;
-    public Action timeUp_;
+    [SerializeField] private TextMeshProUGUI timerText_;
+    private Action timeUp_;
+    private bool countTime_;
     //クリア時間の計測を始める
     //[SerializeField] private 
 
@@ -36,7 +38,11 @@ public class ScoreManager : MonoBehaviour
         }
         scoreData_.Initialize();
         StartCountClearTime();
-        timeUp_ = testCallBack;
+        remainingTime_ = Resources.Load<StageSetting>("StageSettings/Stage1Setting").timeLimit;
+    }
+    public void RegisterOnTimeUpCallback(Action callback)
+    {
+        timeUp_ = callback;
     }
     public void StartCountClearTime()
     {
@@ -59,15 +65,9 @@ public class ScoreManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //デバッグ
-        //if(Input.GetKeyDown(KeyCode.T))
-        //{
-        //    StartCountClearTime();
-        //}
-        //else if(Input.GetKeyDown(KeyCode.Y))
-        //{
-        //    EndCountClearTime();
-        //}
+        if(isStartedCountClearTime == false)
+            return;
+        
         scoreData_.clearTime = Time.time - startTime_;
         if(remainingTime_ > 0) 
         {
@@ -81,19 +81,13 @@ public class ScoreManager : MonoBehaviour
         if (remainingTime_ > 0)
         {
             //カウントダウンタイマーの時間表示
-            timerText_.text = remainingTime_.ToString("Time：" + "0");
+            timerText_.text = $"Time:{Math.Truncate(remainingTime_)}";
         }
         else if (remainingTime_ <= 0)
         {
             //カウントダウンタイマーが０になった時の処理
             timeUp_?.Invoke();
-            //Debug.Log("endTime");
         }
-    }
-
-    public void testCallBack()//動作確認用
-    {
-        Debug.Log("testCallBack");
     }
 
     public void ReceiveScore(int value)

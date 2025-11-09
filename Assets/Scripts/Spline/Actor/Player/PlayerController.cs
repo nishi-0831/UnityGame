@@ -75,6 +75,8 @@ public class PlayerController : SplineMovementBase
     protected override void Initialize()
     {
         GameOutcomeManager.Instance.RegisterGameClearCallback(() => animController_.GameClear());
+        // タイムアップ時にゲームオーバー
+        ScoreManager.Instance.RegisterOnTimeUpCallback(OnPlayerDie);
 
         isDead = false;
         if (animController_ == null)
@@ -105,10 +107,7 @@ public class PlayerController : SplineMovementBase
         {
             // 通常のSpline移動
             transform.rotation = splineController_.EvaluationInfo.rotation;
-
-           
-
-        
+    
             if (!animController_.IsStunned && !isBeingSmashed_)
             {
                 if (inputs_.move.x != 0)
@@ -205,7 +204,6 @@ public class PlayerController : SplineMovementBase
         ChangeLinkedOtherSpline();
     }
 
-    // SplineControllerから呼ばれる落下時の新しいSpline発見処理
     public void OnFoundNewSpline(SplineContainer newSplineContainer)
     {
         // LaneChangeZoneによる強制変更の場合はスキップ
@@ -335,7 +333,7 @@ public class PlayerController : SplineMovementBase
         UpdateCamera();
         if (IsDying())
         {
-            PlayerDie();
+            OnPlayerDie();
         }
 
         Debug.DrawRay(transform.position, offSplineVelocity_ * 1000f);
@@ -476,14 +474,11 @@ public class PlayerController : SplineMovementBase
         StartCoroutine(WaitCanTakeDamage());
     }
 
-    /// <summary>
-    /// HPが0以下か
-    /// </summary>
-    /// <returns>HPが0以下ならば true</returns>
+    
 
-    public void PlayerDie()
+    public void OnPlayerDie()
     {
-        if (IsDying() && isDead == false)
+        if (isDead == false)
         {
             isDead = true;
             GameOutcomeManager.Instance.TriggerGameOver();
@@ -491,6 +486,10 @@ public class PlayerController : SplineMovementBase
         }
     }
 
+    /// <summary>
+    /// HPが0以下か
+    /// </summary>
+    /// <returns>HPが0以下ならば true</returns>
     public bool IsDying()
     {
         return hp_ <= 0;

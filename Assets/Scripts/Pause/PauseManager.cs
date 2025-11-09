@@ -16,16 +16,19 @@ public class PauseManager : MonoBehaviour
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            Instance.ClosePauseScreen();
             return;
         }
         Instance = this;
         DontDestroyOnLoad(gameObject); // シーン遷移しても破棄されないようにする
+        Instance.ClosePauseScreen();
     }
+
 
     void Update()
     {
         // 「Escキー」でポーズのON/OFF切り替え
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (isPaused)
                 ClosePauseScreen();
@@ -51,36 +54,11 @@ public class PauseManager : MonoBehaviour
     /// </summary>
     public void ClosePauseScreen()
     {
+        Debug.Log("Close");
         if (pauseUI != null)
             pauseUI.SetActive(false);
 
         Time.timeScale = 1f; // ゲームを再開
         isPaused = false;
-    }
-
-    /// <summary>
-    /// 「Resume」ボタン：ゲームを再開
-    /// </summary>
-    public void ResumeGame()
-    {
-        ClosePauseScreen();
-    }
-
-    /// <summary>
-    /// 「MainMenu」ボタン：メインメニューへ戻る
-    /// </summary>
-    public void GoToMainMenu()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu"); // シーン名はプロジェクトに合わせて変更
-    }
-
-    /// <summary>
-    /// 「StageSelect」ボタン：ステージ選択画面へ
-    /// </summary>
-    public void GoToStageSelect()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("StageSelect"); // シーン名はプロジェクトに合わせて変更
-    }
+    } 
 }

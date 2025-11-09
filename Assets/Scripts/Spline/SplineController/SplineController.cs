@@ -281,7 +281,7 @@ public class SplineController : MonoBehaviour
                 }
             }
         }
-        else if(SplineProgress_ > 1.0f)
+        else if(SplineProgress_ >= 1.0f)
         {
             onMaxT?.Invoke();
             if (onceAction_)

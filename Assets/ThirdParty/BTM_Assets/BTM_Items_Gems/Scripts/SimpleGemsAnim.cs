@@ -40,8 +40,6 @@ namespace Benjathemaker
             endScale = initialScale * (endScale.magnitude / startScale.magnitude);
         }
 
-        
-
         public void UpdateRot()
         {
             if (isRotating)
@@ -65,14 +63,13 @@ namespace Benjathemaker
 
                 target_.transform.position = initialPosition + new Vector3(0, t * floatHeight, 0);
             }
-
         }
         public void UpdateScale()
         {
             if (isScaling)
             {
                 scaleTimer += Time.deltaTime * scaleLerpSpeed;
-                float t = Mathf.PingPong(scaleTimer, 1f); // Oscillates between 0 and 1
+                float t = Mathf.PingPong(scaleTimer, 1f);
 
                 if (useEasingForScaling)
                 {

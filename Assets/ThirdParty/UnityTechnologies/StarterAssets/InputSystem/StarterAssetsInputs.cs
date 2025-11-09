@@ -77,7 +77,6 @@ namespace StarterAssets
 					SprintInput(false);
 					break;
 			}
-			//Debug.Log("OnSprint");
 		}
 #endif
 		

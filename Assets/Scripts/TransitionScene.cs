@@ -11,9 +11,11 @@ public class TransitionScene : MonoBehaviour
     public struct SceneName
     {
         public const string title = "Title";
-        public const string play = "SampleScene";
+        public const string play = "State1";
         public const string gameOver = "GameOver";
         public const string result = "Result";
+        public const string stageSelect = "StageSelect";
+        public const string pause = "Pause";
     }
 
     private void Awake()
@@ -53,6 +55,14 @@ public class TransitionScene : MonoBehaviour
     public void ToResult(float delay = 0.0f)
     {
         StartCoroutine(ExecuteAfterDelay(delay,() => SceneManager.LoadScene(SceneName.result)));
+    }
+    public void ToStageSelect(float delay = 0.0f)
+    {
+        StartCoroutine(ExecuteAfterDelay(delay, () => SceneManager.LoadScene(SceneName.stageSelect)));
+    }
+    public void ToPause(float delay = 0.0f)
+    {
+        StartCoroutine(ExecuteAfterDelay(delay, () => SceneManager.LoadScene(SceneName.pause)));
     }
     IEnumerator ExecuteAfterDelay(float delay,Action cb)
     {

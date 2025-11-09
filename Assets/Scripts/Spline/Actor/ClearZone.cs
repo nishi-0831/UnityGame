@@ -4,7 +4,7 @@ using UnityEngine;
 public class ClearZone : PlayerInteractableBase
 {
     // クリア後、シーン遷移するまでの猶予時間
-    [SerializeField] float transitionSceneDelay = 1.0f;
+    //[SerializeField] float transitionSceneDelay = 1.0f;
     override protected void Start() 
     {
         base.Start();
@@ -12,7 +12,6 @@ public class ClearZone : PlayerInteractableBase
     }
     public override void OnSideHitCore(GameObject player)
     {
-        //ClearGame();
         GameOutcomeManager.Instance.TriggerGameClear();
     }
 
@@ -23,6 +22,6 @@ public class ClearZone : PlayerInteractableBase
     private void ClearGame()
     {
         ScoreManager.Instance.EndCountClearTime();
-        TransitionScene.Instance.ToResult(transitionSceneDelay);
+        //TransitionScene.Instance.ToResult(transitionSceneDelay);
     }
 }

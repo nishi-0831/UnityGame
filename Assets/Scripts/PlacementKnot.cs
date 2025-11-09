@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
 using Unity.VisualScripting;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.Splines;
 

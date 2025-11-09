@@ -105,27 +105,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineLayerSettings_: {fileID: 0}
-  followTarget_: {fileID: 605150527653573156}
   currentSplineContainer_: {fileID: 0}
-  t_: 0
+  followTarget_: {fileID: 605150527653573156}
+  SplineProgress_: 0
   splineDirection_: 1
   isMovingLeft: 0
   offsetRayStartPosY: 1
   enableEditorPreview: 1
+  autoFindParentSplineContainer_: 1
+  overwriteCurrentWithParentSplineContainer_: 0
+  autoUpdateInfo_: 1
   onUpdateEditor_:
     m_PersistentCalls:
       m_Calls: []
   splineMeshRadius_: 0
   offsetY_: 0
-  autoFindParentSplineContainer_: 1
-  overwriteCurrentWithParentSplineContainer_: 0
+  prevSplineLength: -1
   evaluationInfo_:
     position: {x: 0, y: 0, z: 0}
     tangent: {x: 0, y: 0, z: 0}
     upVector: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0, w: 0}
-  autoUpdateInfo_: 1
 --- !u!114 &-3343479510398985393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,18 +138,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff5405063b4fcb6459af8f98165f3152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp_: 1
   speed_: 5
   autoInitialize_: 1
-  wallTag_: Wall
   splineController_: {fileID: 1403040952140553264}
   isActive_: 1
-  layerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
   onDestroySE_: {fileID: 0}
-  canBeStomped: 1
-  damageToPlayer: 1
-  animator: {fileID: 0}
-  stompBounceForce: 5
+  profile: {fileID: 11400000, guid: fa4689d793ab43d45963d8a510910e8e, type: 2}
+  enemyDieClip: {fileID: 0}
 --- !u!65 &7794550201704987470
 BoxCollider:
   m_ObjectHideFlags: 0

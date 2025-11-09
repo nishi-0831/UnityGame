@@ -7,6 +7,7 @@ public class GameOutcomeManager : MonoBehaviour
 
     private event Action OnGameClear;
     private event Action OnGameOver;
+    [SerializeField] private float transitionSceneDelay;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
@@ -26,12 +27,14 @@ public class GameOutcomeManager : MonoBehaviour
     {
         Debug.Log("GameOutcomeManager: TriggerGameClear");
         OnGameClear?.Invoke();
+        TransitionScene.Instance.ToResult(transitionSceneDelay);
     }
 
     public void TriggerGameOver()
     {
         Debug.Log("GameOutcomeManager: TriggerGameOver");
         OnGameOver?.Invoke();
+        TransitionScene.Instance.ToPause(transitionSceneDelay);
     }
     void Start()
     {
