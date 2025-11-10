@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,11 +11,12 @@ public class TransitionScene : MonoBehaviour
     public struct SceneName
     {
         public const string title = "Title";
-        public const string play = "SampleScene";
+        public const string play = "State1";
         public const string gameOver = "GameOver";
         public const string result = "Result";
+        public const string stageSelect = "StageSelect";
+        public const string pause = "Pause";
     }
-
 
     private void Awake()
     {
@@ -37,21 +40,34 @@ public class TransitionScene : MonoBehaviour
         }
     }
 
-    public void ToTitle()
+    public void ToTitle(float delay = 0.0f)
     {
-        SceneManager.LoadScene(SceneName.title);
+        StartCoroutine(ExecuteAfterDelay(delay, () => SceneManager.LoadScene(SceneName.title)));
     }
-    public void ToPlay()
+    public void ToPlay(float delay = 0.0f)
     {
-        SceneManager.LoadScene(SceneName.play);
+        StartCoroutine(ExecuteAfterDelay(delay, () => SceneManager.LoadScene(SceneName.play)));
     }
-    public void ToGameOver()
+    public void ToGameOver(float delay = 0.0f)
     {
-        SceneManager.LoadScene(SceneName.gameOver);
+        StartCoroutine(ExecuteAfterDelay(delay, () => SceneManager.LoadScene(SceneName.gameOver)));
     }
-    public void ToResult()
+    public void ToResult(float delay = 0.0f)
     {
-        SceneManager.LoadScene(SceneName.result);
+        StartCoroutine(ExecuteAfterDelay(delay,() => SceneManager.LoadScene(SceneName.result)));
+    }
+    public void ToStageSelect(float delay = 0.0f)
+    {
+        StartCoroutine(ExecuteAfterDelay(delay, () => SceneManager.LoadScene(SceneName.stageSelect)));
+    }
+    public void ToPause(float delay = 0.0f)
+    {
+        StartCoroutine(ExecuteAfterDelay(delay, () => SceneManager.LoadScene(SceneName.pause)));
+    }
+    IEnumerator ExecuteAfterDelay(float delay,Action cb)
+    {
+        yield return new WaitForSeconds(delay);
+        cb();
     }
     public void QuitGame()
     {

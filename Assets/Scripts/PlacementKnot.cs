@@ -1,10 +1,12 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Splines;
-using Unity.Mathematics;
 
+[RequireComponent(typeof(SplineContainer))]
 public class PlacementKnot : MonoBehaviour
 {
     [SerializeField] private float radius;
@@ -12,11 +14,15 @@ public class PlacementKnot : MonoBehaviour
     [SerializeField] private SplineContainer splineContainer;
     private Spline spline;
 
+    [Header("Knotの最低数。これより少ない場合は追加される")]
+    [SerializeField,Range(3,64)]private int minKnotNum = 6;
     [Header("等間隔配置のサンプリング精度")]
     [SerializeField, Range(4, 1024)] private int samplesPerSegment = 32;
-
+    [Header("螺旋状配置時のKnot間の垂直方向の間隔（Y軸方向の増分）")]
+    [SerializeField] private float verticalSpacing;
+    [SerializeField] private bool reverse;
     [ContextMenu("PlacementKnot (等距離)")]
-    public void Placement()
+    public void PlacementPerSeg()
     {
         splineContainer = GetComponent<SplineContainer>();
         if (splineContainer == null)
@@ -131,4 +137,58 @@ public class PlacementKnot : MonoBehaviour
 
         Debug.Log($"PlacementKnot: {knotCount} knots redistributed evenly along spline (totalLength={totalLength:F3})");
     }
+
+    [ContextMenu("PlacementKnot (等角度)")]
+    public void PlacementPerDeg()
+    {
+        splineContainer = GetComponent<SplineContainer>();
+        if (splineContainer == null)
+        {
+            Debug.LogError("SplineContainerが見つかりません");
+            return;
+        }
+
+        spline = splineContainer.Spline;
+        if (spline == null || spline.Count == 0)
+        {
+            splineContainer.AddSpline();
+            //Debug.LogError("Splineが空です");
+            //return;
+        }
+        var knots = spline.Knots;
+
+        int knotCount = spline.Count;
+        if (knotCount < minKnotNum)
+        {
+            int addNum = minKnotNum - knotCount;
+            
+            for (int i = 0; i < addNum; i++)
+            {
+                // 新しいKnotを適当な位置で追加
+                spline.Add(new BezierKnot(Vector3.zero));
+            }
+            // Knotの数を更新
+            knotCount = spline.Count; 
+        }
+
+        int segmentCount = close ? knotCount : Mathf.Max(1, knotCount - 1);
+        float degPerKnot = (360 / (float)segmentCount);
+
+        for (int i = 0; i < knotCount; i++)
+        {
+            float rad = degPerKnot * i * Mathf.Deg2Rad;
+            float dir = reverse ? -1 : 1;
+            float x = Mathf.Cos(rad) * (radius * dir);
+            float z = Mathf.Sin(rad) * (radius * dir);
+
+            var knot = spline[i];
+            knot.Position = new float3(x, i * verticalSpacing, z);
+            knot.Rotation = Quaternion.LookRotation(knot.TangentOut, Vector3.up);
+
+            spline[i] = knot;
+        }
+        spline.SetTangentMode(TangentMode.AutoSmooth);
+        spline.Closed = close;
+    }
+
 }

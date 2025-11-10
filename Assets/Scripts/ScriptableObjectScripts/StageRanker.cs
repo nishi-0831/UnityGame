@@ -7,11 +7,15 @@ public class StageAchievementChecker : MonoBehaviour
     [SerializeField] private string stageName;
     [SerializeField] private float checkInterval = 1.5f;
     [SerializeField] private StageSetting stageSetting;
+    [SerializeField] private StageAchievementChecker achievementChecker;
+
 
     private bool stageCleared = false;
     private float checkTimer = 0f;
     void Awake()
     {
+        Debug.Log("ABC");
+       
         stageSetting = Resources.Load<StageSetting>($"StageSettings/{stageName}");
         if (stageSetting == null)
         {
@@ -19,7 +23,13 @@ public class StageAchievementChecker : MonoBehaviour
         }
     }
 
-    public bool IsScoreAchieved() // スコア達成
+    void StageClear()
+    {
+        // スコア集計などを終えたあと
+        achievementChecker.OnStageClear(); // ←ここで上の関数が実行される！
+    }
+
+    public bool IsScoreAchieved()
     {
         if (stageSetting == null) return false;
         return scoreData.score >= stageSetting.scoreTarget;
@@ -68,6 +78,7 @@ public class StageAchievementChecker : MonoBehaviour
             stageCleared = true;
             OnStageClear();
         }
+       
     }
 
     public void OnStageClear()
@@ -94,7 +105,7 @@ public class StageAchievementChecker : MonoBehaviour
         {
             Debug.Log("★すべての条件を達成しました！★");
             //ランク表示・報酬処理などここで呼び出し
-        }
+    }
 
         //ScriptableObjectの内容を保存（エディタ実行中のみ）
 #if UNITY_EDITOR

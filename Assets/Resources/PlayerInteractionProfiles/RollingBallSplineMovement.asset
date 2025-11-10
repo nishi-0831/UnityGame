@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canBeStomped: 1
   damageToPlayer: 1
-  stompBounceForce: 15
+  stompBounceForce: 20
   scoreValue: 0
