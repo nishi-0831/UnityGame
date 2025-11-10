@@ -12,6 +12,8 @@ public class TransitionScene : MonoBehaviour
         public const string play = "SampleScene";
         public const string gameOver = "GameOver";
         public const string result = "Result";
+        public const string StageSelect = "StageSelect";
+        public const string MainMenu = "MainMenu";
     }
 
 
@@ -52,6 +54,14 @@ public class TransitionScene : MonoBehaviour
     public void ToResult()
     {
         SceneManager.LoadScene(SceneName.result);
+    }
+    public void ToStageSelect()
+    {
+        SceneManager.LoadScene(SceneName.StageSelect);
+    }
+    public void ToMainMenu()
+    {
+        SceneManager.LoadScene(SceneName.MainMenu);
     }
     public void QuitGame()
     {
