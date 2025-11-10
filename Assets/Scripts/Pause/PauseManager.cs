@@ -5,7 +5,7 @@ public class PauseManager : MonoBehaviour
 {
     // シングルトン設定 
     // 他のクラス（例：Player）から呼び出すためのグローバル参照
-    public static PauseManager Instance { get; private set; }
+    //public static PauseManager Instance { get; private set; }
 
     [SerializeField] private GameObject pauseUI; // ポーズ画面のCanvasを指定
     private bool isPaused = false;               // 現在ポーズ中かどうか
@@ -13,15 +13,15 @@ public class PauseManager : MonoBehaviour
     void Awake()
     {
         // シングルトンのインスタンスをセット
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            Instance.ClosePauseScreen();
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject); // シーン遷移しても破棄されないようにする
-        Instance.ClosePauseScreen();
+        //if (Instance != null && Instance != this)
+        //{
+        //    Destroy(gameObject);
+        //    Instance.ClosePauseScreen();
+        //    return;
+        //}
+        //Instance = this;
+        //DontDestroyOnLoad(gameObject); // シーン遷移しても破棄されないようにする
+        ClosePauseScreen();
     }
 
 

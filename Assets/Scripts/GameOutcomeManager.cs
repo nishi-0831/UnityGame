@@ -17,7 +17,7 @@ public class GameOutcomeManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        //DontDestroyOnLoad(this.gameObject);
     }
 
     public void RegisterGameClearCallback(Action cb) => OnGameClear += cb;
