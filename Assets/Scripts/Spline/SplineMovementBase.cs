@@ -59,12 +59,6 @@ public abstract class SplineMovementBase : MonoBehaviour
         get { return splineController_.SplineLayerSettings; }
 
     }
-    [Header("”jŠü‚ÉÄ¶‚³‚ê‚éSE")]
-    /// <summary>
-    /// <para>- ”jŠü‚ÉÄ¶‚·‚éSE</para>
-    /// </summary>
-    [SerializeField] private AudioClip onDestroySE_ = null;
-
     /// <summary>
     /// <para>- SplineController ‚ªQÆ‚·‚éƒtƒHƒ[‘ÎÛ</para>
     /// <para>- setter ‚Å SplineController ‘¤‚Ö”½‰f‚·‚é</para>
@@ -299,10 +293,6 @@ public abstract class SplineMovementBase : MonoBehaviour
         {
             splineController_.onMaxT -= OnReachMaxT;
             splineController_.onMinT -= OnReachMinT;
-        }
-        if(onDestroySE_ != null)
-        {
-            AudioSource.PlayClipAtPoint(onDestroySE_, FollowTarget.transform.position);
         }
     }
 

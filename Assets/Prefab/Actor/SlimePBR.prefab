@@ -142,8 +142,11 @@ MonoBehaviour:
   autoInitialize_: 1
   splineController_: {fileID: 1403040952140553264}
   isActive_: 1
-  onDestroySE_: {fileID: 0}
   profile: {fileID: 11400000, guid: fa4689d793ab43d45963d8a510910e8e, type: 2}
+  onStompedAudio: {fileID: 8300000, guid: 1134911da460ed14ea758168ac8ee3bc, type: 3}
+  onStompedAudioVolume: 0.5
+  onSideHitAudio: {fileID: 0}
+  onSideHitAudioVolume: 0.5
   enemyDieClip: {fileID: 0}
 --- !u!65 &7794550201704987470
 BoxCollider:

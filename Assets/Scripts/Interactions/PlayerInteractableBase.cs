@@ -37,10 +37,15 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
             return profile;
         }
     }
+    [SerializeField] private PlayerInteractionSoundProfile soundProfile;
+
     [HideInInspector] protected int animIDDie;
     [HideInInspector] protected int animIDAttack;
     [HideInInspector] protected Animator animator;
-
+    [SerializeField] protected AudioClip onStompedAudio;
+    [SerializeField][Range(0.0f, 1.0f)] protected float onStompedAudioVolume = 0.5f;
+    [SerializeField] protected AudioClip onSideHitAudio;
+    [SerializeField][Range(0.0f, 1.0f)] protected float onSideHitAudioVolume = 0.5f;
     /// <summary>
     /// スプライン上の現在位値を取得
     /// </summary>
@@ -48,6 +53,7 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     {
         get => splineController_.Progress;
     }
+    
 
     /// <summary>
     /// 踏み潰し可能かどうかを取得
@@ -120,6 +126,10 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     {
         if (!IsInteractableActive()) return;
 
+        if(onStompedAudio != null)
+        {
+            AudioManager.Instance.PlaySound(onStompedAudio, onStompedAudioVolume);
+        }
         OnStompedCore(player);
     }
 
@@ -131,6 +141,10 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     {
         if (!IsInteractableActive()) return;
 
+        if(onSideHitAudio != null)
+        {
+            AudioManager.Instance.PlaySound(onSideHitAudio, onSideHitAudioVolume);
+        }
         OnSideHitCore(player);
     }
 
