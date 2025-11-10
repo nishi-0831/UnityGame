@@ -46,12 +46,7 @@ public class ScoreItemSplineMovement : PlayerInteractableBase
         base.OnReachMinT();
         splineController_.Reverse();
     }
-
-    private void DestroyItem()
-    {
-        //Vector3 playerPos = player.transform.position;
-        //float verticalVelocity = Mathf.Sqrt(height * -2f * Gravity)
-    }
+  
     private IEnumerator DestroyAnim(GameObject player)
     {
         Disable();
@@ -90,11 +85,11 @@ public class ScoreItemSplineMovement : PlayerInteractableBase
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            // スコア加算処理（実際のゲームではScoreManagerなどを使用）
-            GiveScoreToPlayer(other.gameObject);
-        }
+        //if (other.CompareTag("Player"))
+        //{
+        //    // スコア加算処理（実際のゲームではScoreManagerなどを使用）
+        //    GiveScoreToPlayer(other.gameObject);
+        //}
     }
     
     

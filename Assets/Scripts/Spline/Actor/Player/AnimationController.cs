@@ -213,7 +213,7 @@ public class AnimationController : MonoBehaviour
     }
     public void GameClear()
     {
-        Debug.Log("GameClear,AnimContro");
+        //Debug.Log("GameClear,AnimContro");
         if (_hasAnimator)
         {
             _animator.SetTrigger(_animIDOnGameClear);

@@ -143,6 +143,7 @@ MonoBehaviour:
   splineController_: {fileID: 1403040952140553264}
   isActive_: 1
   profile: {fileID: 11400000, guid: fa4689d793ab43d45963d8a510910e8e, type: 2}
+  soundProfile: {fileID: 11400000, guid: da53a49d64eff9e468c1de370d954459, type: 2}
   onStompedAudio: {fileID: 8300000, guid: 1134911da460ed14ea758168ac8ee3bc, type: 3}
   onStompedAudioVolume: 0.5
   onSideHitAudio: {fileID: 0}

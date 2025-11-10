@@ -267,7 +267,7 @@ public abstract class SplineMovementBase : MonoBehaviour
     /// </summary>
     protected void Disable()
     {
-        Debug.Log($"Disable:{FollowTarget.name}");
+        //Debug.Log($"Disable:{FollowTarget.name}");
         IsActive_ = false;
         FollowTarget.layer = (int)Mathf.Log(LayerSettings.disabledLayer.value, 2);
     }

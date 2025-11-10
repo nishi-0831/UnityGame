@@ -38,14 +38,16 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
         }
     }
     [SerializeField] private PlayerInteractionSoundProfile soundProfile;
-
+    protected PlayerInteractionSoundProfile SoundProfile
+    {
+        get
+        {
+            return soundProfile;
+        }
+    }
     [HideInInspector] protected int animIDDie;
     [HideInInspector] protected int animIDAttack;
     [HideInInspector] protected Animator animator;
-    [SerializeField] protected AudioClip onStompedAudio;
-    [SerializeField][Range(0.0f, 1.0f)] protected float onStompedAudioVolume = 0.5f;
-    [SerializeField] protected AudioClip onSideHitAudio;
-    [SerializeField][Range(0.0f, 1.0f)] protected float onSideHitAudioVolume = 0.5f;
     /// <summary>
     /// スプライン上の現在位値を取得
     /// </summary>
@@ -125,10 +127,12 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     public void OnStomped(GameObject player)
     {
         if (!IsInteractableActive()) return;
+        Debug.Log("OnStomped");
 
-        if(onStompedAudio != null)
+        if (SoundProfile != null && SoundProfile.onStompedAudio != null)
         {
-            AudioManager.Instance.PlaySound(onStompedAudio, onStompedAudioVolume);
+            Debug.Log("OnStompedAudio");
+            AudioManager.Instance.PlaySound(SoundProfile.onStompedAudio, SoundProfile.onStompedAudioVolume);
         }
         OnStompedCore(player);
     }
@@ -140,10 +144,12 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
     public void OnSideHit(GameObject player)
     {
         if (!IsInteractableActive()) return;
+        Debug.Log("OnSideHit");
 
-        if(onSideHitAudio != null)
+        if ( SoundProfile != null && SoundProfile.onSideHitAudio != null)
         {
-            AudioManager.Instance.PlaySound(onSideHitAudio, onSideHitAudioVolume);
+            Debug.Log("OnSideHitAudio");
+            AudioManager.Instance.PlaySound(SoundProfile.onSideHitAudio, SoundProfile.onSideHitAudioVolume);
         }
         OnSideHitCore(player);
     }

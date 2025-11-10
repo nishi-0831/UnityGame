@@ -4,11 +4,6 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    [SerializeField] private AudioClip defaultClip; //テスト用(任意)
-    [SerializeField] private AudioClip gameOverSE;  // 追加：ゲームオーバー用
-    [SerializeField] private AudioClip gameClearSE;  // 追加：ゲームオーバー用
-
-
     void Awake()
     {
         // シングルトン化
@@ -47,11 +42,4 @@ public class AudioManager : MonoBehaviour
         //再生が終わったら自動で削除
         Destroy(obj, clip.length);
     }
-
-    /// <summary>
-    /// テスト用：defaultClipを鳴らす
-    /// </summary>
-    public void PlayDefault() => PlaySound(defaultClip);
-    public void PlayGameOver() => PlaySound(gameOverSE); // 追加
-    public void PlayGameClear() => PlaySound(gameClearSE); // 追加
 }
