@@ -29,12 +29,14 @@ public class TextSetting : MonoBehaviour
     {
         blackPanel.transform.SetAsFirstSibling();
         StartCoroutine(ShowUIAfterDelay(gameOverUI_));
+        AudioManager.Instance.PlayGameOver(0.01f);
         Debug.Log("GameOverUI");
     }
 
     private void StartGameClearUI()
     {
         StartCoroutine(ShowUIAfterDelay(gameClearUI_));
+        AudioManager.Instance.PlayGameClear(0.01f);
         Debug.Log("GameClearUI");
 
     }
@@ -66,10 +68,10 @@ public class TextSetting : MonoBehaviour
 
 
         // Ç±Ç±Ç≈GameOver UIï\é¶
-        gameOverUI_.SetActive(true);
+        //gameOverUI_.SetActive(true);
 
         // UIï\é¶Ç∆ìØéûÇ…SEçƒê∂
-        AudioManager.Instance.PlayGameOver(0.3f);
+        //AudioManager.Instance.PlayGameOver(0.3f);
     }
 
 
