@@ -52,7 +52,7 @@ public class RollingBallSplineMovement : PlayerInteractableBase
     public void SetParam(SplineContainer splineContainer, float t, float moveSpeed, float rollSpeed, bool isLeft,float lifeSpan)
     {
         this.splineController_.currentSplineContainer_ = splineContainer;
-        splineController_.SetSplineMeshRadius();
+        //splineController_.SetSplineMeshRadius();
 
         this.splineController_.Progress = t;
         this.speed_ = moveSpeed;
@@ -69,7 +69,7 @@ public class RollingBallSplineMovement : PlayerInteractableBase
         lastVelosity_ = splineMovement / Time.deltaTime;
 
         // 基本の移動
-        transform.position = info.position + (info.upVector * (Radius + splineController_.SplineMeshRadius / 2.0f) );
+        transform.position = info.position + (info.upVector * Radius );
 
         // 転がるアニメーション
         Vector3 tangent = info.tangent;

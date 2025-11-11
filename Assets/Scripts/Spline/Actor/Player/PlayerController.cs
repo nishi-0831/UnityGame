@@ -222,8 +222,6 @@ public class PlayerController : SplineMovementBase
             // 新しいSplineに移行
             splineController_.ChangeOtherSpline(newSplineContainer);
 
-            //新しいSplineMeshのRadiusを取得
-            splineController_.SetSplineMeshRadius();
             // 位置を新しいSplineに合わせて調整
             Vector3 newSplinePosition = splineController_.GetSplineMeshPos();
             transform.position = new Vector3(newSplinePosition.x, transform.position.y, newSplinePosition.z);
@@ -406,12 +404,9 @@ public class PlayerController : SplineMovementBase
         splineController_.currentSplineContainer_ = targetSpline.currentSplineContainer_;
         splineController_.Progress = targetSpline.Progress;
         
-        // EvaluationInfoを強制更新
-        splineController_.SetSplineMeshRadius();
         
         // 位置を即座に更新
         Vector3 newPosition = splineController_.GetSplineMeshPos();
-        //Debug.Log($"[ForceSplineChange] Completed. Prev position: {transform.position}, Container: {splineController_.currentSplineContainer_?.name}, Progress: {splineController_.Progress}");
 
         transform.position = newPosition;
         

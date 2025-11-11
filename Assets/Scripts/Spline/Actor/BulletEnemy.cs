@@ -10,8 +10,6 @@ public class BulletEnemy : PlayerInteractableBase
     public GameObject targetPlayer;
     [SerializeField] private float attackInterval_ = 5.0f;
     [SerializeField] private EaseInterpolator easeInterpolator_;
-    [SerializeField] private AudioClip enemyDieClip;
-    //float bulletSpeed_ = 200.0f;
     // 独自のフィールドをここに追加
     /// <summary>
     /// 初期化処理
@@ -112,10 +110,6 @@ public class BulletEnemy : PlayerInteractableBase
     /// <param name="player">プレイヤーのGameObject</param>
     public override void OnStompedCore(GameObject player)
     {
-        if (AudioManager.Instance != null && enemyDieClip != null)
-        {
-            AudioManager.Instance.PlaySound(enemyDieClip, 1f);
-        }
         // 踏みつけ時の処理をここに記述
         // 例: 
         OnDamage();

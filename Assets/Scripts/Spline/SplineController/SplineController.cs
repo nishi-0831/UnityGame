@@ -72,11 +72,8 @@ public class SplineController : MonoBehaviour
     [SerializeField] private bool autoUpdateInfo_ = true;
     
     //追加でエディターに反映させたいときにどうぞ
-    public UnityEvent onUpdateEditor_;
-    [Header("メッシュの半径(上方向)")]
-    [SerializeField] private float splineMeshRadius_;
+    //public UnityEvent onUpdateEditor_;
     [SerializeField] public float offsetY_ = 0f;
-    //[SerializeField] public bool isOffSpline_ = false; // Spline範囲外にいるかどうか
     private bool onceAction_ = false;
     public Action onMaxT;
     public Action onMinT;
@@ -84,7 +81,6 @@ public class SplineController : MonoBehaviour
     private float prevT_;
     [SerializeField] private float prevSplineLength = -1f;
     private bool isFirstFrame_ = true;
-    private EvaluationInfo prevEvaluationInfo_;
     [SerializeField] private EvaluationInfo evaluationInfo_;
     public EvaluationInfo EvaluationInfo 
     { get
@@ -115,10 +111,10 @@ public class SplineController : MonoBehaviour
         get { return prevT_; }
     }
 
-    public float SplineMeshRadius
-    {
-        get { return splineMeshRadius_; }
-    }
+    //public float SplineMeshRadius
+    //{
+    //    get { return splineMeshRadius_; }
+    //}
     #region EditModePreview
 #if UNITY_EDITOR
     /// <summary>
@@ -183,7 +179,7 @@ public class SplineController : MonoBehaviour
             // Splineの長さが変わったときにProgressを調整
             MaybeAdjustProgressForSplineLength();
             MoveAlongSpline();
-            onUpdateEditor_?.Invoke();
+            //onUpdateEditor_?.Invoke();
             if (!Application.isPlaying)
             {
                 Debug.Log("Paint");
@@ -220,27 +216,12 @@ public class SplineController : MonoBehaviour
         }
         if (followTarget_ != null && currentSplineContainer_ != null)
         {
-            //MoveAlongSpline(SplineProgress_);
-            SetSplineMeshRadius();
         }
         prevT_ = SplineProgress_;
         splineDirection_ = 1;
         evaluationInfo_ = new EvaluationInfo();
-        //evaluationInfo_.ToString();
-        prevEvaluationInfo_ = evaluationInfo_;
     }
-    public void SetSplineMeshRadius()
-    {
-        SplineExtrude splineExtrude = currentSplineContainer_.GetComponent<SplineExtrude>();
-        if (splineExtrude != null)
-        {
-            splineMeshRadius_ = splineExtrude.Radius;
-        }
-        else
-        {
-            splineMeshRadius_ = 0;
-        }
-    }
+    
     protected bool CanFindSplineContainer()
     {
         bool ret = false;
@@ -499,18 +480,18 @@ public class SplineController : MonoBehaviour
     public void SyncEvaluationInfo()
     {
         followTarget_.transform.rotation = evaluationInfo_.rotation;
-        followTarget_.transform.position = evaluationInfo_.position + new Vector3(0, splineMeshRadius_ / 2.0f, 0);
+        followTarget_.transform.position = evaluationInfo_.position;
     }
     public void MoveAlongSpline(float t)
     {
         //Debug.Log($"{followTarget_.name}:MoveAlongSpline");
         EvaluationInfo spline = GetEvaluationInfo(t);
         followTarget_.transform.rotation = spline.rotation;
-        followTarget_.transform.position = spline.position + new Vector3(0, splineMeshRadius_ / 2.0f, 0);
+        followTarget_.transform.position = spline.position;
     }
     public Vector3 GetSplineMeshPos()
     {
-        return EvaluationInfo.position + new Vector3(0, splineMeshRadius_ / 2.0f, 0);
+        return EvaluationInfo.position;
     }
     public void ClampProgress()
     {

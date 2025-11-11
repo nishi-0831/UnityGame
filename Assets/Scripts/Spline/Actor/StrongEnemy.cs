@@ -23,8 +23,6 @@ public class StrongEnemy : PlayerInteractableBase
     [SerializeField]private EaseInterpolator easeInterpolator_;
 
     [SerializeField] private float ballLifeSpan_ = 5f;
-    [SerializeField] private AudioClip enemyDieClip;
-
     protected override void Initialize()
     {
         base.Initialize();
@@ -83,19 +81,9 @@ public class StrongEnemy : PlayerInteractableBase
 
         animator?.SetTrigger(animIDAttack);
     }
-
-   
-    //public override void OnRequestDestroy()
-    //{
-    //    Destroy(gameObject);
-    //}
-    // IPlayerInteractableé¿ëï
+ 
     public override void OnStompedCore(GameObject player)
     {
-        if (AudioManager.Instance != null && enemyDieClip != null)
-        {
-            AudioManager.Instance.PlaySound(enemyDieClip, 1f);
-        }
         OnDamage();
         // ÉvÉåÉCÉÑÅ[Ç…íµÇÀï‘ÇËå¯â Çó^Ç¶ÇÈ
         PlayerInteractionUtils.ApplyStompBounce(player, StompBounceForce);
