@@ -7,6 +7,28 @@ public class DamageObject : MonoBehaviour, IPlayerInteractable
     void Start()
     {
         gameObject.layer = (int)Mathf.Log(SplineLayerSettings.Instance.activeLayer.value, 2);
+
+        if (profile == null)
+        {
+            // クラス名を取得
+            string className = GetType().Name;
+            profile = Resources.Load<PlayerInteractionProfile>($"PlayerInteractionProfiles/{className}");
+
+            if (profile == null)
+            {
+                Debug.LogWarning($"{className} という名前のPlayerInteractionProfileが見当たりませんでした。" +
+                              $"Resources/PlayerInteractionProfiles/{className}のように作ってください");
+                // フォールバック用のデフォルトの設定を読み込む
+                profile = Resources.Load<PlayerInteractionProfile>("PlayerInteractionProfiles/Default");
+            }
+
+
+
+            if (profile == null)
+            {
+                Debug.LogError("Resources/PlayerInteractionProfiles/Default が見当たりませんでした");
+            }
+        }
     }
 
     // Update is called once per frame

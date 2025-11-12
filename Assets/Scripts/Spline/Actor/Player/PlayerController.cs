@@ -74,9 +74,9 @@ public class PlayerController : SplineMovementBase
     private Action OnDamageCallback_;
     protected override void Initialize()
     {
-        GameOutcomeManager.Instance.RegisterGameClearCallback(() => animController_.GameClear());
+        GameOutcomeManager.Instance?.RegisterGameClearCallback(() => animController_.GameClear());
         // タイムアップ時にゲームオーバー
-        ScoreManager.Instance.RegisterOnTimeUpCallback(OnPlayerDie);
+        ScoreManager.Instance?.RegisterOnTimeUpCallback(OnPlayerDie);
 
         isDead = false;
         if (animController_ == null)

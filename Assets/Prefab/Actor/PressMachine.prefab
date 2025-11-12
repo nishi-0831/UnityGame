@@ -54,10 +54,6 @@ MonoBehaviour:
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
   autoUpdateInfo_: 1
-  onUpdateEditor_:
-    m_PersistentCalls:
-      m_Calls: []
-  splineMeshRadius_: 2.19
   offsetY_: 0
   prevSplineLength: -1
   evaluationInfo_:
@@ -79,7 +75,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.095
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5809,8 +5805,8 @@ MonoBehaviour:
   autoInitialize_: 0
   splineController_: {fileID: 5976918758377031522}
   isActive_: 1
-  onDestroySE_: {fileID: 0}
   profile: {fileID: 0}
+  soundProfile: {fileID: 0}
   pingPong_: {fileID: 7971946760139128203}
   respawnPoint_: {fileID: 1150643821407076299}
   from_: {x: 47.913643, y: 12.389999, z: 33.220795}
@@ -5840,22 +5836,6 @@ MonoBehaviour:
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
   autoUpdateInfo_: 1
-  onUpdateEditor_:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5072289798373815903}
-        m_TargetAssemblyTypeName: PressMachine, Assembly-CSharp
-        m_MethodName: SetLerpPos
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  splineMeshRadius_: 2.19
   offsetY_: 0
   prevSplineLength: -1
   evaluationInfo_:

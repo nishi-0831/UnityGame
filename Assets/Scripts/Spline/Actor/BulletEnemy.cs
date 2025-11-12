@@ -9,7 +9,12 @@ public class BulletEnemy : PlayerInteractableBase
     public GameObject Sphere;
     public GameObject targetPlayer;
     [SerializeField] private float attackInterval_ = 5.0f;
+    [SerializeField] private float bulletSpeed_ = 30.0f;
+    [SerializeField] private float battleDistance_ = 50.0f;
     [SerializeField] private EaseInterpolator easeInterpolator_;
+    [SerializeField] private Vector3 bulletOffset_ = Vector3.zero;
+    [HideInInspector] protected int animIDBattle;
+
     // 独自のフィールドをここに追加
     /// <summary>
     /// 初期化処理
@@ -22,6 +27,8 @@ public class BulletEnemy : PlayerInteractableBase
         easeInterpolator_.onFinished_ += GenerateBullet;
         easeInterpolator_.Reset();
         easeInterpolator_.duration = attackInterval_;
+
+        animIDBattle = Animator.StringToHash("Battle");
     }
 
     /// <summary>
@@ -38,15 +45,27 @@ public class BulletEnemy : PlayerInteractableBase
     /// </summary>
     void Update()
     {
-        easeInterpolator_.UpdateTime();
-        //ターゲットに向く(全方位向く)
-        transform.LookAt(targetPlayer.transform);
-        //ターゲットへの方向ベクトルの計算(横向きのみ)
-        //Vector3 direction = targetPlayer.transform.position - transform.position;
-        //direction.verticalSpacing = 0;
-        //Quaternion lookRotation = Quaternion.LookRotation(direction,Vector3.up);
-        //transform.rotation = lookRotation;
-        // 更新処理をここに記述
+        Vector3 dir = Vector3.Normalize(targetPlayer.transform.position - transform.position);
+        float distanceSqr = Vector3.SqrMagnitude(transform.position - targetPlayer.transform.position);
+        if (distanceSqr < Mathf.Pow(battleDistance_,2))
+        {
+            animator.SetBool(animIDBattle, true);
+        }
+        else
+        {
+            animator.SetBool(animIDBattle, false);
+            easeInterpolator_.Reset();
+        }
+
+
+        if (animator.GetBool(animIDBattle))
+        {
+            //ターゲットに向く(全方位向く)
+            transform.LookAt(targetPlayer.transform);
+            easeInterpolator_.UpdateTime();
+        }
+
+        Debug.DrawLine(transform.position, transform.position + dir * battleDistance_);
     }
     private void GenerateBullet()
     {
@@ -56,11 +75,14 @@ public class BulletEnemy : PlayerInteractableBase
             return;
         }
         GameObject bullet = Instantiate(Sphere);
-        bullet.transform.localPosition = transform.position;
+        
+        bullet.transform.localPosition = transform.position + bulletOffset_;
         Rigidbody rigidbody = bullet.GetComponent<Rigidbody>();
-        rigidbody.AddForce(transform.forward * 500.0f);
+        //rigidbody.useGravity = false;
+        //rigidbody.AddForce(transform.forward * 500.0f);
+        rigidbody.AddForce(transform.forward * bulletSpeed_, ForceMode.Impulse);
         Destroy(bullet, 10.0f);
-
+        //bullet.AddComponent<DamageObject>();
         animator?.SetTrigger(animIDAttack);
 
     }

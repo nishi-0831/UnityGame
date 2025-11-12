@@ -970,7 +970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df84d17ca63df0943b822bae3b484ad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destroyDelay: 3
+  destroyDelay: 1.5
   splineMovementBase: {fileID: 0}
 --- !u!1101 &8855932724278774632
 AnimatorStateTransition:
