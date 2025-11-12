@@ -7,7 +7,8 @@ public class Hammer : PlayerInteractableBase
 {
     //ハンマーのY座標は20～22(今回は21で設定)
     //[SerializeField] 
-    [SerializeField] GameObject respawnPoint_;
+    [SerializeField] public GameObject respawnPoint_;
+    [SerializeField] private float rotateSpeedZ_;
 
     // 独自のフィールドをここに追加
 
@@ -19,6 +20,7 @@ public class Hammer : PlayerInteractableBase
         base.Initialize();
         // 初期化処理をここに記述
         transform.position = transform.localPosition;
+        rotateSpeedZ_ = 0.3f;
     }
 
     /// <summary>
@@ -36,47 +38,7 @@ public class Hammer : PlayerInteractableBase
     void Update()
     {
         // 更新処理をここに記述
-        transform.Rotate(0, 0, 0.3f);
-    }
-
-    /// <summary>
-    /// 移動処理の更新
-    /// </summary>
-    protected override void UpdateMovement()
-    {
-        // 移動処理をここに記述
-        // 例:
-        // splineController_.Move(speed_);
-    }
-
-    /// <summary>
-    /// 壁との衝突処理
-    /// </summary>
-    protected override void OnCollideWall()
-    {
-        // 壁衝突時の処理をここに記述
-        // 例:
-        // splineController_.Reverse();
-    }
-
-    /// <summary>
-    /// スプライン終端到達時の処理
-    /// </summary>
-    protected override void OnReachMaxT()
-    {
-        // スプライン終端到達時の処理をここに記述
-        // 例:
-        // splineController_.Reverse();
-    }
-
-    /// <summary>
-    /// スプライン始端到達時の処理
-    /// </summary>
-    protected override void OnReachMinT()
-    {
-        // スプライン始端到達時の処理をここに記述
-        // 例:
-        // splineController_.Reverse();
+        transform.Rotate(0,0,rotateSpeedZ_);
     }
 
     /// <summary>

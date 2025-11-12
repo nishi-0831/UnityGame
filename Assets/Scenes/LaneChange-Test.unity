@@ -6056,6 +6056,10 @@ PrefabInstance:
       propertyPath: respawnPoint_
       value: 
       objectReference: {fileID: 668574970}
+    - target: {fileID: 2546355866668827934, guid: 811c41d27ee647246ad4bb559424fc34, type: 3}
+      propertyPath: rotateSpeedZ_
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8156539854386284573, guid: 811c41d27ee647246ad4bb559424fc34, type: 3}
       propertyPath: m_Name
       value: Hammer
