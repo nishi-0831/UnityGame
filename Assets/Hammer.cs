@@ -20,7 +20,7 @@ public class Hammer : PlayerInteractableBase
         base.Initialize();
         // 初期化処理をここに記述
         transform.position = transform.localPosition;
-        rotateSpeedZ_ = 0.3f;
+        rotateSpeedZ_ = 60.0f;
     }
 
     /// <summary>
@@ -38,7 +38,8 @@ public class Hammer : PlayerInteractableBase
     void Update()
     {
         // 更新処理をここに記述
-        transform.Rotate(0,0,rotateSpeedZ_);
+        float rotateAmount = rotateSpeedZ_ * Time.deltaTime;
+        transform.Rotate(0,0,rotateAmount);
     }
 
     /// <summary>
