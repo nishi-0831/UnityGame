@@ -16,5 +16,5 @@ MonoBehaviour:
   maxScore: 999
   minScore: 0
   initTime: 0
-  score: 0
-  clearTime: 0.5397604
+  score: 1000
+  clearTime: 0
