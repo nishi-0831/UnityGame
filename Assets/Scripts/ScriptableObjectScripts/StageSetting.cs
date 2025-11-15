@@ -11,4 +11,8 @@ public class StageSetting : ScriptableObject
 
     [Header("クリア評価用：目標体力（残りHP）")]
     public int hpTarget;
+
+    public bool achievedClearTimeLimit;
+    public bool achievedScoreTarget;
+    public bool achievedHpTarget;
 }

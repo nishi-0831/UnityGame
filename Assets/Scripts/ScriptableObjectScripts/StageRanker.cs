@@ -65,6 +65,9 @@ public class StageAchievementChecker : MonoBehaviour
         bool timeOk = IsTimeAchieved();
         bool allOk = IsAllAchieved();
 
+        stageSetting.achievedScoreTarget = scoreOk;
+        stageSetting.achievedClearTimeLimit = timeOk;
+        stageSetting.achievedHpTarget = hpOk;
         Debug.Log($"スコア達成: {scoreOk}");
         Debug.Log($"HP達成: {hpOk}");
         Debug.Log($"タイム達成: {timeOk}");

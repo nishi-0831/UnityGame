@@ -13,24 +13,15 @@ public class ToggleConroller : MonoBehaviour
 
     public void TimeOnToggle()
     {
-        if(stageAchievementChecker.IsTimeAchieved())
-        {
-            toggle.isOn = true;
-        }
+        toggle.isOn = stageAchievementChecker.IsTimeAchieved();
     }
     public void ScoreOnToggle()
     {
-        if (stageAchievementChecker.IsScoreAchieved())
-        {
-            toggle.isOn = true;
-        }
+        toggle.isOn = stageAchievementChecker.IsScoreAchieved();
     }
     public void HpOnToggle()
     {
-        if (stageAchievementChecker.IsHpAchieved())
-        {
-            toggle.isOn = true;
-        }
+        toggle.isOn = stageAchievementChecker.IsHpAchieved();
     }
     // Update is called once per frame
     void Update()
