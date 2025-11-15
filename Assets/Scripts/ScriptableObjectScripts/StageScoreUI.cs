@@ -3,9 +3,9 @@ using UnityEngine.UI; // トグルとイメージを使うために必要
 using TMPro;
 using System.Collections.Generic;
 
-public class ScoreUIManager : MonoBehaviour
+public class StageScoreUI : MonoBehaviour
 {
-    public StageSetting stageSetting;
+    //public StageSetting stageSetting;
     [Header("画像スプライト")]
     public Sprite offSprite;      // 黒い星の画像
     public Sprite onSprite;       // 黄色い星の画像
@@ -48,7 +48,11 @@ public class ScoreUIManager : MonoBehaviour
     // 初期化時にトグルのイベントを登録する
     void Start()
     {
-        for(int i = 0;i<scoreUIs.Length;i++)
+        
+    }
+    public void ApplyStageSetting(StageSetting stageSetting)
+    {
+        for (int i = 0; i < scoreUIs.Length; i++)
         {
             scoreUIs[i].offSprite = offSprite;
             scoreUIs[i].onSprite = onSprite;
@@ -56,7 +60,7 @@ public class ScoreUIManager : MonoBehaviour
         CheckStar(scoreUIs[0], stageSetting.achievedScoreTarget);
         scoreUIs[0].text.text = $"スコア{stageSetting.scoreTarget}以上でクリア";
 
-        CheckStar(scoreUIs[1], stageSetting.achievedClearTimeLimit);   
+        CheckStar(scoreUIs[1], stageSetting.achievedClearTimeLimit);
         scoreUIs[1].text.text = $"{stageSetting.clearTimeLimit}秒以内でクリア";
 
         CheckStar(scoreUIs[2], stageSetting.achievedHpTarget);
