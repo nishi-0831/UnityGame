@@ -38,7 +38,10 @@ public class ScoreManager : MonoBehaviour
         }
         scoreData_.Initialize();
         StartCountClearTime();
-        remainingTime_ = Resources.Load<StageSetting>("StageSettings/Stage1Setting").timeLimit;
+        if(StageUIManager.Instance)
+        {
+            remainingTime_ = StageUIManager.Instance.CurrentStageSetting().timeLimit;
+        }
     }
     public void RegisterOnTimeUpCallback(Action callback)
     {
