@@ -132,7 +132,7 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
         if (SoundProfile != null && SoundProfile.onStompedAudio != null)
         {
             Debug.Log("OnStompedAudio");
-            AudioManager.Instance.PlaySound(SoundProfile.onStompedAudio, SoundProfile.onStompedAudioVolume);
+            AudioManager.Instance?.PlaySound(SoundProfile.onStompedAudio, SoundProfile.onStompedAudioVolume);
         }
         OnStompedCore(player);
     }
@@ -149,7 +149,7 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
         if ( SoundProfile != null && SoundProfile.onSideHitAudio != null)
         {
             Debug.Log("OnSideHitAudio");
-            AudioManager.Instance.PlaySound(SoundProfile.onSideHitAudio, SoundProfile.onSideHitAudioVolume);
+            AudioManager.Instance?.PlaySound(SoundProfile.onSideHitAudio, SoundProfile.onSideHitAudioVolume);
         }
         OnSideHitCore(player);
     }

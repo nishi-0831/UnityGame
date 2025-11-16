@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abecc452c44e2d94f8fb616e13ddc5f8, type: 3}
   m_Name: Stage2Setting
   m_EditorClassIdentifier: 
-  stageSceneName: 
-  timeLimit: 80
-  clearTimeLimit: 40
-  scoreTarget: 0
-  hpTarget: 100
+  stageSceneName: Stage2
+  timeLimit: 180
+  clearTimeLimit: 100
+  scoreTarget: 1000
+  hpTarget: 2
   achievedClearTimeLimit: 0
   achievedScoreTarget: 0
   achievedHpTarget: 0

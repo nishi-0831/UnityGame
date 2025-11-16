@@ -54,7 +54,7 @@ public class PauseManager : MonoBehaviour
     /// </summary>
     public void ClosePauseScreen()
     {
-        Debug.Log("Close");
+        //Debug.Log("Close");
         if (pauseUI != null)
             pauseUI.SetActive(false);
 

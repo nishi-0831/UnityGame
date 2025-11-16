@@ -41,8 +41,6 @@ namespace MySpline
 }
 public class SplineController : MonoBehaviour
 {
-
-
     [SerializeField]
     public SplineLayerSettings SplineLayerSettings
     {
@@ -63,7 +61,7 @@ public class SplineController : MonoBehaviour
     [SerializeField] protected float offsetRayStartPosY = 1.0f;
 
     [Header("エディターで初期位置表示")]
-    [SerializeField] private bool enableEditorPreview = false;
+    [SerializeField] private bool enableEditorPreview = true;
     [Header("currentSplineContainerがnullの場合、親のSplineContainerを取得するか否か")]
     [SerializeField] private bool autoFindParentSplineContainer_ = true;
     [Header("既存のcurrentSplineContainerを上書きして親のSplineContainerを取得するか否か")]
@@ -262,7 +260,7 @@ public class SplineController : MonoBehaviour
                 }
             }
         }
-        else if(SplineProgress_ >= 1.0f)
+        else if(SplineProgress_ > 1.0f)
         {
             onMaxT?.Invoke();
             if (onceAction_)
@@ -375,6 +373,7 @@ public class SplineController : MonoBehaviour
     {
         if (Progress < 0f)
         {
+            float p = 1f + Progress % 1f;
             Progress = 1f + Progress % 1f;
         }
         else if(Progress > 1f)
@@ -495,11 +494,7 @@ public class SplineController : MonoBehaviour
     }
     public void ClampProgress()
     {
-        // 1.0fを超えていた場合は0.99fにする
-        if (SplineProgress_ > 1.0f)
-            Progress = 0.99f;
-        else
-            Progress = Mathf.Clamp01(SplineProgress_);
+        Progress = Mathf.Clamp01(SplineProgress_);
     }
     #region 他のSplineContainerへの移動関連
     public void MoveOtherSplineMinOrMax()
@@ -657,19 +652,28 @@ public class SplineController : MonoBehaviour
 
         if (Physics.Raycast(pos + new Vector3(0, offsetRayStartPosY, 0), dir, out hit, Mathf.Infinity, SplineLayerSettings.groundLayer))
         {
-            Debug.Log($"[RayUnderSpline] Ray hit: {hit.collider.gameObject.name}, Current spline: {currentSplineContainer_?.name}");
+            //Debug.Log($"[RayUnderSpline] Ray hit: {hit.collider.gameObject.name}, Current spline: {currentSplineContainer_?.name}");
             SplineContainer foundSpline = hit.collider.gameObject.GetComponent<SplineContainer>();
+            if(foundSpline == null)
+            {
+                foundSpline = hit.collider.gameObject.GetComponent<SplineColliderReference>().splineContainer;
+            }
             if (foundSpline != null && foundSpline != currentSplineContainer_)
             {
-                Debug.Log($"[RayUnderSpline] Pos: {pos}");
+                //Debug.Log($"[RayUnderSpline] Pos: {pos}");
 
                 Debug.Log($"[RayUnderSpline] Found different spline: {foundSpline.name}, notifying PlayerController");
                 // PlayerControllerに新しいSplineの発見を通知
                 NotifyPlayerOfNewSpline(foundSpline);
             }
+            else if (foundSpline == currentSplineContainer_)
+            {
+                Debug.Log($"[RayUnderSpline] Same spline");
+            }
             else
             {
-                Debug.Log($"[RayUnderSpline] Same spline or no SplineContainer found");
+                Debug.Log($"[RayUnderSpline] SplineContainer found");
+
             }
         }
         else
@@ -690,7 +694,6 @@ public class SplineController : MonoBehaviour
             playerController.OnFoundNewSpline(newSplineContainer);
         }
     }
-
     public void CheckUnderSpline()
     {
         if (followTarget_ != null)
