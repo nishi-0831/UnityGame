@@ -180,11 +180,7 @@ public abstract class SplineMovementBase : MonoBehaviour
             targetCollider_.excludeLayers = LayerSettings.disabledLayer;
 
             FollowTarget.layer = (int)Mathf.Log(LayerSettings.activeLayer.value, 2);
-            
         }
-
-        
-        
     }
    
    

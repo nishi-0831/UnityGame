@@ -6,6 +6,8 @@ public class StageSetting : ScriptableObject
     [Header("ステージのシーン名")]
     public string stageSceneName;
 
+    [Header("制限時間:ゲームオーバーまでのカウントダウン")]
+    public float timeLimit;
     [Header("クリア評価用：制限時間（秒単位）")]
     public float clearTimeLimit;
 

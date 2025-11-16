@@ -1,4 +1,4 @@
-Ôªøusing UnityEngine;
+using UnityEngine;
 
 public class StageAchievementChecker : MonoBehaviour
 {
@@ -17,14 +17,14 @@ public class StageAchievementChecker : MonoBehaviour
         stageSetting = Resources.Load<StageSetting>($"StageSettings/{stageName}");
         if (stageSetting == null)
         {
-            Debug.LogError($"StageSettings/{stageName}.asset „ÅåË¶ã„Å§„Åã„Çä„Åæ„Åõ„Çì„ÄÇ");
+            Debug.LogError($"StageSettings/{stageName}.asset Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒÅB");
         }
     }
 
     void StageClear()
     {
-        // „Çπ„Ç≥„Ç¢ÈõÜË®à„Å™„Å©„ÇíÁµÇ„Åà„Åü„ÅÇ„Å®
-        achievementChecker.OnStageClear(); // ‚Üê„Åì„Åì„Åß‰∏ä„ÅÆÈñ¢Êï∞„ÅåÂÆüË°å„Åï„Çå„ÇãÔºÅ
+        // ÉXÉRÉAèWåvÇ»Ç«ÇèIÇ¶ÇΩÇ†Ç∆
+        achievementChecker.OnStageClear(); // Å©Ç±Ç±Ç≈è„ÇÃä÷êîÇ™é¿çsÇ≥ÇÍÇÈÅI
     }
 
     public bool IsScoreAchieved()
@@ -33,24 +33,24 @@ public class StageAchievementChecker : MonoBehaviour
         return scoreData.score >= stageSetting.scoreTarget;
     }
 
-    public bool IsHpAchieved()
+    public bool IsHpAchieved() // HPíBê¨
     {
         if (stageSetting == null) return false;
-        return player.Hp() >= stageSetting.hpTarget;
+        return player.Hp >= stageSetting.hpTarget;
     }
 
-    public bool IsTimeAchieved()
+    public bool IsTimeAchieved() // É^ÉCÉÄíBê¨
     {
         if (stageSetting == null) return false;
         return scoreData.clearTime <= stageSetting.clearTimeLimit;
     }
 
-    public bool IsAllAchieved()
+    public bool IsAllAchieved() // ëSÇƒíBê¨ÇµÇƒÇ¢ÇÈÇ©
     {
         return IsScoreAchieved() && IsHpAchieved() && IsTimeAchieved();
     }
 
-    public void Update()
+    void Update()
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -58,26 +58,39 @@ public class StageAchievementChecker : MonoBehaviour
         }
        
     }
+
     public void OnStageClear()
     {
-        bool scoreOk = IsScoreAchieved();
-        bool hpOk = IsHpAchieved();
-        bool timeOk = IsTimeAchieved();
+        if (stageSetting == null)
+        {
+            Debug.LogError("StageSettingÇ™ê›íËÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒÅB");
+            return;
+        }
+
+        // îªíËåãâ ÇScriptableObjectÇ…îΩâf
+        stageSetting.scoreAchieved = IsScoreAchieved();
+        stageSetting.hpAchieved = IsHpAchieved();
+        stageSetting.clearTimeAchieved = IsTimeAchieved();
+
         bool allOk = IsAllAchieved();
 
         stageSetting.achievedScoreTarget = scoreOk;
         stageSetting.achievedClearTimeLimit = timeOk;
         stageSetting.achievedHpTarget = hpOk;
-        Debug.Log($"„Çπ„Ç≥„Ç¢ÈÅîÊàê: {scoreOk}");
-        Debug.Log($"HPÈÅîÊàê: {hpOk}");
-        Debug.Log($"„Çø„Ç§„É†ÈÅîÊàê: {timeOk}");
-        Debug.Log($"ÂÖ®Êù°‰ª∂ÈÅîÊàê: {allOk}");
+        Debug.Log($"ÉXÉRÉAíBê¨: {scoreOk}");
+        Debug.Log($"HPíBê¨: {hpOk}");
+        Debug.Log($"É^ÉCÉÄíBê¨: {timeOk}");
+        Debug.Log($"ëSèåèíBê¨: {allOk}");
 
         if (allOk)
         {
-            Debug.Log("‚òÖ„Åô„Åπ„Å¶„ÅÆÊù°‰ª∂„ÇíÈÅîÊàê„Åó„Åæ„Åó„ÅüÔºÅ‚òÖ");
-            // „Åì„Åì„ÅßÂ†±ÈÖ¨‰ªò‰∏é„ÇÑ„É©„É≥„ÇØË°®Á§∫„Å™„Å©
-        }
+            Debug.Log("ÅöÇ∑Ç◊ÇƒÇÃèåèÇíBê¨ÇµÇ‹ÇµÇΩÅIÅö");
+            //ÉâÉìÉNï\é¶ÅEïÒèVèàóùÇ»Ç«Ç±Ç±Ç≈åƒÇ—èoÇµ
     }
 
+        //ScriptableObjectÇÃì‡óeÇï€ë∂ÅiÉGÉfÉBÉ^é¿çsíÜÇÃÇ›Åj
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(stageSetting);
+#endif
+    }
 }

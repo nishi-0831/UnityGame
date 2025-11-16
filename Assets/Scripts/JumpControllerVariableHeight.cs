@@ -194,6 +194,45 @@ public class JumpControllerVariableHeight : MonoBehaviour
     public float ChosenTargetHeight => targetHeightChosen;
 
     /// <summary>
+    /// 足場（プラットフォーム）を跨いで移動した際に、現在のワールド高さを保ちつつ
+    /// 新しい足場の相対高さに自然に変換する。
+    /// 例: oldY=0, relativeY=8 の状態で newY=5 に移行 -> relativeY は 3 になる。
+    /// </summary>
+    /// <param name="oldPlatformY">移行前の足場のY座標</param>
+    /// <param name="newPlatformY">移行後の足場のY座標</param>
+    public void AdjustForPlatformChange(float oldPlatformY, float newPlatformY)
+    {
+        // 現在のワールド高さを保持
+        float currentWorldY = oldPlatformY + relativeY;
+
+        // 新しい足場基準の相対高さへ変換
+        float newRelativeY = currentWorldY - newPlatformY;
+
+        // 内部状態を更新
+        startPlatformY = newPlatformY;
+        relativeY = newRelativeY;
+
+        // 目標高さの記録値も相対的に再計算（デバッグ用途）
+        float deltaBase = newPlatformY - oldPlatformY;
+        targetHeightChosen = Mathf.Max(0f, targetHeightChosen - deltaBase);
+
+        // 地面判定（新しい足場基準で地面以下なら着地扱い）
+        if (relativeY <= groundEpsilon)
+        {
+            relativeY = 0f;
+            isJumping = false;
+            isHolding = false;
+            isStompJump = false;
+            velocityY = 0f;
+        }
+        else
+        {
+            isJumping = true;
+        }
+        // velocityY はワールド基準の鉛直速度なので基本的に維持する。
+    }
+
+    /// <summary>
     /// 敵踏みつけ専用のジャンプ開始。現在の足場位置を起点 0 として相対高度計算。
     /// </summary>
     public void StartStompJump(float platformY, float stompBounceHeight)

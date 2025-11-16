@@ -44,21 +44,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineLayerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
-  followTarget_: {fileID: 1150643821407076299}
   currentSplineContainer_: {fileID: 0}
-  t_: 0.121
+  followTarget_: {fileID: 1150643821407076299}
+  SplineProgress_: 0
   splineDirection_: 1
   isMovingLeft: 0
   offsetRayStartPosY: 1
   enableEditorPreview: 1
+  autoFindParentSplineContainer_: 1
+  overwriteCurrentWithParentSplineContainer_: 0
+  autoUpdateInfo_: 1
   onUpdateEditor_:
     m_PersistentCalls:
       m_Calls: []
   splineMeshRadius_: 2.19
   offsetY_: 0
-  autoFindParentSplineContainer_: 1
-  overwriteCurrentWithParentSplineContainer_: 0
+  prevSplineLength: -1
   evaluationInfo_:
     position: {x: 44.65164, y: 12.389999, z: 8.565948}
     tangent: {x: 15.423733, y: 0.0000019073486, z: 8.555614}
@@ -74,31 +75,31 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 57.55764
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.0949993
+      value: 1.095
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 15.699564
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.24893643
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 3.142387e-13
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.96851987
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -1.2225868e-12
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c9afbba58f3a55243b01606b0be1965b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5804,13 +5805,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3b8d2cc4db67ac4186fba1dfee23436, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp_: 1
   speed_: 1
   autoInitialize_: 0
   splineController_: {fileID: 5976918758377031522}
   isActive_: 1
-  layerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
   onDestroySE_: {fileID: 0}
+  profile: {fileID: 0}
   pingPong_: {fileID: 7971946760139128203}
   respawnPoint_: {fileID: 1150643821407076299}
   from_: {x: 47.913643, y: 12.389999, z: 33.220795}
@@ -5830,14 +5830,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineLayerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
-  followTarget_: {fileID: 2695058702159260974}
   currentSplineContainer_: {fileID: 0}
-  t_: 0.5
+  followTarget_: {fileID: 2695058702159260974}
+  SplineProgress_: 0
   splineDirection_: 1
   isMovingLeft: 0
   offsetRayStartPosY: 1
   enableEditorPreview: 1
+  autoFindParentSplineContainer_: 1
+  overwriteCurrentWithParentSplineContainer_: 0
+  autoUpdateInfo_: 1
   onUpdateEditor_:
     m_PersistentCalls:
       m_Calls:
@@ -5855,8 +5857,7 @@ MonoBehaviour:
         m_CallState: 1
   splineMeshRadius_: 2.19
   offsetY_: 0
-  autoFindParentSplineContainer_: 1
-  overwriteCurrentWithParentSplineContainer_: 0
+  prevSplineLength: -1
   evaluationInfo_:
     position: {x: 57.55764, y: 12.389999, z: 15.699564}
     tangent: {x: 13.026604, y: 0.0000009536743, z: 7.1700745}
