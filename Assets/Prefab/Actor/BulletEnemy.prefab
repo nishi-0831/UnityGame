@@ -339,8 +339,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8162794614275298932}
   serializedVersion: 2
-  m_LocalRotation: {x: -1.0417695e-10, y: -0.3536512, z: -4.5602888e-10, w: 0.9353774}
-  m_LocalPosition: {x: 0.37506163, y: 0.0008667818, z: 0.3306582}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.065, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -415,6 +415,7 @@ MonoBehaviour:
       m_Calls: []
   splineMeshRadius_: 0.13
   offsetY_: 0
+  prevSplineLength: -1
   evaluationInfo_:
     position: {x: 49.02587, y: -0.40000004, z: 35.396057}
     tangent: {x: -38.105026, y: 0.000000029802322, z: 43.188835}
@@ -463,6 +464,7 @@ MonoBehaviour:
   targetPlayer: {fileID: 0}
   attackInterval_: 5
   easeInterpolator_: {fileID: 0}
+  enemyDieClip: {fileID: 0}
 --- !u!1 &8886813625966698371
 GameObject:
   m_ObjectHideFlags: 0

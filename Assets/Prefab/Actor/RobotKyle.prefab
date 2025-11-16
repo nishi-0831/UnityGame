@@ -2289,6 +2289,7 @@ GameObject:
   - component: {fileID: 2768966881961337981}
   - component: {fileID: 1873772516215525529}
   - component: {fileID: 5660682240979132065}
+  - component: {fileID: 825623998830045978}
   m_Layer: 6
   m_Name: RobotKyle
   m_TagString: Player
@@ -2304,7 +2305,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9091554052753675359}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.000110397006, y: 0.7071068, z: -0.00011034685, w: 0.7071068}
+  m_LocalRotation: {x: 0.00011109051, y: -0.7071068, z: 0.00011109051, w: -0.7071068}
   m_LocalPosition: {x: -13.662141, y: 4.45, z: -0.000000040612022}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
@@ -2313,7 +2314,7 @@ Transform:
   - {fileID: 830871737398540885}
   - {fileID: 2009157501752892862}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -214.796, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -270, z: -0.018}
 --- !u!95 &8326213713871442624
 Animator:
   serializedVersion: 7
@@ -2473,9 +2474,9 @@ MonoBehaviour:
     m_ActionName: 'Player/Jump[/Keyboard/space,/XInputControllerWindows/buttonSouth]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: InputSprint
+      - m_Target: {fileID: 7987154615463471221}
+        m_TargetAssemblyTypeName: StarterAssets.StarterAssetsInputs, Assembly-CSharp
+        m_MethodName: OnSprint
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2504,27 +2505,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineLayerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
-  followTarget_: {fileID: 9091554052753675359}
   currentSplineContainer_: {fileID: 0}
-  t_: 0.063
+  followTarget_: {fileID: 9091554052753675359}
+  SplineProgress_: 0.157
   splineDirection_: 1
   isMovingLeft: 0
   offsetRayStartPosY: 6
   enableEditorPreview: 1
+  autoFindParentSplineContainer_: 1
+  overwriteCurrentWithParentSplineContainer_: 0
+  autoUpdateInfo_: 1
   onUpdateEditor_:
     m_PersistentCalls:
       m_Calls: []
   splineMeshRadius_: 2.9
   offsetY_: 0
-  autoFindParentSplineContainer_: 1
-  overwriteCurrentWithParentSplineContainer_: 0
+  prevSplineLength: 136.82999
   evaluationInfo_:
-    position: {x: -13.662141, y: 3, z: -0.000000040612022}
-    tangent: {x: 6.723089, y: 0.00000047683716, z: 0.00000015570086}
-    upVector: {x: -0.00000003165548, y: 0.9999999, z: -0.00031217892}
-    rotation: {x: -0.000110397006, y: 0.7071068, z: -0.00011034685, w: 0.7071068}
-  autoUpdateInfo_: 1
+    position: {x: 0, y: 0, z: 1.5028622}
+    tangent: {x: 0, y: 0, z: 59.326225}
+    upVector: {x: 0, y: 0.99999994, z: -0}
+    rotation: {x: -0, y: 0, z: -0, w: 1}
 --- !u!114 &688552519666361199
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2537,19 +2538,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06f15efa8ccd0fb40a17fbe74c00f233, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp_: 3
   speed_: 20
   autoInitialize_: 1
-  wallTag_: Wall
   splineController_: {fileID: 7463270403788800420}
   isActive_: 1
   onDestroySE_: {fileID: 0}
+  runSpeed_: 40
+  hp_: 3
   takeDamageInterval_: 3
   canTakeDamage_: 1
   knockbackLength_: 5
   knockbackForce: 0
   attenuationDelta_: 20
-  animController_: {fileID: 0}
+  animController_: {fileID: 2768966881961337981}
   cameraController_: {fileID: 0}
   verticalForce_: 7
   groundLayer_:
@@ -2560,7 +2561,8 @@ MonoBehaviour:
   halfExtends_: {x: 0.85, y: 1, z: 0.69}
   vertical: {x: 0, y: 0, z: 0}
   inputs_: {fileID: 7987154615463471221}
-  capsuleCollider_: {fileID: 0}
+  hasSplineChangedThisFrame_: 0
+  splineChangeFrameCount_: 0
   previousSplinePosition_: {x: 0, y: 0, z: 0}
   isOffSpline_: 0
   offSplineVelocity_: {x: 0, y: 0, z: 0}
@@ -2569,16 +2571,7 @@ MonoBehaviour:
   rb_: {fileID: 1873772516215525529}
   isBeingSmashed_: 0
   respawnPoint_: {fileID: 0}
-  actualMovement: {x: 0, y: 0, z: 0}
-  desiredMovement: {x: 0, y: 0, z: 0}
-  splineDelta: {x: 0, y: 0, z: 0}
-  characterController_: {fileID: 6416836816204939111}
-  jumpVerticalMovement: {x: 0, y: 0, z: 0}
-  newPosition: {x: 0, y: 0, z: 0}
-  actualNoVerticalMovementPos: {x: 0, y: 0, z: 0}
-  inputMovement: {x: 0, y: 0, z: 0}
-  currentHorizontalPosition: {x: 0, y: 0, z: 0}
-  knockbackMovement: {x: 0, y: 0, z: 0}
+  jumpControllerVariableHeight_: {fileID: 825623998830045978}
 --- !u!114 &2768966881961337981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2591,9 +2584,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5188b36bc0fb30443af972f40cc666ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nowGravity_: 0
-  jumpingGravity_: -60
-  fallingGravity_: -140
   jumpTimeout_: 0.5
   fallTimeout_: 0.15
   LandingAudioClip: {fileID: 8300000, guid: ff697d3070687ce4583faa0561a145a2, type: 3}
@@ -2611,8 +2601,9 @@ MonoBehaviour:
   FootstepAudioVolume: 0.5
   smashed_: 0
   grounded_: 1
-  verticalVelocity_: 0
+  currentOffsetY: 0
   _isAir: 0
+  isRunning: 0
   _fallTimeoutDelta: 0
   jump: 0
   inputs_: {fileID: 7987154615463471221}
@@ -2661,6 +2652,27 @@ MonoBehaviour:
   fallLength: 5
   fallDuration: 3
   respawnDelay: 0.1
+--- !u!114 &825623998830045978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9091554052753675359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e00fe12410057b48bb4b868a1ca1697, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minHeight: 2.4
+  maxHeight: 12
+  gravityMagnitude: 18
+  maxHoldTime: 0.4
+  releaseGravityMultiplier: 2
+  fallGravityMultiplier: 1.5
+  useVelocityClampOnRelease: 1
+  groundEpsilon: 0.001
+  showDebug: 0
 --- !u!1001 &2142177730512228394
 PrefabInstance:
   m_ObjectHideFlags: 0

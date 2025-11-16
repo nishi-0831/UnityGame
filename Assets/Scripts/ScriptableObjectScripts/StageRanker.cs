@@ -68,10 +68,9 @@ public class StageAchievementChecker : MonoBehaviour
         }
 
         // ”»’èŒ‹‰Ê‚ðScriptableObject‚É”½‰f
-        stageSetting.scoreAchieved = IsScoreAchieved();
-        stageSetting.hpAchieved = IsHpAchieved();
-        stageSetting.clearTimeAchieved = IsTimeAchieved();
-
+        bool scoreOk = IsScoreAchieved();
+        bool timeOk = IsTimeAchieved();
+        bool hpOk = IsHpAchieved();
         bool allOk = IsAllAchieved();
 
         stageSetting.achievedScoreTarget = scoreOk;

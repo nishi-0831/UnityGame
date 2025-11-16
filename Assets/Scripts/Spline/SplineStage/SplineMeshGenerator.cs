@@ -11,6 +11,7 @@ namespace Assets.Scripts
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(SplineContainer))]
+    [RequireComponent(typeof(ProBuilderMesh))]
     public class SplineMeshGenerator : MonoBehaviour
     {
         [Header("断面サイズ設定 (Knot位置を原点として +X に幅, -Y に高さ)")]
@@ -25,6 +26,7 @@ namespace Assets.Scripts
 
         [Header("Collider 生成オプション")]
         [SerializeField] private bool addCollider = true;
+        [SerializeField]
         private List<Collider> createdColliders = new List<Collider>();
 
         private ProBuilderMesh pbMesh;

@@ -5,22 +5,26 @@ using TMPro;
 using UnityEngine.SceneManagement;
 public class StageUIManager : MonoBehaviour
 {
-    public TextMeshProUGUI stageName;
-    public List<StageSetting> stageSettingList = new List<StageSetting>();
+    [SerializeField]private TextMeshProUGUI stageName;
+    [SerializeField]private List<StageSetting> stageSettingList = new List<StageSetting>();
     public StageScoreUI currentStageScoreUI;
-    public int index = 0;
+    [SerializeField]private int index = 0;
+    public static StageUIManager Instance { get; private set; }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
+        Destroy(Instance);
+        Instance = this;
+        DontDestroyOnLoad(this.gameObject);
         index = Mathf.Clamp(index, 0, stageSettingList.Count - 1);
-        currentStageScoreUI.ApplyStageSetting(stageSettingList[index]);
+        currentStageScoreUI?.ApplyStageSetting(stageSettingList[index]);
     }
-
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
         
     }
+
+    public StageSetting CurrentStageSetting () => stageSettingList[index];
     public void ChangePrevStageScoreUI()
     {
         if (index == 0)

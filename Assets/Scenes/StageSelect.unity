@@ -588,8 +588,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 870089495}
-        m_TargetAssemblyTypeName: StageScoreUIManager, Assembly-CSharp
+      - m_Target: {fileID: 2141196360}
+        m_TargetAssemblyTypeName: StageUIManager, Assembly-CSharp
         m_MethodName: ChangeNextStageScoreUI
         m_Mode: 1
         m_Arguments:
@@ -612,7 +612,6 @@ GameObject:
   - component: {fileID: 870089494}
   - component: {fileID: 870089493}
   - component: {fileID: 870089492}
-  - component: {fileID: 870089495}
   m_Layer: 5
   m_Name: StageSelect
   m_TagString: Untagged
@@ -684,8 +683,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 870089495}
-        m_TargetAssemblyTypeName: StageScoreUIManager, Assembly-CSharp
+      - m_Target: {fileID: 2141196360}
+        m_TargetAssemblyTypeName: StageUIManager, Assembly-CSharp
         m_MethodName: TransitionSelectedStageScene
         m_Mode: 1
         m_Arguments:
@@ -734,24 +733,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 870089490}
   m_CullTransparentMesh: 1
---- !u!114 &870089495
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 870089490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72511955c1d2bda4d8f9537df738c498, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stageName: {fileID: 1314514012}
-  stageSettingList:
-  - {fileID: 11400000, guid: a69e9d2771329a04388e68da671b8195, type: 2}
-  - {fileID: 11400000, guid: c2c255ddec77c2b4a8f32ac4a0a6839a, type: 2}
-  currentStageScoreUI: {fileID: 1314514014}
-  index: 0
 --- !u!1 &1111457817
 GameObject:
   m_ObjectHideFlags: 0
@@ -1098,8 +1079,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 870089495}
-        m_TargetAssemblyTypeName: StageScoreUIManager, Assembly-CSharp
+      - m_Target: {fileID: 2141196360}
+        m_TargetAssemblyTypeName: StageUIManager, Assembly-CSharp
         m_MethodName: ChangePrevStageScoreUI
         m_Mode: 1
         m_Arguments:
@@ -1442,6 +1423,17 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &2141196360 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8834559085206813295, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+  m_PrefabInstance: {fileID: 4937739225341832446}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72511955c1d2bda4d8f9537df738c498, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2036677144770961580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1539,6 +1531,71 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6c04cf257f5ed0c4d9a29b7617f3c1bb, type: 3}
+--- !u!1001 &4937739225341832446
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 863302596038666366, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 467.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 863302596038666366, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 274.40674
+      objectReference: {fileID: 0}
+    - target: {fileID: 863302596038666366, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 863302596038666366, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 863302596038666366, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 863302596038666366, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 863302596038666366, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 863302596038666366, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 863302596038666366, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 863302596038666366, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1931841339410246200, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: m_Name
+      value: StageUIManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8834559085206813295, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: stageName
+      value: 
+      objectReference: {fileID: 1314514012}
+    - target: {fileID: 8834559085206813295, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
+      propertyPath: currentStageScoreUI
+      value: 
+      objectReference: {fileID: 1314514014}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 912352b7051e51944bff0b5c3711d9b1, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1549,3 +1606,4 @@ SceneRoots:
   - {fileID: 442558341}
   - {fileID: 1442739414}
   - {fileID: 1185532432}
+  - {fileID: 4937739225341832446}
