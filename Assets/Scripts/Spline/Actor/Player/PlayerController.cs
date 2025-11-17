@@ -187,32 +187,43 @@ public class PlayerController : SplineMovementBase
         }
 
 #if true
-        if ( newSplineContainer != null)
+        if ( newSplineContainer == null)
         {
-            NativeSpline nativeSpline = new NativeSpline(newSplineContainer.Spline, newSplineContainer.transform.localToWorldMatrix);
-            float3 outPos;
-            float outT;
-            SplineUtility.GetNearestPoint<NativeSpline>(nativeSpline, transform.position, out outPos, out outT);
-            if (transform.position.y < outPos.y)
-                return;
-
-            Debug.Log($"[OnFoundNewSpline] Processing new spline: {newSplineContainer.name}");
-            isOffSpline_ = false;
-
-            float prevSplineY = splineController_.EvaluationInfo.position.y;
-            // 新しいSplineに移行
-            splineController_.ChangeOtherSpline(newSplineContainer);
-
-            // 位置を新しいSplineに合わせて調整
-            Vector3 newSplinePosition = splineController_.GetSplineMeshPos();
-            transform.position = new Vector3(newSplinePosition.x, transform.position.y, newSplinePosition.z);
-
-            previousSplinePosition_ = newSplinePosition;
-            Debug.Log(newSplinePosition);
-            jumpControllerVariableHeight_.AdjustForPlatformChange(prevSplineY, newSplinePosition.y);
-
-            Debug.Log($"[OnFoundNewSpline] Completed spline change to: {newSplineContainer.name}");
+            return;
         }
+        if (newSplineContainer.GetComponent<HighGroundSpline>() == null)
+        {
+            if(splineController_.currentSplineContainer_.GetComponent<HighGroundSpline>().groundSpline != newSplineContainer)
+            {
+                return;
+            }
+        }
+
+
+        NativeSpline nativeSpline = new NativeSpline(newSplineContainer.Spline, newSplineContainer.transform.localToWorldMatrix);
+        float3 outPos;
+        float outT;
+        SplineUtility.GetNearestPoint<NativeSpline>(nativeSpline, transform.position, out outPos, out outT);
+        if (transform.position.y < outPos.y)
+            return;
+
+        Debug.Log($"[OnFoundNewSpline] Processing new spline: {newSplineContainer.name}");
+        isOffSpline_ = false;
+
+        float prevSplineY = splineController_.EvaluationInfo.position.y;
+        // 新しいSplineに移行
+        splineController_.ChangeOtherSpline(newSplineContainer);
+
+        // 位置を新しいSplineに合わせて調整
+        Vector3 newSplinePosition = splineController_.GetSplineMeshPos();
+        transform.position = new Vector3(newSplinePosition.x, transform.position.y, newSplinePosition.z);
+
+        previousSplinePosition_ = newSplinePosition;
+        Debug.Log(newSplinePosition);
+        jumpControllerVariableHeight_.AdjustForPlatformChange(prevSplineY, newSplinePosition.y);
+
+        Debug.Log($"[OnFoundNewSpline] Completed spline change to: {newSplineContainer.name}");
+
 #endif
     }
     private void InputMovement()
@@ -322,7 +333,7 @@ public class PlayerController : SplineMovementBase
         // 空中にいる場合は下方向のSplineをチェック
         
         splineController_.CheckUnderSpline();
-        
+
     }
 
     public void ApplyStompBounce(float force)

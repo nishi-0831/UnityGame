@@ -186,6 +186,53 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   splineContainer: {fileID: 618179453}
+--- !u!1 &35714301
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 35714303}
+  - component: {fileID: 35714302}
+  m_Layer: 0
+  m_Name: StageRanker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &35714302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 35714301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ba03f62e2420d84fa1a6c437a13ef6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreData: {fileID: 0}
+  player: {fileID: 1665071377}
+  stageSetting: {fileID: 0}
+--- !u!4 &35714303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 35714301}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 763, y: 219, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &58701853
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10849,7 +10896,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.5028622
+      value: -16.992273
       objectReference: {fileID: 0}
     - target: {fileID: 4906063939378695975, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -10880,9 +10927,69 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: SplineProgress_
+      value: 0.022
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: prevSplineLength
+      value: 136.82999
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: currentSplineContainer_
       value: 
       objectReference: {fileID: 918548476}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.tangent.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.tangent.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.tangent.z
+      value: 34.902706
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.position.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.position.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.position.z
+      value: -16.564224
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.rotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.rotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.rotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.rotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.upVector.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.upVector.y
+      value: 0.9999999
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463270403788800420, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
+      propertyPath: evaluationInfo_.upVector.z
+      value: -0
+      objectReference: {fileID: 0}
     - target: {fileID: 9091554052753675359, guid: 03babbd08e93d0747acd71de5655644a, type: 3}
       propertyPath: m_Name
       value: RobotKyle
@@ -14346,6 +14453,10 @@ PrefabInstance:
     - target: {fileID: 5232002545199996533, guid: 4efdf666449f95f439c25db5d8c36f2a, type: 3}
       propertyPath: m_Name
       value: GameScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 5232002545199996533, guid: 4efdf666449f95f439c25db5d8c36f2a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6580260118700460649, guid: 4efdf666449f95f439c25db5d8c36f2a, type: 3}
       propertyPath: m_Enabled
@@ -26211,3 +26322,4 @@ SceneRoots:
   - {fileID: 1011364428}
   - {fileID: 2255119969192131902}
   - {fileID: 1074618939}
+  - {fileID: 35714303}

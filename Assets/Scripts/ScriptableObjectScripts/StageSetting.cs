@@ -20,4 +20,10 @@ public class StageSetting : ScriptableObject
     public bool achievedClearTimeLimit;
     public bool achievedScoreTarget;
     public bool achievedHpTarget;
+    public void InitAchievement()
+    {
+        achievedClearTimeLimit = false;
+        achievedScoreTarget = false;
+        achievedHpTarget = false;
+    }
 }

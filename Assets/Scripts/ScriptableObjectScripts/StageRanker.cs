@@ -4,27 +4,28 @@ public class StageAchievementChecker : MonoBehaviour
 {
     [SerializeField] private ScoreData scoreData;
     [SerializeField] private PlayerController player;
-    [SerializeField] private string stageName;
 
     [SerializeField] private StageSetting stageSetting;
-    [SerializeField] private StageAchievementChecker achievementChecker;
 
 
     void Awake()
     {
-        Debug.Log("ABC");
-       
-        stageSetting = Resources.Load<StageSetting>($"StageSettings/{stageName}");
-        if (stageSetting == null)
+        scoreData = Resources.Load<ScoreData>("ScoreData");
+        if(scoreData == null )
         {
-            Debug.LogError($"StageSettings/{stageName}.asset が見つかりません。");
+            Debug.LogError("ResourcesにScoreDataが見当たりません");
         }
+        //stageSetting = Resources.Load<StageSetting>($"StageSettings/{stageName}");
+        //if (stageSetting == null)
+        //{
+        //    Debug.LogError($"StageSettings/{stageName}.asset が見つかりません。");
+        //}
     }
-
-    void StageClear()
+    private void Start()
     {
-        // スコア集計などを終えたあと
-        achievementChecker.OnStageClear(); // ←ここで上の関数が実行される！
+        GameOutcomeManager.Instance?.RegisterGameClearCallback(OnStageClear);
+        stageSetting = StageUIManager.Instance?.CurrentStageSetting();
+        stageSetting.InitAchievement();
     }
 
     public bool IsScoreAchieved()
@@ -52,10 +53,7 @@ public class StageAchievementChecker : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            OnStageClear();
-        }
+       
        
     }
 
