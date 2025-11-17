@@ -28,7 +28,6 @@ public class PlayerController : SplineMovementBase
     [SerializeField] AnimationController animController_;
     [SerializeField] CameraController cameraController_;
 
-    [SerializeField][Range(0f, 30f)] float verticalForce_;
 
     // SplineContainer変更検知用
     private SplineContainer previousSplineContainer_;
@@ -48,21 +47,19 @@ public class PlayerController : SplineMovementBase
 
     // Splineの垂直方向の変化とジャンプを統合するための変数
     [SerializeField]private Vector3 previousSplinePosition_;
-    private Vector3 previousOffSplinePosition_;
-    private bool isFirstFrame_ = true;
 
     // Spline範囲外での移動制御
     [SerializeField] private bool isOffSpline_ = false; // Spline範囲外にいるかどうか
     [SerializeField] private Vector3 offSplineVelocity_; // Spline範囲外での移動速度
     [SerializeField] private Vector3 lastValidTangent_; // 最後の有効なタンジェント
-    private float lastValidDir = 0f;
     private bool isSmashed = false;
     [SerializeField] private SmashPlayer smashPlayer_;
     [SerializeField] private Rigidbody rb_;
     // スマッシュ状態管理
     [SerializeField] private bool isBeingSmashed_ = false;
     [SerializeField] private GameObject respawnPoint_;
-    
+    [SerializeField] private float speedInterpolateProgress_ = 0.0f;
+    [SerializeField] private float speedChangeDuration_ = 1.0f;
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
     private bool isDead = false;
     public float T { get { return splineController_.Progress; } }
@@ -111,24 +108,29 @@ public class PlayerController : SplineMovementBase
             {
                 if (inputs_.move.x != 0)
                 {
+                    float speed = 0.0f;
                     if(animController_.IsRunning)
                     {
-                        splineController_.Move(runSpeed_);
+                        speedInterpolateProgress_ += speedChangeDuration_ * Time.deltaTime;
+                        float t = EaseInterpolator.InSine(speedInterpolateProgress_);
+                        speed = Mathf.Lerp(speed_, runSpeed_, t);
                     }
                     else
                     {
-                        splineController_.Move(speed_);
+                        speedInterpolateProgress_ -= speedChangeDuration_ * Time.deltaTime;
+                        float t = EaseInterpolator.OutSine(speedInterpolateProgress_);
+                        speed = Mathf.Lerp(speed_, runSpeed_, t);
                     }
+
+                    speedInterpolateProgress_ = Mathf.Clamp(speedInterpolateProgress_,0.0f,1.0f);
+                    splineController_.Move(speed);
+                }
+                else
+                {
+                    speedInterpolateProgress_ = 0.0f;
                 }
             }
-         
             jumpControllerVariableHeight_.Tick(splineController_.EvaluationInfo.position);
-
-        }
-        // Spline範囲外の場合
-        else
-        {
-            
         }
     }
 
@@ -296,16 +298,6 @@ public class PlayerController : SplineMovementBase
 
         InputMovement();
 
-        // 前フレームの位置を移動処理前に更新
-        if (!isOffSpline_)
-        {
-            previousSplinePosition_ = splineController_.GetSplineMeshPos();
-        }
-        else
-        {
-            previousOffSplinePosition_ = transform.position;
-        }
-
         HandleSplineMovement();
 
         // 地面判定をAnimationControllerに反映
@@ -316,10 +308,8 @@ public class PlayerController : SplineMovementBase
         else
         {
             animController_.Grounded = false;
-            Debug.Log("animController_.Grounded = false;");
         }
 
-        isFirstFrame_ = false;
 
         jumpControllerVariableHeight_.Tick(splineController_.EvaluationInfo.position);
         CheckSplineContainerChange();
@@ -569,11 +559,8 @@ public class PlayerController : SplineMovementBase
 
         splineController_.Progress = respawnPointSpline.Progress;
         
-        // 位置とフレーム状態をリセット
-        isFirstFrame_ = true;
         previousSplinePosition_ = splineController_.GetSplineMeshPos();
         transform.position = previousSplinePosition_;
-        previousOffSplinePosition_ = transform.position;
     }
 
     /// <summary>
@@ -649,20 +636,5 @@ public class PlayerController : SplineMovementBase
             return true;
         }
 
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
-        Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
-
-        if (animController_ != null && animController_.Grounded)
-            Gizmos.color = transparentGreen;
-        else
-            Gizmos.color = transparentRed;
-
-        // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
-        //Vector3 worldCenter = transform.TransformPoint(center_);
-        Gizmos.DrawCube(transform.position + center_, halfExtends_);
     }
 }
