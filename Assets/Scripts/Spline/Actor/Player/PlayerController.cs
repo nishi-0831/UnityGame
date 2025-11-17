@@ -112,7 +112,7 @@ public class PlayerController : SplineMovementBase
                     if(animController_.IsRunning)
                     {
                         speedInterpolateProgress_ += speedChangeDuration_ * Time.deltaTime;
-                        float t = EaseInterpolator.InSine(speedInterpolateProgress_);
+                        float t = EaseInterpolator.InCubic(speedInterpolateProgress_);
                         speed = Mathf.Lerp(speed_, runSpeed_, t);
                     }
                     else

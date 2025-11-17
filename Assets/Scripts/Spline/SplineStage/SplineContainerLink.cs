@@ -11,6 +11,13 @@ public class SplineContainerLink : MonoBehaviour
     public SplineContainer prev;
     public SplineContainer next;
     public bool adjustVerticalPos = false;
+    [ContextMenu("Swap Container")]
+    void SwapContainer()
+    {
+        SplineContainer tmp = prev;
+        prev = next;
+        next = tmp;
+    }
     [ContextMenu("Adjust First And End Knot Pos")]
     void AdjustKnotPos()
     {

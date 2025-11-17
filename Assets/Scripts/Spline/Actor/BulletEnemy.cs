@@ -16,6 +16,9 @@ public class BulletEnemy : PlayerInteractableBase
     [SerializeField] private EaseInterpolator easeInterpolator_;
     [SerializeField] private Vector3 bulletOffset_ = Vector3.zero;
     [HideInInspector] protected int animIDBattle;
+
+    [SerializeField] private bool shootOnFirstDetect_ = true;
+    private bool wasInBattle_ = false;
     // 独自のフィールドをここに追加
     /// <summary>
     /// 初期化処理
@@ -51,6 +54,11 @@ public class BulletEnemy : PlayerInteractableBase
         if (distanceSqr < Mathf.Pow(battleDistance_,2))
         {
             animator.SetBool(animIDBattle, true);
+            if(shootOnFirstDetect_)
+            {
+                GenerateBullet();
+                shootOnFirstDetect_ = false;
+            }
         }
         else
         {
@@ -82,17 +90,14 @@ public class BulletEnemy : PlayerInteractableBase
         {
             return;
         }
-        //GameObject bullet = Instantiate(Sphere);
 
         Vector3 origin = transform.position + bulletOffset_;
         Vector3 toTarget = targetPlayer.transform.position - transform.position;
         Vector3 baseDir = toTarget.sqrMagnitude > 1e-6f ? toTarget.normalized : transform.forward;
 
-        Vector3 up = rotationRoot != null ? rotationRoot.up : Vector3.up;
-        CreateBullet(origin, baseDir);
-
         Vector3 leftDir = Quaternion.AngleAxis(-spreadAngle, Vector3.up) * baseDir;
         Vector3 rightDir = Quaternion.AngleAxis(spreadAngle, Vector3.up) * baseDir;
+        CreateBullet(origin, baseDir);
         CreateBullet(origin, leftDir);
         CreateBullet(origin, rightDir);
 
