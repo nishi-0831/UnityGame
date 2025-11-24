@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using static ScoreManager;
@@ -97,4 +98,20 @@ public class ScoreManager : MonoBehaviour
     {
         scoreData_.score += value;
     }
+#if UNITY_EDITOR
+    [InitializeOnEnterPlayMode]
+    static void ResetScoreForPlayMode()
+    {
+        string[] guids = AssetDatabase.FindAssets("t:ScoreData");
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            ScoreData scoreData = AssetDatabase.LoadAssetAtPath<ScoreData>(path);
+            if (scoreData != null)
+            {
+                scoreData.Initialize();
+            }
+        }
+    }
+#endif
 }

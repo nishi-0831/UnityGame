@@ -51,7 +51,8 @@ public class PressMachine : PlayerInteractableBase
     {
         if(pingPong_.CurrentState == MoveState.GOING)
         {
-            PlayerInteractionUtils.GetPlayerController(player).OnSmash(respawnPoint_); 
+            PlayerInteractionUtils.GetPlayerController(player).OnSmash(respawnPoint_);
+            PlayerInteractionUtils.ApplyDamage(player, DamageToPlayer);
         }
     }
 
@@ -60,6 +61,7 @@ public class PressMachine : PlayerInteractableBase
         if (pingPong_.CurrentState == MoveState.GOING)
         {
             PlayerInteractionUtils.GetPlayerController(player).OnSmash(respawnPoint_);
+            PlayerInteractionUtils.ApplyDamage(player, DamageToPlayer);
         }
     }
 

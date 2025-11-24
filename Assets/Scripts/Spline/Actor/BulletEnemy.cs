@@ -13,6 +13,7 @@ public class BulletEnemy : PlayerInteractableBase
     [SerializeField] private float attackInterval_ = 5.0f;
     [SerializeField] private float bulletSpeed_ = 30.0f;
     [SerializeField] private float battleDistance_ = 50.0f;
+    [SerializeField] private float minAttackDistance = 15.0f;
     [SerializeField] private EaseInterpolator easeInterpolator_;
     [SerializeField] private Vector3 bulletOffset_ = Vector3.zero;
     [HideInInspector] protected int animIDBattle;
@@ -78,7 +79,11 @@ public class BulletEnemy : PlayerInteractableBase
                 // rotationRootの現状のupをdesiredUpに合わせる
                 rotationRoot.rotation = Quaternion.FromToRotation(-rotationRoot.up, desiredUp) * rotationRoot.rotation;
             }
-            easeInterpolator_.UpdateTime();
+            // ターゲットが極近距離の場合、射撃のカウントダウンを行わない
+            if (toTarget.sqrMagnitude > Mathf.Pow(minAttackDistance,2f))
+            {
+                easeInterpolator_.UpdateTime();
+            }
         }
 
         Debug.DrawLine(transform.position, transform.position + dir * battleDistance_);

@@ -193,6 +193,8 @@ public class SplineController : MonoBehaviour
     [ContextMenu("EditorOnSelected")]
     public void EditorOnSelected()
     {
+        if (autoUpdateInfo_ == false)
+            return;
         // Splineの長さが変わったときだけProgressを調整
         MaybeAdjustProgressForSplineLength();
 
@@ -558,7 +560,7 @@ public class SplineController : MonoBehaviour
 
         // t_値をクランプ
         float currT = Mathf.Clamp01(SplineProgress_);
-        Debug.Log($"Current SplineProgress_: {currT}");
+        //Debug.Log($"Current SplineProgress_: {currT}");
         
         // tangentを安全に取得
         float3 currTangent = currentSplineContainer_.EvaluateTangent(currT);
@@ -595,18 +597,18 @@ public class SplineController : MonoBehaviour
         nextTangent = math.normalize(nextTangent);
         
         float dot = math.dot(currTangent, nextTangent);
-        Debug.Log($"Current spline: {currentSplineContainer_.gameObject.name}");
-        Debug.Log($"Next spline: {nextContainer.gameObject.name}");
-        Debug.Log($"Dot product: {dot}, currTangent: {currTangent}, nextTangent: {nextTangent}");
+        //Debug.Log($"Current spline: {currentSplineContainer_.gameObject.name}");
+        //Debug.Log($"Next spline: {nextContainer.gameObject.name}");
+        //Debug.Log($"Dot product: {dot}, currTangent: {currTangent}, nextTangent: {nextTangent}");
         
         if (dot > 0.1f) // 閾値を設けて数値誤差を考慮
         {
-            Debug.Log("同じ向き");
+            //Debug.Log("同じ向き");
         }
         else if (dot < -0.1f)
         {
             splineDirection_ *= -1;
-            Debug.Log("逆向き");
+            //Debug.Log("逆向き");
         }
         else
         {

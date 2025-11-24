@@ -304,10 +304,8 @@ public class PlayerController : SplineMovementBase
         if(jumpControllerVariableHeight_.IsJumping == false)
         {
             animController_.Grounded = Physics.CheckBox(transform.position + center_, halfExtends_, transform.rotation, groundLayer_);
-            //cameraController_.OnSplineContainerChanged(splineController_.EvaluationInfo.position.y);
             cameraController_.IsYFollowingLocked = false;
             cameraController_.ForceYUpdate = true;
-            //Debug.Log("ForceY");
         }
         else
         {
@@ -326,7 +324,7 @@ public class PlayerController : SplineMovementBase
         Debug.DrawRay(transform.position, offSplineVelocity_ * 1000f);
         // 空中にいる場合は下方向のSplineをチェック
         
-        //splineController_.CheckUnderSpline();
+        splineController_.CheckUnderSpline();
 
     }
 
@@ -557,10 +555,10 @@ public class PlayerController : SplineMovementBase
         Enable();
         
         //操作などを再度有効化する
-        //splineMovementBaseなどを取得してtやevaluationInfoから...
         var respawnPointSpline = respawnPoint_.GetComponent<SplineController>();
         if (respawnPointSpline == null) return;
 
+        splineController_.currentSplineContainer_ = respawnPointSpline.currentSplineContainer_;
         splineController_.Progress = respawnPointSpline.Progress;
         
         previousSplinePosition_ = splineController_.GetSplineMeshPos();

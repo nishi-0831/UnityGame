@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 public class StageUIManager : MonoBehaviour
 {
     [SerializeField]private TextMeshProUGUI stageName;
@@ -19,10 +20,7 @@ public class StageUIManager : MonoBehaviour
         index = Mathf.Clamp(index, 0, stageSettingList.Count - 1);
         currentStageScoreUI?.ApplyStageSetting(stageSettingList[index]);
     }
-    void Start()
-    {
-        
-    }
+    
 
     public StageSetting CurrentStageSetting () => stageSettingList[index];
     public void ChangePrevStageScoreUI()
@@ -52,4 +50,21 @@ public class StageUIManager : MonoBehaviour
         string sceneName = stageSettingList[index].stageSceneName;
         SceneManager.LoadScene(sceneName);
     }
+
+#if UNITY_EDITOR
+    [InitializeOnEnterPlayMode]
+    static void ResetStageSettingForPlayMode()
+    {
+        string[] guids = AssetDatabase.FindAssets("t:StageSetting");
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            StageSetting stageSetting = AssetDatabase.LoadAssetAtPath<StageSetting>(path);
+            if (stageSetting != null)
+            {
+                stageSetting.InitAchievement();
+            }
+        }
+    }
+#endif
 }

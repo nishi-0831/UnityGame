@@ -28,6 +28,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float azimuthalLerpSpeed_ = 2.0f; // 方位角補間速度
     [Header("Camera Height Limit")]
     [SerializeField] private float maxScreenHeightRatio_ = 0.6f;
+    [SerializeField] private float minScreenHeightRatio_ = 0.2f;
     [SerializeField] private float maxCameraWorldY = 15.0f;
     [SerializeField] private bool isYFollowingLocked = false;
     public bool IsYFollowingLocked
@@ -69,7 +70,7 @@ public class CameraController : MonoBehaviour
     private Vector3 previousTangent_;
     private bool isFirstFrame_ = true;
     private float newY;
-
+    [SerializeField]private bool isNotInTargetDeadZone_ = false;
     // スマッシュ中の処理停止用
     [SerializeField] private bool isPlayerBeingSmashed_ = false;
 
@@ -107,7 +108,7 @@ public class CameraController : MonoBehaviour
         UpdateCameraAngles();
         UpdateCameraPosition();
 
-        //UpdateYFollowState();
+        UpdateYFollowState();
 
         UpdateLookAt();
 
@@ -120,25 +121,25 @@ public class CameraController : MonoBehaviour
 
     private void UpdateYFollowState()
     {
-        Vector3 targetWorldPos = evaluationInfo_.position + Vector3.up * splineOffsetY_;
+        Vector3 targetWorldPos = target_.transform.position;
 
         // ビュー空間での被写体のY座標を計算
         targetInViewSpace = camera_.WorldToViewportPoint(targetWorldPos);
 
-        // 画面上での被写体の高さが閾値を越えたらカメラのY軸の追従を停止
-        bool shouldLockY = targetInViewSpace.y > maxScreenHeightRatio_;
+        // 画面上での被写体の高さが閾値を越えたらカメラのY軸の追従を行う
+        bool shouldFollowY = targetInViewSpace.y < minScreenHeightRatio_;
 
-        if (shouldLockY && !isYFollowingLocked)
+        if (shouldFollowY && isYFollowingLocked)
         {
-            // ロック開始
-            isYFollowingLocked = true;
-            lockedCameraY_ = camera_.transform.position.y;
-            
-        }
-        else if(!shouldLockY && isYFollowingLocked)
-        {
+            //lockedCameraY_ = target_.transform.position.y + splineOffsetY_;
             isYFollowingLocked = false;
+            isNotInTargetDeadZone_ = true;
         }
+        else
+        {
+            isNotInTargetDeadZone_ = false;
+        }
+        
     }
     /// <summary>
     /// カメラの角度を更新
@@ -196,21 +197,30 @@ public class CameraController : MonoBehaviour
                 azimuthalAngle_ = targetAzimuthalAngle_;
             }
 
-            float targetY = evaluationInfo_.position.y + splineOffsetY_;
-            if (forceYUpdate_)
+            float targetY;
+            if(isNotInTargetDeadZone_)
+            {
+                targetY = target_.transform.position.y + splineOffsetY_;
+            }
+            else
+            {
+                targetY = evaluationInfo_.position.y + splineOffsetY_;
+            }
+            if (isYFollowingLocked)
+            {
+                // Y軸追従がロックされている場合、足場の高さで固定
+                newY = lockedCameraY_;
+            }
+            else if (forceYUpdate_)
             {
                 newY = Mathf.Lerp(camera_.transform.position.y, targetY, splineChangeVerticalSpeed * Time.deltaTime);
-                if(Mathf.Abs(newY - targetY) < float.Epsilon)
+                if (Mathf.Abs(newY - targetY) < float.Epsilon)
                 {
                     forceYUpdate_ = false;
                     Debug.Log("forceY");
                 }
             }
-            else if (isYFollowingLocked)
-            {
-                // Y軸追従がロックされている場合、足場の高さで固定
-                newY = lockedCameraY_;
-            }
+
             else
             {
                 newY = targetY;

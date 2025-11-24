@@ -11,7 +11,7 @@ public class RotateAroundObject : MonoBehaviour
     private float rotationSpeed = 30f; // 1ïbÇ†ÇΩÇËÇÃâÒì]ë¨ìx (ìxêî)
 
     public Vector3 rotationAxis = Vector3.up;
-
+    [SerializeField] bool rotateLocal = false;
     void Update()
     {
         if (pivotObject != null && targetObjects != null)
@@ -20,7 +20,12 @@ public class RotateAroundObject : MonoBehaviour
             {
                 if (obj != null)
                 {
-                    obj.transform.RotateAround(pivotObject.transform.position, rotationAxis, rotationSpeed * Time.deltaTime);
+                    Vector3 axis = rotationAxis;
+                    if(rotateLocal)
+                    {
+                        axis = pivotObject.transform.TransformDirection(rotationAxis);
+                    }
+                    obj.transform.RotateAround(pivotObject.transform.position, axis, rotationSpeed * Time.deltaTime);
                 }
             }
         }

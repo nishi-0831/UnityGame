@@ -22,31 +22,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4d1925e0c08b6c458ea40d57a5f7876, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 58.1316
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4d1925e0c08b6c458ea40d57a5f7876, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 20.665
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4d1925e0c08b6c458ea40d57a5f7876, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.132492
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4d1925e0c08b6c458ea40d57a5f7876, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.99825495
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4d1925e0c08b6c458ea40d57a5f7876, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.000009445712
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4d1925e0c08b6c458ea40d57a5f7876, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.0590517
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4d1925e0c08b6c458ea40d57a5f7876, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.00015967753
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4d1925e0c08b6c458ea40d57a5f7876, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -120,9 +120,10 @@ MonoBehaviour:
   autoInitialize_: 1
   splineController_: {fileID: 306570891217540028}
   isActive_: 1
-  onDestroySE_: {fileID: 0}
   profile: {fileID: 11400000, guid: 262c405bc12ee4c4f9693c3ebebf2418, type: 2}
+  soundProfile: {fileID: 0}
   respawnPoint_: {fileID: 0}
+  rotateSpeedZ_: 0
 --- !u!114 &306570891217540028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,11 +146,8 @@ MonoBehaviour:
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
   autoUpdateInfo_: 1
-  onUpdateEditor_:
-    m_PersistentCalls:
-      m_Calls: []
-  splineMeshRadius_: 0.13
   offsetY_: 21
+  prevSplineLength: -1
   evaluationInfo_:
     position: {x: 58.1316, y: 20.6, z: 6.132492}
     tangent: {x: 7.147339, y: 0, z: 60.20064}

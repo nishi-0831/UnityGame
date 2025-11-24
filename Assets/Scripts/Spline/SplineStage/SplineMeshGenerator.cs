@@ -12,7 +12,7 @@ namespace Assets.Scripts
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(SplineContainer))]
-    [RequireComponent(typeof(ProBuilderMesh))]
+    //[RequireComponent(typeof(ProBuilderMesh))]
     public class SplineMeshGenerator : MonoBehaviour
     {
         [Header("断面サイズ設定 (Knot位置を原点として +X に幅, -Y に高さ)")]
