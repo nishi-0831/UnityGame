@@ -161,11 +161,12 @@ public class CameraController : MonoBehaviour
             float desiredAzimuthal = CalculateAzimuthalAngle(rightDirection);
             
             // SplineContainer変更時の急激な角度変化を検出
-            if (!isFirstFrame_ && Vector3.Dot(currentTangent.normalized, previousTangent_.normalized) < 0.7f)
+            if (!isFirstFrame_ && Vector3.Dot(currentTangent.normalized, previousTangent_.normalized) < 0.1f)
             {
                 // 大きな角度変化が発生した場合、補間を開始
                 if (!isTransitioning_)
                 {
+                    Debug.Log("startTransition");
                     StartTransition(desiredAzimuthal);
                 }
             }
@@ -199,9 +200,10 @@ public class CameraController : MonoBehaviour
             if (forceYUpdate_)
             {
                 newY = Mathf.Lerp(camera_.transform.position.y, targetY, splineChangeVerticalSpeed * Time.deltaTime);
-                if(Mathf.Abs(newY - targetY) < 0.1f)
+                if(Mathf.Abs(newY - targetY) < float.Epsilon)
                 {
                     forceYUpdate_ = false;
+                    Debug.Log("forceY");
                 }
             }
             else if (isYFollowingLocked)
@@ -319,7 +321,7 @@ public class CameraController : MonoBehaviour
         isYFollowingLocked = true;
         lockedCameraY_ = transform.position.y;
 
-        forceYUpdate_ = false;
+        forceYUpdate_ = true;
         Debug.Log($"Camera: SplineContainer changed, new base Y: {newBaseY}");
     }
 

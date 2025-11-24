@@ -22,6 +22,9 @@ public class LaneChangeZone : PlayerInteractableBase
         base.Initialize();
         // 初期化処理をここに記述
         speed_ = 0f;
+        if (changeDestination == null)
+            return;
+
         // 移動先の GameObjectからSplineContainerを取得
         changeDestination.TryGetComponent<SplineController>(out changeController);
         changeDestination.TryGetComponent<LaneChangeZone>(out changeDestZone);

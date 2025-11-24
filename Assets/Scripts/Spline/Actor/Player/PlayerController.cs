@@ -307,6 +307,7 @@ public class PlayerController : SplineMovementBase
             //cameraController_.OnSplineContainerChanged(splineController_.EvaluationInfo.position.y);
             cameraController_.IsYFollowingLocked = false;
             cameraController_.ForceYUpdate = true;
+            //Debug.Log("ForceY");
         }
         else
         {
