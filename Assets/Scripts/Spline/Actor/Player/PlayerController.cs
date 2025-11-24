@@ -301,9 +301,12 @@ public class PlayerController : SplineMovementBase
         HandleSplineMovement();
 
         // 地面判定をAnimationControllerに反映
-        if(animController_.CurrentJumpOffsetY <= 0f && !inputs_.jump)
+        if(jumpControllerVariableHeight_.IsJumping == false)
         {
             animController_.Grounded = Physics.CheckBox(transform.position + center_, halfExtends_, transform.rotation, groundLayer_);
+            //cameraController_.OnSplineContainerChanged(splineController_.EvaluationInfo.position.y);
+            cameraController_.IsYFollowingLocked = false;
+            cameraController_.ForceYUpdate = true;
         }
         else
         {
@@ -322,7 +325,7 @@ public class PlayerController : SplineMovementBase
         Debug.DrawRay(transform.position, offSplineVelocity_ * 1000f);
         // 空中にいる場合は下方向のSplineをチェック
         
-        splineController_.CheckUnderSpline();
+        //splineController_.CheckUnderSpline();
 
     }
 

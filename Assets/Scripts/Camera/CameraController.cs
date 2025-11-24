@@ -13,8 +13,8 @@ public class CameraController : MonoBehaviour
 
     [Header("Spherical Coordinate Settings")]
     [SerializeField] private float distance_ = 4.0f; // プレイヤーからの距離
-    [SerializeField] private float polarAngle_ = 70.0f; // Y軸との角度（極角）
-    [SerializeField] private float azimuthalAngle_ = 90.0f; // 方位角（XZ平面での角度）
+    [SerializeField] private float polarAngle_ = 70.0f; // Y軸との角度
+    [SerializeField] private float azimuthalAngle_ = 90.0f; // XZ平面での角度
     [SerializeField] private float splineOffsetY_ = 1.0f; // Splineからの垂直オフセット
 
     [Header("Angle Limits")]
@@ -29,20 +29,43 @@ public class CameraController : MonoBehaviour
     [Header("Camera Height Limit")]
     [SerializeField] private float maxScreenHeightRatio_ = 0.6f;
     [SerializeField] private float maxCameraWorldY = 15.0f;
-    private bool isYFollowingLocked = false;
-
+    [SerializeField] private bool isYFollowingLocked = false;
+    public bool IsYFollowingLocked
+    {
+        get
+        {
+            return isYFollowingLocked;
+        }
+        set
+        {
+            isYFollowingLocked = value;
+        }
+    }
+    public bool ForceYUpdate
+    {
+        get
+        {  
+            return forceYUpdate_;
+        }
+        set
+        {
+            forceYUpdate_ = value;
+        }
+    }
+    [SerializeField]
     private float lockedCameraY_;
+
     [SerializeField] private float splineChangeHorizontalSpeed = 3.0f; // SplineContainer変更時の補間速度
     [SerializeField] private float splineChangeVerticalSpeed = 3.0f; // SplineContainer変更時の補間速度
-
+    [SerializeField] private Vector3 targetInViewSpace;
     [Header("Player Direction Control")]
     public bool isMovingLeft_ { get; set; }
 
     // SplineContainer変更時の補間制御
     private bool isTransitioning_ = false;
-    private bool forceYUpdate_ = false;
+    [SerializeField] private bool forceYUpdate_ = false;
     private float targetAzimuthalAngle_;
-    [SerializeField]private EvaluationInfo evaluationInfo_;
+    [SerializeField] private EvaluationInfo evaluationInfo_;
     private Vector3 previousTangent_;
     private bool isFirstFrame_ = true;
     private float newY;
@@ -84,7 +107,7 @@ public class CameraController : MonoBehaviour
         UpdateCameraAngles();
         UpdateCameraPosition();
 
-        UpdateYFollowState();
+        //UpdateYFollowState();
 
         UpdateLookAt();
 
@@ -100,7 +123,7 @@ public class CameraController : MonoBehaviour
         Vector3 targetWorldPos = evaluationInfo_.position + Vector3.up * splineOffsetY_;
 
         // ビュー空間での被写体のY座標を計算
-        Vector3 targetInViewSpace = camera_.WorldToViewportPoint(targetWorldPos);
+        targetInViewSpace = camera_.WorldToViewportPoint(targetWorldPos);
 
         // 画面上での被写体の高さが閾値を越えたらカメラのY軸の追従を停止
         bool shouldLockY = targetInViewSpace.y > maxScreenHeightRatio_;
@@ -183,7 +206,7 @@ public class CameraController : MonoBehaviour
             }
             else if (isYFollowingLocked)
             {
-                // Y軸追従がロックされている場合、ロック時の高さを保持
+                // Y軸追従がロックされている場合、足場の高さで固定
                 newY = lockedCameraY_;
             }
             else
@@ -231,7 +254,7 @@ public class CameraController : MonoBehaviour
     }
 
     /// <summary>
-    /// 角度の補間（360度対応）
+    /// 角度の補間
     /// </summary>
     private float LerpAngle(float current, float target, float speed)
     {
@@ -292,10 +315,11 @@ public class CameraController : MonoBehaviour
             return;
         }
 
-        // 足場変更時、Y軸追従ロックを解除
-        isYFollowingLocked = false;
+        // 足場変更
+        isYFollowingLocked = true;
+        lockedCameraY_ = transform.position.y;
 
-        forceYUpdate_ = true;
+        forceYUpdate_ = false;
         Debug.Log($"Camera: SplineContainer changed, new base Y: {newBaseY}");
     }
 
@@ -304,7 +328,7 @@ public class CameraController : MonoBehaviour
     /// </summary>
     public void SetEvaluationInfo(EvaluationInfo info)
     {
-        // スマッシュ中でもEvaluationInfoの設定は許可（リスポーン時に必要）
+        // スマッシュ中でもEvaluationInfoの設定は許可)リスポーン時に必要)
         evaluationInfo_ = info;
     }
 
