@@ -45,3 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transitionSceneDelay: 3
+  onGameClearClip: {fileID: 8300000, guid: 3b7c67b764550ad478b783c2b60c84a5, type: 3}
+  onGameOverClip: {fileID: 8300000, guid: 352158fa8c1d3ea41a220e10ce199713, type: 3}

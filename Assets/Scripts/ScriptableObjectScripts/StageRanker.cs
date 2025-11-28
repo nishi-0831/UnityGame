@@ -25,7 +25,7 @@ public class StageAchievementChecker : MonoBehaviour
     {
         GameOutcomeManager.Instance?.RegisterGameClearCallback(OnStageClear);
         stageSetting = StageUIManager.Instance?.CurrentStageSetting();
-        stageSetting.InitAchievement();
+        //stageSetting.InitAchievement();
     }
 
     public bool IsScoreAchieved()

@@ -1188,6 +1188,22 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4587790351602780027, guid: 4373399f1a1c8c54eaaaba1593819c4b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1962194073}
+    - target: {fileID: 4587790351602780027, guid: 4373399f1a1c8c54eaaaba1593819c4b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToMainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 4587790351602780027, guid: 4373399f1a1c8c54eaaaba1593819c4b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: TransitionScene, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4587790351602780027, guid: 4373399f1a1c8c54eaaaba1593819c4b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4915784520993624528, guid: 4373399f1a1c8c54eaaaba1593819c4b, type: 3}
       propertyPath: m_Name
       value: Pause
