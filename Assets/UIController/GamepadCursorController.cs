@@ -3,96 +3,154 @@ using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.InputSystem.UI;
 
 public class GamepadCursorController : MonoBehaviour
 {
-    // インスペクターから設定
-    public RectTransform cursorRect; // UICursorのRectTransform
-    public float speed = 1000f;     // カーソルの移動速度
+    // ★★★ CS1593対策: 静的なデリゲートを定義する ★★★
+    private static ExecuteEvents.EventFunction<IPointerEnterHandler> s_PointerEnterHandler = ExecuteEvents_PointerEnterHandler;
+    private static ExecuteEvents.EventFunction<IPointerExitHandler> s_PointerExitHandler = ExecuteEvents_PointerExitHandler;
 
-    // 現在のカーソル位置
+    // Static Delegate Body (イベントの実体処理)
+    private static void ExecuteEvents_PointerEnterHandler(IPointerEnterHandler handler, BaseEventData eventData)
+    {
+        handler.OnPointerEnter((PointerEventData)eventData);
+    }
+    private static void ExecuteEvents_PointerExitHandler(IPointerExitHandler handler, BaseEventData eventData)
+    {
+        handler.OnPointerExit((PointerEventData)eventData);
+    }
+
+    // === インスペクターで設定する項目 ===
+    public RectTransform cursorRect;
+    public InputActionReference moveAction;
+    public float speed = 1000f;
+
+    // === 内部で使用する変数 ===
     private Vector2 cursorPos;
-
-    // スティック入力の値
     private Vector2 moveInput;
+
+    private PointerEventData eventData;
+    private List<RaycastResult> raycastResults;
+
+    private GameObject currentHoverObject = null;
+
 
     void Start()
     {
-        // カーソル画像をCanvasの親にする
         if (cursorRect != null)
         {
             cursorPos = cursorRect.anchoredPosition;
         }
-        // PCのマウスカーソルを非表示にする（任意）
-        Cursor.visible = false;
 
-        // Input SystemのUI/Moveアクションを購読（Listen）
-        // ※このコードではUpdate()でGamepad.currentから直接読み込むため不要ですが、
-        //   本格的な設計ではInputAction.performedなどで購読します。
+        eventData = new PointerEventData(EventSystem.current);
+        raycastResults = new List<RaycastResult>();
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.None;
+
+        if (moveAction != null)
+        {
+            moveAction.action.Enable();
+            moveAction.action.performed += OnMovePerformed;
+            moveAction.action.canceled += OnMoveCanceled;
+        }
     }
+
+    void OnDestroy()
+    {
+        if (moveAction != null && moveAction.action.enabled)
+        {
+            moveAction.action.performed -= OnMovePerformed;
+            moveAction.action.canceled -= OnMoveCanceled;
+            moveAction.action.Disable();
+        }
+    }
+
+    private void OnMovePerformed(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue<Vector2>();
+    }
+
+    private void OnMoveCanceled(InputAction.CallbackContext context)
+    {
+        moveInput = Vector2.zero;
+    }
+
 
     void Update()
     {
-        // 1. スティック入力の取得
-        if (Gamepad.current != null)
-        {
-            // 左スティックの値を直接読み込む
-            moveInput = Gamepad.current.leftStick.ReadValue();
-        }
-        else
-        {
-            moveInput = Vector2.zero;
-            return;
-        }
+        if (cursorRect == null) return;
 
-        // 2. カーソル位置の更新
+        // 1. カーソル位置の更新と制限
         cursorPos += moveInput * speed * Time.deltaTime;
 
-        // 3. カーソル位置を画面内に制限（オプション）
-        // TODO: ここに画面端の制限処理を追加すると、より実用的になる
+        float maxX = 900f;
+        float maxY = 500f;
 
-        // 4. UIに反映
+        cursorPos.x = Mathf.Clamp(cursorPos.x, -maxX, maxX);
+        cursorPos.y = Mathf.Clamp(cursorPos.y, -maxY, maxY);
+
         cursorRect.anchoredPosition = cursorPos;
 
-        // 5. ボタンのクリック判定（重要）
+        // 2. マウスの強制同期処理は削除。カーソル位置を直接使ってイベントを処理
+        HandleHoverEvents();
+
+        // 3. クリック処理
         HandleUIClick();
     }
 
+
+    // カーソルがUI要素に乗った/離れたときのイベント処理 (ハイライトに必須)
+    private void HandleHoverEvents()
+    {
+        // ★ 修正点: UICursorのスクリーン座標を直接イベントデータに設定する ★
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(null, cursorRect.position);
+        eventData.position = screenPoint;
+
+        raycastResults.Clear();
+
+        EventSystem.current.RaycastAll(eventData, raycastResults);
+
+        // --- ホバーしたオブジェクトの判定 ---
+        GameObject newHoverObject = null;
+        if (raycastResults.Count > 0)
+        {
+            newHoverObject = raycastResults[0].gameObject;
+        }
+
+        if (newHoverObject != currentHoverObject)
+        {
+            // 以前ホバーしていたオブジェクトから離れたときの処理 (Pointer Exit)
+            if (currentHoverObject != null)
+            {
+                // ★★★ 修正: 定義した静的デリゲート変数を使用 ★★★
+                ExecuteEvents.Execute(currentHoverObject, eventData, s_PointerExitHandler);
+            }
+
+            // 新しいオブジェクトにホバーしたときの処理 (Pointer Enter)
+            if (newHoverObject != null)
+            {
+                // ★★★ 修正: 定義した静的デリゲート変数を使用 ★★★
+                ExecuteEvents.Execute(newHoverObject, eventData, s_PointerEnterHandler);
+            }
+
+            currentHoverObject = newHoverObject;
+        }
+    }
+
+
+    // Aボタンが押されたときのクリック処理
     private void HandleUIClick()
     {
-        // 1. Aボタン（Submit）が押された瞬間を判定
-        if (Gamepad.current != null && Gamepad.current.aButton.wasPressedThisFrame)
+        if (Gamepad.current != null && Gamepad.current.aButton.wasPressedThisFrame && currentHoverObject != null)
         {
-            // 2. EventSystemのポインターデータを作成
-            //    カーソルの位置をポインターの位置として扱うために必要
-            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            Button button = currentHoverObject.GetComponent<Button>();
 
-            // RectTransformの位置（ローカル座標）を画面座標に変換
-            // この処理が成功すると、eventData.positionに画面上の座標が入ります
-            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(null, cursorRect.position);
-            eventData.position = screenPoint;
-
-            // 3. UI Raycasterを使用して、カーソルの下にあるUI要素を検出
-            List<RaycastResult> results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, results);
-
-            // 4. 検出された要素をチェック
-            foreach (RaycastResult result in results)
+            if (button != null && button.interactable)
             {
-                // RaycastResultがヒットしたオブジェクトを取得
-                GameObject hitObject = result.gameObject;
-
-                // ボタンコンポーネントがあるかチェック
-                Button button = hitObject.GetComponent<Button>();
-                if (button != null && button.interactable)
-                {
-                    // 5. ボタンのクリックイベントを発火させる
-                    Debug.Log($"Clicked: {hitObject.name}");
-                    button.onClick.Invoke();
-
-                    // 目的のボタンをクリックしたら処理を終了
-                    return;
-                }
+                button.onClick.Invoke();
+                Debug.Log($"Clicked: {currentHoverObject.name}");
             }
         }
     }

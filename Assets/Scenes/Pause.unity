@@ -170,7 +170,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cursorRect: {fileID: 14619400}
-  speed: 1000
+  moveAction: {fileID: -1918878744776191233, guid: 2377c2992f2ac4849ab864e4f00de275, type: 3}
+  speed: 500
 --- !u!114 &14619402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -613,6 +614,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5122801903629049457, guid: 4373399f1a1c8c54eaaaba1593819c4b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5712029976301291191, guid: 4373399f1a1c8c54eaaaba1593819c4b, type: 3}
+      propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8188478316831574001, guid: 4373399f1a1c8c54eaaaba1593819c4b, type: 3}
