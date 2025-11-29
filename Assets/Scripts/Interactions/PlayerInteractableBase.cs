@@ -27,8 +27,6 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
                     profile = Resources.Load<PlayerInteractionProfile>("PlayerInteractionProfiles/Default");
                 }
 
-                
-
                 if (profile == null)
                 {
                     Debug.LogError("Resources/PlayerInteractionProfiles/Default ‚ªŒ©“–‚½‚è‚Ü‚¹‚ñ‚Å‚µ‚½");
@@ -172,6 +170,10 @@ public abstract class PlayerInteractableBase : SplineMovementBase , IPlayerInter
         if (ScoreManager.Instance)
         {
             ScoreManager.Instance.ReceiveScore(ScoreValue);
+        }
+        if (FloatingScoreManager.Instance != null && ScoreValue > 0)
+        {
+            FloatingScoreManager.Instance.DisplayFloatingScore(ScoreValue, transform.position);
         }
         if (animator)
         {
