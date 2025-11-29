@@ -27,9 +27,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private bool interpolateAzimuthalWhenNotTransitioning_ = false; // isTransitioning_‚ªfalse‚ÌŽž‚É•ûˆÊŠp‚ð•âŠÔ‚·‚é‚©
     [SerializeField] private float azimuthalLerpSpeed_ = 2.0f; // •ûˆÊŠp•âŠÔ‘¬“x
     [Header("Camera Height Limit")]
-    [SerializeField] private float maxScreenHeightRatio_ = 0.6f;
     [SerializeField] private float minScreenHeightRatio_ = 0.2f;
-    [SerializeField] private float maxCameraWorldY = 15.0f;
     [SerializeField] private bool isYFollowingLocked = false;
     public bool IsYFollowingLocked
     {

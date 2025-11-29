@@ -49,12 +49,10 @@ public class PlayerController : SplineMovementBase
     [SerializeField]private Vector3 previousSplinePosition_;
 
     // Spline範囲外での移動制御
-    [SerializeField] private bool isOffSpline_ = false; // Spline範囲外にいるかどうか
     [SerializeField] private Vector3 offSplineVelocity_; // Spline範囲外での移動速度
     [SerializeField] private Vector3 lastValidTangent_; // 最後の有効なタンジェント
     private bool isSmashed = false;
     [SerializeField] private SmashPlayer smashPlayer_;
-    [SerializeField] private Rigidbody rb_;
     // スマッシュ状態管理
     [SerializeField] private bool isBeingSmashed_ = false;
     [SerializeField] private GameObject respawnPoint_;
@@ -210,7 +208,6 @@ public class PlayerController : SplineMovementBase
             return;
 
         Debug.Log($"[OnFoundNewSpline] Processing new spline: {newSplineContainer.name}");
-        isOffSpline_ = false;
 
         float prevSplineY = splineController_.EvaluationInfo.position.y;
         // 新しいSplineに移行
@@ -321,8 +318,6 @@ public class PlayerController : SplineMovementBase
             OnPlayerDie();
         }
 
-        Debug.DrawRay(transform.position, offSplineVelocity_ * 1000f);
-        // 空中にいる場合は下方向のSplineをチェック
         
         splineController_.CheckUnderSpline();
 
@@ -395,8 +390,6 @@ public class PlayerController : SplineMovementBase
         animController_.ResetVerticalVelocity();
         animController_.Grounded = true;
 
-        // オフSpline状態をリセット
-        isOffSpline_ = false;
         
         // 移動関連の変数もリセット
         knockbackForce = 0;
@@ -544,9 +537,6 @@ public class PlayerController : SplineMovementBase
         // ノックバック状態をリセット
         knockbackForce = 0;
         
-        // オフスライン状態をリセット
-        isOffSpline_ = false;
-        offSplineVelocity_ = Vector3.zero;
         
         // 各種フラグをリセット
         canTakeDamage_ = true;

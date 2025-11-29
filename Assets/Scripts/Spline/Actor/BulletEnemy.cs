@@ -19,7 +19,6 @@ public class BulletEnemy : PlayerInteractableBase
     [HideInInspector] protected int animIDBattle;
 
     [SerializeField] private bool shootOnFirstDetect_ = true;
-    private bool wasInBattle_ = false;
     // 独自のフィールドをここに追加
     /// <summary>
     /// 初期化処理

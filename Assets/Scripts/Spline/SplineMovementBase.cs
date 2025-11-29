@@ -167,7 +167,7 @@ public abstract class SplineMovementBase : MonoBehaviour
         //©g‚ğfollowTarget‚Æ‚µ‚Äg—p
         FollowTarget = gameObject;
         targetCollider_ = FollowTarget.GetComponent<Collider>();
-        targetCollider_.isTrigger = true;
+        //targetCollider_.isTrigger = true;
         //includelayer“™‚ğİ’è...
         //if(LayerSettings != null)
         {
