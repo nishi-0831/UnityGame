@@ -25,7 +25,6 @@ public class StageUIManager : MonoBehaviour
         {
             currentStageScoreUI.ApplyStageSetting(stageSettingList[index]);
             stageName.text = (index + 1).ToString();
-
         });
     }
 
@@ -55,6 +54,11 @@ public class StageUIManager : MonoBehaviour
         }
 
         string sceneName = stageSettingList[index].stageSceneName;
+
+        if (GameSessionManager.Instance != null)
+        {
+            GameSessionManager.Instance.SetCurrentStage(sceneName, index);
+        }
         SceneManager.LoadScene(sceneName);
     }
 
