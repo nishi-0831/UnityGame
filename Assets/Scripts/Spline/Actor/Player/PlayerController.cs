@@ -63,7 +63,7 @@ public class PlayerController : SplineMovementBase
     public float T { get { return splineController_.Progress; } }
     public int Hp { get { return hp_; } }
 
-
+    public AudioClip hitSound_;
     
     private Action OnDamageCallback_;
     protected override void Initialize()
@@ -431,6 +431,7 @@ public class PlayerController : SplineMovementBase
             return; // ƒ_ƒ[ƒW‚ğó‚¯‚ç‚ê‚È‚¢ê‡‚Í‰½‚à‚µ‚È‚¢
         }
         animController_.TakeDamage();
+        AudioSource.PlayClipAtPoint(hitSound_, transform.position);
 
         hp_ -= damageValue;
         OnDamageCallback_?.Invoke();
