@@ -10,7 +10,7 @@ public class FloatingScoreManager : MonoBehaviour
     [SerializeField] private Canvas canvas;
     [SerializeField] private float floatingDuration = 1.0f;
     [SerializeField] private float floatingHeight = 1.5f;
-    [SerializeField] private AnimationCurve alphaCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
+    [SerializeField] private AnimationCurve alphaCurve = AnimationCurve.Linear(0, 1, 1, 0);
 
     private void Awake()
     {
@@ -46,6 +46,7 @@ public class FloatingScoreManager : MonoBehaviour
 
         // Canvasの座標系を設定
         floatingText.GetComponent<RectTransform>().anchoredPosition = uiPosition;
+        floatingText.raycastTarget = false;
         // アニメーション開始
         StartCoroutine(FloatingScoreAnimation(floatingText));
     }

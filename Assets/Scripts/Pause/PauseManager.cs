@@ -24,11 +24,11 @@ public class PauseManager : MonoBehaviour
 
     public void OnPauseStart(UnityAction action)
     {
-        onPauseStart = action;
+        onPauseStart += action;
     }
     public void OnPauseEnd(UnityAction action) 
     { 
-        onPauseEnd = action; 
+        onPauseEnd += action; 
     }
     void Awake()
     {
@@ -56,13 +56,13 @@ public class PauseManager : MonoBehaviour
     void Update()
     {
         // 「Escキー」でポーズのON/OFF切り替え
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            if (isPaused)
-                ClosePauseScreen();
-            else
-                OpenPauseScreen();
-        }
+        //if (Input.GetKeyDown(KeyCode.Tab))
+        //{
+        //    if (isPaused)
+        //        ClosePauseScreen();
+        //    else
+        //        OpenPauseScreen();
+        //}
     }
 
     /// <summary>
@@ -76,6 +76,7 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 0f; // ゲームを止める
         isPaused = true;
 
+        Debug.Log("OnPuaseInvloe");
         onPauseStart?.Invoke();
     }
 
@@ -91,5 +92,13 @@ public class PauseManager : MonoBehaviour
         isPaused = false;
 
         onPauseEnd?.Invoke();
-    } 
+    }
+    public void SwitchPauseScreen()
+    {
+        if (isPaused)
+            ClosePauseScreen();
+        else
+            OpenPauseScreen();
+    }
+        
 }
