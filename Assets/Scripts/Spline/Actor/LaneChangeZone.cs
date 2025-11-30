@@ -10,10 +10,11 @@ public class LaneChangeZone : PlayerInteractableBase
 
     // 独自のフィールドをここに追加    
     [Header("移動先")]
-    [SerializeField] GameObject changeDestination;
+    [SerializeField] private GameObject changeDestination;
     [SerializeField] private bool changed;
-    [SerializeField] SplineController changeController;
+    [SerializeField] private SplineController changeController;
     private LaneChangeZone changeDestZone;
+    [SerializeField] private AudioClip onChangeAudio;
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -62,6 +63,8 @@ public class LaneChangeZone : PlayerInteractableBase
             // 専用メソッドでSpline変更を強制実行
             playerController.ForceSplineChange(changeController);
             changeDestZone.changed = true;
+
+            AudioManager.Instance.PlaySound(onChangeAudio, 0.5f);
         }
     }
 
@@ -121,6 +124,7 @@ public class LaneChangeZone : PlayerInteractableBase
             playerController.ForceSplineChange(changeController);
             Debug.Log("LaneChangeZone");
             changeDestZone.changed = true;
+            AudioManager.Instance.PlaySound(onChangeAudio, 0.5f);
 
         }
     }

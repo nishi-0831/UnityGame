@@ -79,7 +79,10 @@ public class ScoreItemSplineMovement : PlayerInteractableBase
         {
             ScoreManager.Instance?.ReceiveScore(ScoreValue);
         }
-        
+        if (FloatingScoreManager.Instance != null && ScoreValue > 0)
+        {
+            FloatingScoreManager.Instance.DisplayFloatingScore(ScoreValue, transform.position);
+        }
         Destroy(this.gameObject);
     }
     
@@ -103,21 +106,11 @@ public class ScoreItemSplineMovement : PlayerInteractableBase
     {
         // スコアアイテムは踏みつけでも普通の取得と同じ
         GiveScoreToPlayer(player);
-
-        if(FloatingScoreManager.Instance != null && ScoreValue > 0)
-        {
-            FloatingScoreManager.Instance.DisplayFloatingScore(ScoreValue, transform.position);
-        }
     }
     
     public override void OnSideHitCore(GameObject player)
     {
         // 横からの衝突でも取得
         GiveScoreToPlayer(player);
-
-        if(FloatingScoreManager.Instance != null && ScoreValue > 0)
-        {
-            FloatingScoreManager.Instance.DisplayFloatingScore(ScoreValue, transform.position);
-        }
     }
 }

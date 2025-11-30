@@ -14,20 +14,20 @@ public class StageUIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        //if(Instance.gameObject != null)
-        //{
-        //    Destroy(Instance.gameObject);
-        //}
-        //if(Instance != null)
-        //{
-        //    Destroy(Instance);
-        //}
+        
         Instance = this;
-        //DontDestroyOnLoad(this.gameObject);
         index = Mathf.Clamp(index, 0, stageSettingList.Count - 1);
         currentStageScoreUI?.ApplyStageSetting(stageSettingList[index]);
     }
-    
+    private void Start()
+    {
+        PauseManager.Instance.OnPauseStart(() =>
+        {
+            currentStageScoreUI.ApplyStageSetting(stageSettingList[index]);
+            stageName.text = (index + 1).ToString();
+
+        });
+    }
 
     public StageSetting CurrentStageSetting () => stageSettingList[index];
     public void ChangePrevStageScoreUI()

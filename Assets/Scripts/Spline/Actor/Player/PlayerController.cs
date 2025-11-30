@@ -431,7 +431,8 @@ public class PlayerController : SplineMovementBase
             return; // ƒ_ƒ[ƒW‚ğó‚¯‚ç‚ê‚È‚¢ê‡‚Í‰½‚à‚µ‚È‚¢
         }
         animController_.TakeDamage();
-        AudioSource.PlayClipAtPoint(hitSound_, transform.position);
+        AudioManager.Instance.PlaySound(hitSound_, 0.5f);
+        //AudioSource.PlayClipAtPoint(hitSound_, transform.position);
 
         hp_ -= damageValue;
         OnDamageCallback_?.Invoke();
