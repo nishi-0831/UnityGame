@@ -26,7 +26,6 @@ public class PlayerInputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(playerInput.currentActionMap.ToString());
     }
     
     void HandlePause()

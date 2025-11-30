@@ -24,7 +24,7 @@ public class FloatingScoreManager : MonoBehaviour
         }
     }
 
-    public void DisplayFloatingScore(int scoreValue,Vector3 worldPositon)
+    public void DisplayFloatingScore(int scoreValue,Vector3 worldPosition)
     {
         if(floatingScorePrefab == null || canvas == null)
         {
@@ -37,13 +37,21 @@ public class FloatingScoreManager : MonoBehaviour
         floatingText.text = $"+{scoreValue}";
 
         // ワールド座標系をスクリーン座標系に変換
-        Vector3 screenPosition = Camera.main.WorldToScreenPoint(worldPositon);
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(worldPosition);
+
+        Camera camera = canvas.worldCamera;
+        if(canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            camera = null;
+        }
         // スクリーン座標系をCanvasの座標系に変換
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.GetComponent<RectTransform>(),
             screenPosition,
-            canvas.worldCamera,
+            camera,
             out Vector2 uiPosition);
 
+        Debug.Log($"uiPosition:{uiPosition}");
+        Debug.Log($"screenPosition:{screenPosition}");
         // Canvasの座標系を設定
         floatingText.GetComponent<RectTransform>().anchoredPosition = uiPosition;
         floatingText.raycastTarget = false;
