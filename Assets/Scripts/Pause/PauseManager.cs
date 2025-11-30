@@ -45,7 +45,8 @@ public class PauseManager : MonoBehaviour
     private void Start()
     {
         Debug.Log("Pause Start");
-        retryButton.onClick.AddListener(() => TransitionScene.Instance.ToPlay());
+        string stageName =  StageUIManager.Instance.CurrentStageSetting().stageSceneName;
+        retryButton.onClick.AddListener(() => SceneManager.LoadScene(stageName));
         stageSelectButton.onClick.AddListener(() => TransitionScene.Instance.ToStageSelect());
         mainMenuButton.onClick.AddListener(() => TransitionScene.Instance.ToMainMenu());
         ClosePauseScreen();
