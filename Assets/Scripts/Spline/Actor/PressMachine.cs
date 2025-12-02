@@ -19,7 +19,6 @@ public class PressMachine : PlayerInteractableBase
         if (pingPong_ == null)
         {
             pingPong_ = GetComponent<LerpPingPong>();
-            
         }
     }
     override protected void Start()
@@ -44,8 +43,6 @@ public class PressMachine : PlayerInteractableBase
         to_ = info.position + FollowTarget.transform.forward * forwardDistance_;
         from_ = info.position + -FollowTarget.transform.forward * backDistance_;
     }
-
-
 
     public override void OnStompedCore(GameObject player)
     {
