@@ -6,7 +6,7 @@ public class AudioManager : MonoBehaviour
 
     void Awake()
     {
-        // シングルトン化
+        //シングルトン化
         if (Instance == null)
         {
             Instance = this;
