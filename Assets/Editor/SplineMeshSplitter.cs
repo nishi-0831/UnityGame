@@ -45,13 +45,20 @@ public class SplineMeshSplitter : EditorWindow
 
 		if(GUILayout.Button("SplitSelectedAplineMesh"))
 		{
-			foreach(SplineMeshGenerator generator in generators)
+            // Undoグループ開始
+            int group = Undo.GetCurrentGroup();
+            Undo.SetCurrentGroupName("Split SplineMesh");
+
+            foreach (SplineMeshGenerator generator in generators)
 			{
 				SplitSplineMesh(generator);
 			}
-		}
+
+            // Undoグループをまとめる
+            Undo.CollapseUndoOperations(group);
+        }
     }
-    public void SplitSplineMesh(SplineMeshGenerator splineMeshGenerator)
+    private void SplitSplineMesh(SplineMeshGenerator splineMeshGenerator)
     {
         float width = splineMeshGenerator.width;
         float height = splineMeshGenerator.height;
@@ -60,15 +67,33 @@ public class SplineMeshSplitter : EditorWindow
         float bottomHeight = height - topHeight;
         Vector3 bottomOffset = new Vector3(0, -topHeight, 0);
 
-		splineMeshGenerator.height = topHeight;
+        // 既存オブジェクトの変更をUndo登録
+        Undo.RecordObject(splineMeshGenerator, "Change SplineMeshGenerator");
+        splineMeshGenerator.height = topHeight;
 		splineMeshGenerator.material = topMaterial;
 
-		GameObject bottomGameObject = GameObject.Instantiate(splineMeshGenerator.gameObject);
-		SplineMeshGenerator bottomSplineMeshGenerator = bottomGameObject.GetComponent<SplineMeshGenerator>();
-		bottomSplineMeshGenerator.height = bottomHeight;
-		bottomSplineMeshGenerator.material = bottomMaterial;
+		GameObject bottomGameObject = new GameObject($"{splineMeshGenerator.name} bottom");
+        Undo.RegisterCreatedObjectUndo(bottomGameObject, "Create Bottom SplineMesh");
+        // Transformの値をコピー
+        bottomGameObject.transform.position = splineMeshGenerator.transform.position;
+        bottomGameObject.transform.rotation = splineMeshGenerator.transform.rotation;
+		bottomGameObject.transform.localScale = splineMeshGenerator.transform.localScale;
+		bottomGameObject.transform.parent = bottomGameObject.transform.parent;
 
+        // SplineMeshGeneratorを追加、設定
+        SplineMeshGenerator bottomSplineMeshGenerator = bottomGameObject.AddComponent<SplineMeshGenerator>();
+        Undo.RegisterCreatedObjectUndo(bottomSplineMeshGenerator, "Add SplineMeshGenerator");
+        bottomSplineMeshGenerator.width = width;
+		bottomSplineMeshGenerator.height = bottomHeight;
+		bottomSplineMeshGenerator.offset = bottomOffset;
+		bottomSplineMeshGenerator.material = bottomMaterial;
+		bottomSplineMeshGenerator.splineContainer = splineMeshGenerator.splineContainer;
+		bottomSplineMeshGenerator.addCollider = false;
+
+		// 生成
 		splineMeshGenerator.Generate();
 		bottomSplineMeshGenerator.Generate();
+
+		EditorUtility.SetDirty(splineMeshGenerator);
     }
 }

@@ -6,13 +6,14 @@ using UnityEngine.ProBuilder.MeshOperations;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
 using UnityEngine.Rendering.Universal.Internal;
+using UnityEditor;
 
 namespace Assets.Scripts
 {
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(SplineContainer))]
-    //[RequireComponent(typeof(ProBuilderMesh))]
+    [RequireComponent(typeof(ProBuilderMesh))]
     public class SplineMeshGenerator : MonoBehaviour
     {
         [Header("断面サイズ設定 (Knot位置を原点として +X に幅, -Y に高さ)")]
@@ -30,7 +31,7 @@ namespace Assets.Scripts
         
 
         [Header("Collider 生成オプション")]
-        [SerializeField] private bool addCollider = true;
+        [SerializeField] public bool addCollider = false;
         [SerializeField]
         private List<Collider> createdColliders = new List<Collider>();
 
@@ -58,6 +59,12 @@ namespace Assets.Scripts
         [ContextMenu("Generate ProBuilder Mesh From Spline")]
         public void Generate()
         {
+            // Undoグループ開始
+            int group = Undo.GetCurrentGroup();
+            Undo.SetCurrentGroupName("Generate SplineMesh");
+
+            // 既存オブジェクトの変更をUndo登録
+            Undo.RecordObject(pbMesh, "Change pbMesh");
             if (splineContainer == null || splineContainer.Spline == null)
             {
                 Debug.LogError("SplineContainer / Spline が設定されていません");
@@ -155,6 +162,8 @@ namespace Assets.Scripts
             //pbMesh.マテリアル...
             EnsureMaterial();
             Debug.Log($"Spline Mesh Generated: Knots={knotCount}, Segments={segmentCount}, Vertices={positions.Count}, Faces={faces.Count}");
+            // Undoグループをまとめる
+            Undo.CollapseUndoOperations(group);
         }
 
         
@@ -237,11 +246,11 @@ namespace Assets.Scripts
                     // 子オブジェクト全体を削除
                     if(c.gameObject != null)
                     {
-                        DestroyImmediate(c.gameObject);
+                        Undo.DestroyObjectImmediate(c.gameObject);
                     }
                     else
                     {
-                        DestroyImmediate(c);
+                        Undo.DestroyObjectImmediate(c);
                     }
                 }
                 createdColliders.RemoveAt(i);
