@@ -2619,6 +2619,7 @@ MonoBehaviour:
   speedChangeDuration_: 1
   jumpControllerVariableHeight_: {fileID: 825623998830045978}
   hitSound_: {fileID: 8300000, guid: db126fe367cd8eb468b3b7ff38a2b1cd, type: 3}
+  jumpSound_: {fileID: 8300000, guid: 3fbc8dea384ad90449fac46df8b4b939, type: 3}
 --- !u!114 &2768966881961337981
 MonoBehaviour:
   m_ObjectHideFlags: 0
