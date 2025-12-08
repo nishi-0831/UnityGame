@@ -16,12 +16,15 @@ namespace Assets.Scripts
     public class SplineMeshGenerator : MonoBehaviour
     {
         [Header("断面サイズ設定 (Knot位置を原点として +X に幅, -Y に高さ)")]
-        [SerializeField, Min(0.0001f)] private float height = 1.0f; // 下方向(-Y)
-        [SerializeField, Min(0.0001f)] private float width = 1.0f;  // +X 方向
+        [SerializeField, Min(0.0001f)] public float height = 1.0f; // 下方向(-Y)
+        [SerializeField, Min(0.0001f)] public float width = 1.0f;  // +X 方向
+        [SerializeField] public Vector3 offset; // 生成位置のオフセット
+        [SerializeField] public Material material;
+        //[SerializeField] private Layer
         public float Height() { return height; }
         public float Width() { return width; }
         [Header("参照 / オプション")]
-        [SerializeField] private SplineContainer splineContainer;
+        [SerializeField] public SplineContainer splineContainer;
         [SerializeField] private bool generateEndCaps = true;  // Open Spline の両端に蓋を付ける
         [SerializeField] private bool autoGenerateOnPlay = false;
         
@@ -91,10 +94,10 @@ namespace Assets.Scripts
                 Vector3 B = pLocal + rotLocal * Vector3.right * (width / 2);
                 Vector3 C = B + rotLocal * Vector3.down * (height);
                 Vector3 D = A + rotLocal * Vector3.down * (height);
-                positions.Add(A); // index +0
-                positions.Add(B); // +1
-                positions.Add(C); // +2
-                positions.Add(D); // +3
+                positions.Add(A + offset); // index +0
+                positions.Add(B + offset); // +1
+                positions.Add(C + offset); // +2
+                positions.Add(D + offset); // +3
             }
 
             bool closed = spline.Closed;
@@ -150,7 +153,7 @@ namespace Assets.Scripts
                 BuildSegmentChildColliders();
             }
             //pbMesh.マテリアル...
-            EnsureDefaultMaterial();
+            EnsureMaterial();
             Debug.Log($"Spline Mesh Generated: Knots={knotCount}, Segments={segmentCount}, Vertices={positions.Count}, Faces={faces.Count}");
         }
 
@@ -160,11 +163,16 @@ namespace Assets.Scripts
             faces.Add(new Face(new int[] { v0, v1, v2, v0, v2, v3 }));
         }
 
-        private void EnsureDefaultMaterial()
+        private void EnsureMaterial()
         {
             var renderer = pbMesh.GetComponent<MeshRenderer>();
             if (renderer == null) return;
             
+            if(material != null)
+            {
+                renderer.material = material;
+                return;
+            }
             // マテリアルが未設定または nullの場合
             if (renderer.sharedMaterial == null || renderer.sharedMaterials.Length == 0)
             {
