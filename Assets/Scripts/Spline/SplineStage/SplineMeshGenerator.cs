@@ -5,19 +5,21 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
+using UnityEngine.Rendering.Universal.Internal;
 
 namespace Assets.Scripts
 {
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(SplineContainer))]
-    [RequireComponent(typeof(ProBuilderMesh))]
+    //[RequireComponent(typeof(ProBuilderMesh))]
     public class SplineMeshGenerator : MonoBehaviour
     {
         [Header("断面サイズ設定 (Knot位置を原点として +X に幅, -Y に高さ)")]
         [SerializeField, Min(0.0001f)] private float height = 1.0f; // 下方向(-Y)
         [SerializeField, Min(0.0001f)] private float width = 1.0f;  // +X 方向
-
+        public float Height() { return height; }
+        public float Width() { return width; }
         [Header("参照 / オプション")]
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private bool generateEndCaps = true;  // Open Spline の両端に蓋を付ける
@@ -302,6 +304,11 @@ namespace Assets.Scripts
             up = transform.InverseTransformDirection((Vector3)u);
         }
 
+        public void CopySetting(SplineMeshGenerator other)
+        {
+            width = other.width; height = other.height;
+            addCollider = other.addCollider;
+        }
         //private float ApproxSegmentArcLength(float t0,float t1,int samples)
         //{
         //    float len = 0f;

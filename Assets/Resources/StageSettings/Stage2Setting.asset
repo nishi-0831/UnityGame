@@ -15,7 +15,7 @@ MonoBehaviour:
   stageSceneName: Stage2
   timeLimit: 180
   clearTimeLimit: 100
-  scoreTarget: 1000
+  scoreTarget: 4000
   hpTarget: 2
   achievedClearTimeLimit: 0
   achievedScoreTarget: 0

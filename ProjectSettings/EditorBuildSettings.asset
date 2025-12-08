@@ -6,33 +6,33 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Title.unity
-    guid: fb71fb75ff8c8eb498376c3e578fccb6
+    path: Assets/Scenes/MainMenu.unity
+    guid: 3e5c83ab21072384fb9ccbda06cde10b
   - enabled: 1
     path: Assets/Scenes/State1.unity
     guid: 63e722e7524bdfe4ea9a2b9f9ca6d98f
   - enabled: 1
-    path: Assets/Scenes/Title.unity
-    guid: fb71fb75ff8c8eb498376c3e578fccb6
+    path: Assets/Scenes/StageSelect.unity
+    guid: 00fdd11c103785a41ba6c29f2e580a9b
   - enabled: 1
-    path: Assets/Scenes/LaneChange-Test.unity
-    guid: a332514a6c013ae45ad5238c6813c99a
+    path: Assets/Scenes/Stage2.unity
+    guid: 1377d6985584a6b429c1aeb2a277c886
   - enabled: 1
     path: Assets/Scenes/Result.unity
     guid: efdd665a1aeda034080767bb26b1c4d4
   - enabled: 1
     path: Assets/Scenes/Pause.unity
     guid: 9fed96704edcd91478758ad9dd0351de
-  - enabled: 1
-    path: Assets/Scenes/StageSelect.unity
-    guid: 00fdd11c103785a41ba6c29f2e580a9b
-  - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
-    guid: 3e5c83ab21072384fb9ccbda06cde10b
-  - enabled: 1
-    path: Assets/Scenes/Stage2.unity
-    guid: 1377d6985584a6b429c1aeb2a277c886
+  - enabled: 0
+    path: Assets/Scenes/Title.unity
+    guid: fb71fb75ff8c8eb498376c3e578fccb6
+  - enabled: 0
+    path: Assets/Scenes/Title.unity
+    guid: fb71fb75ff8c8eb498376c3e578fccb6
+  - enabled: 0
+    path: Assets/Scenes/LaneChange-Test.unity
+    guid: a332514a6c013ae45ad5238c6813c99a
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 4419d82f33d36e848b3ed5af4c8da37e, type: 3}
   m_UseUCBPForAssetBundles: 0

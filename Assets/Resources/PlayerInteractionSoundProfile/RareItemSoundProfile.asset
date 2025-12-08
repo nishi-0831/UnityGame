@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bee35ca622670c349a6fbe29dc90eee4, type: 3}
   m_Name: RareItemSoundProfile
   m_EditorClassIdentifier: 
-  onStompedAudio: {fileID: 0}
+  onStompedAudio: {fileID: 8300000, guid: b2d4bdb69d658dd4e9b7c00f7278365e, type: 3}
   onStompedAudioVolume: 0.5
-  onSideHitAudio: {fileID: 0}
+  onSideHitAudio: {fileID: 8300000, guid: b2d4bdb69d658dd4e9b7c00f7278365e, type: 3}
   onSideHitAudioVolume: 0.5

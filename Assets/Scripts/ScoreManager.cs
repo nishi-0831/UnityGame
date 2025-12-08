@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using static ScoreManager;
@@ -15,6 +16,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private float startTime_;
     [SerializeField] private float remainingTime_;
     [SerializeField] private float endTime_;
+    [SerializeField] private TextMeshProUGUI scoreText_;
     [SerializeField] private TextMeshProUGUI timerText_;
     private Action timeUp_;
     private bool countTime_;
@@ -38,7 +40,11 @@ public class ScoreManager : MonoBehaviour
         }
         scoreData_.Initialize();
         StartCountClearTime();
-        if(StageUIManager.Instance)
+        
+    }
+    private void Start()
+    {
+        if (StageUIManager.Instance)
         {
             remainingTime_ = StageUIManager.Instance.CurrentStageSetting().timeLimit;
         }
@@ -76,6 +82,7 @@ public class ScoreManager : MonoBehaviour
         {
             CountDownTimer();
         }
+        scoreText_.text = scoreData_.score.ToString();
     }
 
     public void CountDownTimer()
@@ -97,4 +104,20 @@ public class ScoreManager : MonoBehaviour
     {
         scoreData_.score += value;
     }
+#if UNITY_EDITOR
+    [InitializeOnEnterPlayMode]
+    static void ResetScoreForPlayMode()
+    {
+        string[] guids = AssetDatabase.FindAssets("t:ScoreData");
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            ScoreData scoreData = AssetDatabase.LoadAssetAtPath<ScoreData>(path);
+            if (scoreData != null)
+            {
+                scoreData.Initialize();
+            }
+        }
+    }
+#endif
 }

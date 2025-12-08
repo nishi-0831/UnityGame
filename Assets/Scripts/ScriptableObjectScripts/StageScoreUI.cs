@@ -45,12 +45,21 @@ public class StageScoreUI : MonoBehaviour
     }
     public ScoreUI[] scoreUIs = new ScoreUI[3];
 
-    // 初期化時にトグルのイベントを登録する
-    void Start()
-    {
-        
-    }
+    /// <summary>
+    /// ステージの達成状況を全てのUIに反映させる
+    /// </summary>
+    /// <param name="stageSetting"></param>
     public void ApplyStageSetting(StageSetting stageSetting)
+    {
+        Debug.Log("ApplyStageSetting");
+        ApplyAllStar(stageSetting);
+        ApplyAllText(stageSetting);
+    }
+    /// <summary>
+    /// ステージの達成状況を星の画像に反映させる
+    /// </summary>
+    /// <param name="stageSetting"></param>
+    public void ApplyAllStar(StageSetting stageSetting)
     {
         for (int i = 0; i < scoreUIs.Length; i++)
         {
@@ -58,12 +67,17 @@ public class StageScoreUI : MonoBehaviour
             scoreUIs[i].onSprite = onSprite;
         }
         CheckStar(scoreUIs[0], stageSetting.achievedScoreTarget);
-        scoreUIs[0].text.text = $"スコア{stageSetting.scoreTarget}以上でクリア";
-
         CheckStar(scoreUIs[1], stageSetting.achievedClearTimeLimit);
-        scoreUIs[1].text.text = $"{stageSetting.clearTimeLimit}秒以内でクリア";
-
         CheckStar(scoreUIs[2], stageSetting.achievedHpTarget);
+    }
+    /// <summary>
+    /// ステージの実績を達成する状況をテキストに反映させる
+    /// </summary>
+    /// <param name="stageSetting"></param>
+    public void ApplyAllText(StageSetting stageSetting)
+    {
+        scoreUIs[0].text.text = $"スコア{stageSetting.scoreTarget}以上でクリア";
+        scoreUIs[1].text.text = $"{stageSetting.clearTimeLimit}秒以内でクリア";
         scoreUIs[2].text.text = $"残りライフ{stageSetting.hpTarget}以上でクリア";
     }
     void CheckStar(ScoreUI scoreUI,bool achieved)

@@ -113,8 +113,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7293275644708643289}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.7071067, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 8.473486, y: 0.905, z: -0.0000003735991}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -144,11 +144,8 @@ MonoBehaviour:
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
   autoUpdateInfo_: 1
-  onUpdateEditor_:
-    m_PersistentCalls:
-      m_Calls: []
-  splineMeshRadius_: 1.81
   offsetY_: 7
+  prevSplineLength: -1
   evaluationInfo_:
     position: {x: 8.473486, y: 0, z: -0.0000003735991}
     tangent: {x: 8.035689, y: 0, z: 0.0000006689192}
@@ -170,11 +167,12 @@ MonoBehaviour:
   autoInitialize_: 1
   splineController_: {fileID: 3782015035009894109}
   isActive_: 1
-  onDestroySE_: {fileID: 0}
   profile: {fileID: 11400000, guid: b2642b0b27a43cb4292aad3643fd8864, type: 2}
+  soundProfile: {fileID: 0}
   changeDestination: {fileID: 0}
   changed: 0
   changeController: {fileID: 0}
+  onChangeAudio: {fileID: 8300000, guid: 89286201abb1bfa4a8cce4c7cb5c6540, type: 3}
 --- !u!65 &7754746588709245487
 BoxCollider:
   m_ObjectHideFlags: 0
