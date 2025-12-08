@@ -127,10 +127,6 @@ MonoBehaviour:
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
   autoUpdateInfo_: 1
-  onUpdateEditor_:
-    m_PersistentCalls:
-      m_Calls: []
-  splineMeshRadius_: 0
   offsetY_: 0
   prevSplineLength: -1
   evaluationInfo_:
@@ -156,10 +152,6 @@ MonoBehaviour:
   isActive_: 1
   profile: {fileID: 11400000, guid: b2642b0b27a43cb4292aad3643fd8864, type: 2}
   soundProfile: {fileID: 11400000, guid: c8b24555c4f2164498529a3eb9638ba3, type: 2}
-  onStompedAudio: {fileID: 0}
-  onStompedAudioVolume: 0.5
-  onSideHitAudio: {fileID: 0}
-  onSideHitAudioVolume: 0.5
   animDuration: 0.7
   jumpHeight: 8
   initialOffsetY: 1

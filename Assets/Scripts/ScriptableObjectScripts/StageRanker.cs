@@ -4,27 +4,28 @@ public class StageAchievementChecker : MonoBehaviour
 {
     [SerializeField] private ScoreData scoreData;
     [SerializeField] private PlayerController player;
-    [SerializeField] private string stageName;
 
     [SerializeField] private StageSetting stageSetting;
-    [SerializeField] private StageAchievementChecker achievementChecker;
 
 
     void Awake()
     {
-        Debug.Log("ABC");
-       
-        stageSetting = Resources.Load<StageSetting>($"StageSettings/{stageName}");
-        if (stageSetting == null)
+        scoreData = Resources.Load<ScoreData>("ScoreData");
+        if(scoreData == null )
         {
-            Debug.LogError($"StageSettings/{stageName}.asset が見つかりません。");
+            Debug.LogError("ResourcesにScoreDataが見当たりません");
         }
+        //stageSetting = Resources.Load<StageSetting>($"StageSettings/{stageName}");
+        //if (stageSetting == null)
+        //{
+        //    Debug.LogError($"StageSettings/{stageName}.asset が見つかりません。");
+        //}
     }
-
-    void StageClear()
+    private void Start()
     {
-        // スコア集計などを終えたあと
-        achievementChecker.OnStageClear(); // ←ここで上の関数が実行される！
+        GameOutcomeManager.Instance?.RegisterGameClearCallback(OnStageClear);
+        stageSetting = StageUIManager.Instance?.CurrentStageSetting();
+        //stageSetting.InitAchievement();
     }
 
     public bool IsScoreAchieved()
@@ -52,10 +53,7 @@ public class StageAchievementChecker : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            OnStageClear();
-        }
+       
        
     }
 
@@ -68,15 +66,17 @@ public class StageAchievementChecker : MonoBehaviour
         }
 
         // 判定結果をScriptableObjectに反映
-        stageSetting.scoreAchieved = IsScoreAchieved();
-        stageSetting.hpAchieved = IsHpAchieved();
-        stageSetting.clearTimeAchieved = IsTimeAchieved();
-
+        bool scoreOk = IsScoreAchieved();
+        bool timeOk = IsTimeAchieved();
+        bool hpOk = IsHpAchieved();
         bool allOk = IsAllAchieved();
 
-        Debug.Log($"スコア達成: {stageSetting.scoreAchieved}");
-        Debug.Log($"HP達成: {stageSetting.hpAchieved}");
-        Debug.Log($"タイム達成: {stageSetting.clearTimeAchieved}");
+        stageSetting.achievedScoreTarget = scoreOk;
+        stageSetting.achievedClearTimeLimit = timeOk;
+        stageSetting.achievedHpTarget = hpOk;
+        Debug.Log($"スコア達成: {scoreOk}");
+        Debug.Log($"HP達成: {hpOk}");
+        Debug.Log($"タイム達成: {timeOk}");
         Debug.Log($"全条件達成: {allOk}");
 
         if (allOk)

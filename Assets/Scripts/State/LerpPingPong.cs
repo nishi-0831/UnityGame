@@ -35,7 +35,6 @@ public class LerpPingPong : MonoBehaviour
     [Header("最初、動き出すまでの時間")]
     [SerializeField] private float firstTime = 0;
 
-    [SerializeField] private MoveState prevState_;
     [SerializeField] private MoveState currentState_;
 
     public MoveState CurrentState
@@ -44,36 +43,28 @@ public class LerpPingPong : MonoBehaviour
     }
     public StateMachine<MoveState> stateMachine_;
     
-    //衝突時に掛かる力
-    [SerializeField] private float power = 1f;
     private Rigidbody rb;
     
-    //行きだけ吹き飛ばすか否か
-    private bool addForceOnlyGoing = true;
-
     [SerializeField]EaseInterpolator interpolator;
 
     private void Awake()
     {
-        power = power * this.GetComponent<Rigidbody>().mass;
         rb = this.GetComponent<Rigidbody>();
         interpolator = GetComponent<EaseInterpolator>();
         stateMachine_ = new StateMachine<MoveState>();
     }
     private void Start()
     {
-
-        
-        //StartPingPong();
     }
     private void InitializeStateMachine()
     {
 
-        //WAIT状態の設定
+        //WAIT状態の振る舞い
         /*何もしない*/
         stateMachine_.RegisterState(MoveState.WAIT).SetCallbacks(
             onEntry: () => 
             {
+                // 前回の状態を参考にして一定時間待機、次の状態へ遷移
                 switch (stateMachine_.PrevState)
                 {
                     case MoveState.GOING:
@@ -83,11 +74,9 @@ public class LerpPingPong : MonoBehaviour
                         StartCoroutine(delay(againGoingTime, MoveState.GOING));
                         break;
                     case MoveState.WAIT:
-                        
                         StartCoroutine(delay(firstTime, MoveState.GOING));
                         break;
                     default:
-                        
                         StartCoroutine(delay(firstTime, MoveState.GOING));
                         break;
 
@@ -96,21 +85,16 @@ public class LerpPingPong : MonoBehaviour
             },
             onUpdate: () => 
             {
-                //interpolator.UpdateTime();
             },
             onExit: () => { }
             );
         
        
-        //stateMachine_[MoveState.WAIT].AddTransition
-
+        // GOING状態の振る舞い
         stateMachine_.RegisterState(MoveState.GOING).SetCallbacks(
             onEntry: () =>
             {
-                //interpolator.from_ = _from.position;
-                //interpolator.to_ = _to.position;
                 interpolator.duration = goingTime;
-                
                 interpolator.isReverse_ = false;
                 interpolator.Reset();
             },
@@ -125,12 +109,11 @@ public class LerpPingPong : MonoBehaviour
             }).
             AddTransition(MoveState.WAIT, ref interpolator.onFinished_);
 
+        // COMBACKING状態の振る舞い
         stateMachine_.RegisterState(MoveState.COMBACKING).SetCallbacks(
             onEntry: () =>
             {
-                
                 interpolator.duration = comeBackTime;
-                
                 interpolator.isReverse_ = true;
                 interpolator.Reset();
             },
@@ -152,6 +135,9 @@ public class LerpPingPong : MonoBehaviour
     }
     
     
+    /// <summary>
+    /// 状態機を初期化し、始点と終点の座標を設定して往復移動を開始する
+    /// </summary>
     public void StartPingPong()
     {
         InitializeStateMachine();
@@ -163,10 +149,8 @@ public class LerpPingPong : MonoBehaviour
     }
     private void Update()
     {
-        
         stateMachine_.UpdateCurrent();
         currentState_ = stateMachine_.CurrentState;
-        prevState_ = stateMachine_.PrevState;
     }
     
 
@@ -181,31 +165,12 @@ public class LerpPingPong : MonoBehaviour
         stateMachine_.TransitionTo(nextState);
     }
    
+    /// <summary>
+    /// 始点から終点を補間した座標へ移動(Rigidbody.MovePosition を使用)
+    /// </summary>
     private void Move()
     {
         Vector3 newPosition = interpolator.Interpolation();
         rb.MovePosition(newPosition);
     }
-    
-    void OnCollisionEnter(Collision collision)
-    {
-        // 接触したオブジェクトのRigidbodyを取得
-        Rigidbody rb = collision.gameObject.GetComponent<Rigidbody>();
-
-        // Rigidbodyが存在する場合、力を加える
-        if (rb != null && collision.gameObject.CompareTag("Player"))
-        {
-            if (addForceOnlyGoing == false || currentState_ != MoveState.WAIT)
-            {
-                // 力を加える方向と強さを設定
-                Vector3 forceDirection = transform.forward;
-                //float forceMagnitude = 10.0f;
-                Debug.Log("AddForce");
-                // 力を加える
-                rb.AddForce(forceDirection * power, ForceMode.Impulse);
-            }
-        }
-    }
-    
-    
 }

@@ -78,10 +78,18 @@ namespace StarterAssets
 					break;
 			}
 		}
+        public void OpenPause(InputAction.CallbackContext context)
+        {
+            PauseManager.Instance.OpenPauseScreen();
+        }
+		public void ClosePause(InputAction.CallbackContext context)
+		{
+			PauseManager.Instance.ClosePauseScreen();
+		}
 #endif
-		
 
-		public void MoveInput(Vector2 newMoveDirection)
+
+        public void MoveInput(Vector2 newMoveDirection)
 		{
 			move = newMoveDirection;
 		} 

@@ -19,7 +19,6 @@ public class PressMachine : PlayerInteractableBase
         if (pingPong_ == null)
         {
             pingPong_ = GetComponent<LerpPingPong>();
-            
         }
     }
     override protected void Start()
@@ -45,13 +44,12 @@ public class PressMachine : PlayerInteractableBase
         from_ = info.position + -FollowTarget.transform.forward * backDistance_;
     }
 
-
-
     public override void OnStompedCore(GameObject player)
     {
         if(pingPong_.CurrentState == MoveState.GOING)
         {
-            PlayerInteractionUtils.GetPlayerController(player).OnSmash(respawnPoint_); 
+            PlayerInteractionUtils.GetPlayerController(player).OnSmash(respawnPoint_);
+            PlayerInteractionUtils.ApplyDamage(player, DamageToPlayer);
         }
     }
 
@@ -60,6 +58,7 @@ public class PressMachine : PlayerInteractableBase
         if (pingPong_.CurrentState == MoveState.GOING)
         {
             PlayerInteractionUtils.GetPlayerController(player).OnSmash(respawnPoint_);
+            PlayerInteractionUtils.ApplyDamage(player, DamageToPlayer);
         }
     }
 

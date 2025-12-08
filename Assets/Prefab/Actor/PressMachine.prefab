@@ -5805,7 +5805,7 @@ MonoBehaviour:
   autoInitialize_: 0
   splineController_: {fileID: 5976918758377031522}
   isActive_: 1
-  profile: {fileID: 0}
+  profile: {fileID: 11400000, guid: 6e438df7f37d6c743a28a9a49ed503ca, type: 2}
   soundProfile: {fileID: 0}
   pingPong_: {fileID: 7971946760139128203}
   respawnPoint_: {fileID: 1150643821407076299}

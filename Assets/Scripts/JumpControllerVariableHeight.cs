@@ -33,6 +33,7 @@ public class JumpControllerVariableHeight : MonoBehaviour
     public bool showDebug = false;
 
     // 状態
+    [SerializeField]
     private bool isJumping = false;
     private bool isHolding = false;
     private bool isStompJump = false; // 踏みつけジャンプかどうか

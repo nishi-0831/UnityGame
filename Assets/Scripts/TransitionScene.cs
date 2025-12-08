@@ -14,21 +14,25 @@ public class TransitionScene : MonoBehaviour
         public const string play = "State1";
         public const string gameOver = "GameOver";
         public const string result = "Result";
+        public const string StageSelect = "StageSelect";
+        public const string MainMenu = "MainMenu";
         public const string stageSelect = "StageSelect";
         public const string pause = "Pause";
     }
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            //DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        //if (Instance == null)
+        //{
+        //    Instance = this;
+        //    DontDestroyOnLoad(gameObject);
+        //}
+        //else
+        //{
+        //    Destroy(gameObject);
+        //}
+        Instance = this;
+
     }
     // Update is called once per frame
     void Update()
@@ -68,6 +72,14 @@ public class TransitionScene : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         cb();
+    }
+    public void ToStageSelect()
+    {
+        SceneManager.LoadScene(SceneName.StageSelect);
+    }
+    public void ToMainMenu()
+    {
+        SceneManager.LoadScene(SceneName.MainMenu);
     }
     public void QuitGame()
     {

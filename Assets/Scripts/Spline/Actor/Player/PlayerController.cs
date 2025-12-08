@@ -28,7 +28,6 @@ public class PlayerController : SplineMovementBase
     [SerializeField] AnimationController animController_;
     [SerializeField] CameraController cameraController_;
 
-    [SerializeField][Range(0f, 30f)] float verticalForce_;
 
     // SplineContainer変更検知用
     private SplineContainer previousSplineContainer_;
@@ -48,28 +47,23 @@ public class PlayerController : SplineMovementBase
 
     // Splineの垂直方向の変化とジャンプを統合するための変数
     [SerializeField]private Vector3 previousSplinePosition_;
-    private Vector3 previousOffSplinePosition_;
-    private bool isFirstFrame_ = true;
 
     // Spline範囲外での移動制御
-    [SerializeField] private bool isOffSpline_ = false; // Spline範囲外にいるかどうか
     [SerializeField] private Vector3 offSplineVelocity_; // Spline範囲外での移動速度
     [SerializeField] private Vector3 lastValidTangent_; // 最後の有効なタンジェント
-    private float lastValidDir = 0f;
     private bool isSmashed = false;
     [SerializeField] private SmashPlayer smashPlayer_;
-    [SerializeField] private Rigidbody rb_;
     // スマッシュ状態管理
     [SerializeField] private bool isBeingSmashed_ = false;
     [SerializeField] private GameObject respawnPoint_;
-    
+    [SerializeField] private float speedInterpolateProgress_ = 0.0f;
+    [SerializeField] private float speedChangeDuration_ = 1.0f;
     public JumpControllerVariableHeight jumpControllerVariableHeight_;
     private bool isDead = false;
     public float T { get { return splineController_.Progress; } }
     public int Hp { get { return hp_; } }
 
-    private AudioSource audioSource;
-
+    public AudioClip hitSound_;
     
     private Action OnDamageCallback_;
     protected override void Initialize()
@@ -103,7 +97,7 @@ public class PlayerController : SplineMovementBase
         Vector3 actualMovement = Vector3.zero;
         
         // Spline範囲内の場合
-        if (currentT >= 0f && currentT < 1f && !isOffSpline_)
+        if (currentT >= 0f || currentT <= 1f )
         {
             // 通常のSpline移動
             transform.rotation = splineController_.EvaluationInfo.rotation;
@@ -112,83 +106,33 @@ public class PlayerController : SplineMovementBase
             {
                 if (inputs_.move.x != 0)
                 {
+                    float speed = 0.0f;
                     if(animController_.IsRunning)
                     {
-                        splineController_.Move(runSpeed_);
+                        speedInterpolateProgress_ += speedChangeDuration_ * Time.deltaTime;
+                        float t = EaseInterpolator.InCubic(speedInterpolateProgress_);
+                        speed = Mathf.Lerp(speed_, runSpeed_, t);
                     }
                     else
                     {
-                        splineController_.Move(speed_);
+                        speedInterpolateProgress_ -= speedChangeDuration_ * Time.deltaTime;
+                        float t = EaseInterpolator.OutSine(speedInterpolateProgress_);
+                        speed = Mathf.Lerp(speed_, runSpeed_, t);
                     }
+
+                    speedInterpolateProgress_ = Mathf.Clamp(speedInterpolateProgress_,0.0f,1.0f);
+                    splineController_.Move(speed);
+                }
+                else
+                {
+                    speedInterpolateProgress_ = 0.0f;
                 }
             }
-         
             jumpControllerVariableHeight_.Tick(splineController_.EvaluationInfo.position);
-
-        }
-        // Spline範囲外の場合
-        else
-        {
-            desiredMovement = HandleOffSplineMovement(currentT);
-            
-            Vector3 startPos = transform.position;
-            if(desiredMovement != Vector3.zero)
-            {
-                //characterController_.Move(desiredMovement);
-            }
-            actualMovement = transform.position - startPos;
-            
-            // オフSpline時は実際の移動量でt値更新
-            splineController_.UpdateProgressFromMovement(actualMovement);
         }
     }
 
-    private Vector3 HandleOffSplineMovement(float currentT)
-    {
-        Vector3 offSplineVerticalDelta = Vector3.zero;
-        if (!isOffSpline_)
-        {
-
-            //isOffSpline_ = true;
-            // 最後の有効なタンジェントを保存
-            if (currentT > 1f)
-            {
-                lastValidTangent_ = SplineUtility.EvaluateTangent<Spline>(splineController_.currentSplineContainer_.Spline, 1f);
-                lastValidDir = 1f;
-            }
-            else if (currentT < 0f)
-            {
-                lastValidTangent_ = SplineUtility.EvaluateTangent<Spline>(splineController_.currentSplineContainer_.Spline, 0);
-                lastValidDir = -1f;
-            }
-
-            if (!isFirstFrame_)
-            {
-                Vector3 offSplineDelta = transform.position - previousOffSplinePosition_;
-                offSplineVerticalDelta = new Vector3(0, offSplineDelta.y, 0);
-            }
-            // 初期速度を設定（水平方向はSplineのタンジェント、垂直方向は現在の垂直速度）
-            offSplineVelocity_ = new Vector3(transform.forward.x, 0, transform.forward.z);
-
-            offSplineVelocity_ = offSplineVelocity_.normalized * speed_ * Time.deltaTime;
-
-            Debug.Log($"Off Spline! Last tangent");
-
-
-        }
-        // Spline範囲外での移動
-        Vector3 horizontalMovement = new Vector3(offSplineVelocity_.x, 0, offSplineVelocity_.z);
-        
-        Vector3 verticalMovement = Vector3.up * animController_.CurrentJumpOffsetY;
-
-        // 回転をタンジェント方向に設定
-        if (lastValidTangent_ != Vector3.zero)
-        {
-            transform.rotation = Quaternion.LookRotation(lastValidDir * lastValidTangent_, Vector3.up);
-        }
-
-        return horizontalMovement + verticalMovement;
-    }
+    
     
     public void RegisterOnDamageCallback(Action onDamageAction)
     {
@@ -196,12 +140,41 @@ public class PlayerController : SplineMovementBase
     }
     protected override void OnReachMaxT()
     {
-        ChangeLinkedOtherSpline();
+        SplineContainerLink link = splineController_.currentSplineContainer_.GetComponent<SplineContainerLink>();
+        HighGroundSpline highGround = splineController_.currentSplineContainer_.GetComponent<HighGroundSpline>();
+        if (splineController_.currentSplineContainer_.Spline.Closed)
+        {
+            splineController_.Loop();
+        }
+        else if (link != null)
+        {
+            ChangeLinkedOtherSpline();
+
+        }
+        else if (highGround != null)
+        {
+            OnFoundNewSpline(highGround.groundSpline);
+        }
     }
 
     protected override void OnReachMinT()
     {
-        ChangeLinkedOtherSpline();
+        SplineContainerLink link = splineController_.currentSplineContainer_.GetComponent<SplineContainerLink>();
+        HighGroundSpline highGround = splineController_.currentSplineContainer_.GetComponent<HighGroundSpline>();
+        if (splineController_.currentSplineContainer_.Spline.Closed)
+        {
+            splineController_.Loop();
+        }
+        else if(link != null)
+        {
+            ChangeLinkedOtherSpline();
+
+        }
+        else if(highGround != null)
+        {
+            OnFoundNewSpline(highGround.groundSpline);
+        }
+
     }
 
     public void OnFoundNewSpline(SplineContainer newSplineContainer)
@@ -214,21 +187,42 @@ public class PlayerController : SplineMovementBase
         }
 
 #if true
-        if ( newSplineContainer != null)
+        if ( newSplineContainer == null)
         {
-            Debug.Log($"[OnFoundNewSpline] Processing new spline: {newSplineContainer.name}");
-            isOffSpline_ = false;
-
-            // 新しいSplineに移行
-            splineController_.ChangeOtherSpline(newSplineContainer);
-
-            // 位置を新しいSplineに合わせて調整
-            Vector3 newSplinePosition = splineController_.GetSplineMeshPos();
-            transform.position = new Vector3(newSplinePosition.x, transform.position.y, newSplinePosition.z);
-
-            previousSplinePosition_ = newSplinePosition;
-            Debug.Log($"[OnFoundNewSpline] Completed spline change to: {newSplineContainer.name}");
+            return;
         }
+        if (newSplineContainer.GetComponent<HighGroundSpline>() == null)
+        {
+            if(splineController_.currentSplineContainer_.GetComponent<HighGroundSpline>().groundSpline != newSplineContainer)
+            {
+                return;
+            }
+        }
+
+
+        NativeSpline nativeSpline = new NativeSpline(newSplineContainer.Spline, newSplineContainer.transform.localToWorldMatrix);
+        float3 outPos;
+        float outT;
+        SplineUtility.GetNearestPoint<NativeSpline>(nativeSpline, transform.position, out outPos, out outT);
+        if (transform.position.y < outPos.y)
+            return;
+
+        Debug.Log($"[OnFoundNewSpline] Processing new spline: {newSplineContainer.name}");
+
+        float prevSplineY = splineController_.EvaluationInfo.position.y;
+        // 新しいSplineに移行
+        splineController_.ChangeOtherSpline(newSplineContainer);
+
+        // 位置を新しいSplineに合わせて調整
+        Vector3 newSplinePosition = splineController_.GetSplineMeshPos();
+        transform.position = new Vector3(newSplinePosition.x, transform.position.y, newSplinePosition.z);
+
+        previousSplinePosition_ = newSplinePosition;
+        Debug.Log(newSplinePosition);
+        jumpControllerVariableHeight_.AdjustForPlatformChange(prevSplineY, newSplinePosition.y);
+
+        Debug.Log($"[OnFoundNewSpline] Completed spline change to: {newSplineContainer.name}");
+
 #endif
     }
     private void InputMovement()
@@ -301,30 +295,20 @@ public class PlayerController : SplineMovementBase
 
         InputMovement();
 
-        // 前フレームの位置を移動処理前に更新
-        if (!isOffSpline_)
-        {
-            previousSplinePosition_ = splineController_.GetSplineMeshPos();
-        }
-        else
-        {
-            previousOffSplinePosition_ = transform.position;
-        }
-
         HandleSplineMovement();
 
         // 地面判定をAnimationControllerに反映
-        if(animController_.CurrentJumpOffsetY <= 0f && !inputs_.jump)
+        if(jumpControllerVariableHeight_.IsJumping == false)
         {
             animController_.Grounded = Physics.CheckBox(transform.position + center_, halfExtends_, transform.rotation, groundLayer_);
+            cameraController_.IsYFollowingLocked = false;
+            cameraController_.ForceYUpdate = true;
         }
         else
         {
             animController_.Grounded = false;
-            Debug.Log("animController_.Grounded = false;");
         }
 
-        isFirstFrame_ = false;
 
         jumpControllerVariableHeight_.Tick(splineController_.EvaluationInfo.position);
         CheckSplineContainerChange();
@@ -334,12 +318,9 @@ public class PlayerController : SplineMovementBase
             OnPlayerDie();
         }
 
-        Debug.DrawRay(transform.position, offSplineVelocity_ * 1000f);
-        // 空中にいる場合は下方向のSplineをチェック
-        if (!animController_.Grounded)
-        {
-            splineController_.CheckUnderSpline();
-        }
+        
+        splineController_.CheckUnderSpline();
+
     }
 
     public void ApplyStompBounce(float force)
@@ -373,18 +354,7 @@ public class PlayerController : SplineMovementBase
             cameraController_.SetEvaluationInfo(splineController_.EvaluationInfo);
         }
     }
-    public void CheckSpline(SplineContainer splineContainer)
-    {
-        if (splineContainer == null)
-        {
-            Debug.Log("checksplineContainer==null");
-            return;
-        }
-        if (splineController_.currentSplineContainer_ != splineContainer)
-        {
-            splineController_.ChangeOtherSpline(splineContainer);
-        }
-    }
+ 
 
     /// <summary>
     /// LaneChangeZone用の強制Spline変更処理
@@ -420,8 +390,6 @@ public class PlayerController : SplineMovementBase
         animController_.ResetVerticalVelocity();
         animController_.Grounded = true;
 
-        // オフSpline状態をリセット
-        isOffSpline_ = false;
         
         // 移動関連の変数もリセット
         knockbackForce = 0;
@@ -463,6 +431,8 @@ public class PlayerController : SplineMovementBase
             return; // ダメージを受けられない場合は何もしない
         }
         animController_.TakeDamage();
+        AudioManager.Instance.PlaySound(hitSound_, 0.5f);
+        //AudioSource.PlayClipAtPoint(hitSound_, transform.position);
 
         hp_ -= damageValue;
         OnDamageCallback_?.Invoke();
@@ -569,9 +539,6 @@ public class PlayerController : SplineMovementBase
         // ノックバック状態をリセット
         knockbackForce = 0;
         
-        // オフスライン状態をリセット
-        isOffSpline_ = false;
-        offSplineVelocity_ = Vector3.zero;
         
         // 各種フラグをリセット
         canTakeDamage_ = true;
@@ -580,17 +547,14 @@ public class PlayerController : SplineMovementBase
         Enable();
         
         //操作などを再度有効化する
-        //splineMovementBaseなどを取得してtやevaluationInfoから...
         var respawnPointSpline = respawnPoint_.GetComponent<SplineController>();
         if (respawnPointSpline == null) return;
 
+        splineController_.currentSplineContainer_ = respawnPointSpline.currentSplineContainer_;
         splineController_.Progress = respawnPointSpline.Progress;
         
-        // 位置とフレーム状態をリセット
-        isFirstFrame_ = true;
         previousSplinePosition_ = splineController_.GetSplineMeshPos();
         transform.position = previousSplinePosition_;
-        previousOffSplinePosition_ = transform.position;
     }
 
     /// <summary>
@@ -604,7 +568,7 @@ public class PlayerController : SplineMovementBase
     }
 
 
-    private void ChangeLinkedOtherSpline()
+    private bool ChangeLinkedOtherSpline()
     {
         float outOfT = Mathf.Abs(T) % 1.0f;
 
@@ -612,6 +576,7 @@ public class PlayerController : SplineMovementBase
         if (link == null)
         {
             splineController_.ClampProgress();
+            return false;
         }
         else
         {
@@ -624,7 +589,7 @@ public class PlayerController : SplineMovementBase
                 if(link.prev == null)
                 {
                     splineController_.ClampProgress();
-                    return;
+                    return false;
                 }
                 moveDistContainer = link.prev;
                 moveDistNativeSpline = new NativeSpline(moveDistContainer.Spline, moveDistContainer.transform.localToWorldMatrix);
@@ -636,7 +601,7 @@ public class PlayerController : SplineMovementBase
                 if (link.next == null)
                 {
                     splineController_.ClampProgress();
-                    return;
+                    return false;
                 }
                 moveDistContainer = link.next;
                 moveDistNativeSpline = new NativeSpline(moveDistContainer.Spline, moveDistContainer.transform.localToWorldMatrix);
@@ -647,7 +612,7 @@ public class PlayerController : SplineMovementBase
             if (transform.position.y < knotPos.y)
             {
                 splineController_.ClampProgress();
-                return;
+                return false;
             }
 
             jumpControllerVariableHeight_.AdjustForPlatformChange(splineController_.EvaluationInfo.position.y, knotPos.y);
@@ -662,22 +627,8 @@ public class PlayerController : SplineMovementBase
 
             Debug.Log("Player.y," + transform.position.y + "knot.y," + knotPos.y);
             Debug.Log("T:" + splineController_.Progress);
+            return true;
         }
 
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
-        Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
-
-        if (animController_ != null && animController_.Grounded)
-            Gizmos.color = transparentGreen;
-        else
-            Gizmos.color = transparentRed;
-
-        // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
-        //Vector3 worldCenter = transform.TransformPoint(center_);
-        Gizmos.DrawCube(transform.position + center_, halfExtends_);
     }
 }

@@ -23,6 +23,9 @@ public class StrongEnemy : PlayerInteractableBase
     [SerializeField]private EaseInterpolator easeInterpolator_;
 
     [SerializeField] private float ballLifeSpan_ = 5f;
+
+    private GameObject targetPlayer_;
+    [SerializeField] private float minAttackDistance_ = 15.0f;
     protected override void Initialize()
     {
         base.Initialize();
@@ -38,12 +41,22 @@ public class StrongEnemy : PlayerInteractableBase
         easeInterpolator_.onFinished_ += GenerateBall;
         easeInterpolator_.Reset();
         easeInterpolator_.duration = attackInterval_;
+
+        targetPlayer_ = GameObject.FindGameObjectWithTag("Player");
+        if(targetPlayer_ == null)
+        {
+            Debug.LogError("targetPlayer is null : StrongEnemy");
+        }
     }
 
     protected override void UpdateMovement()
     {
         base.UpdateMovement();
-        easeInterpolator_.UpdateTime();
+        float distanceSqr = Vector3.SqrMagnitude(transform.position - targetPlayer_.transform.position);
+        if (distanceSqr > Mathf.Pow(minAttackDistance_,2))
+        {
+            easeInterpolator_.UpdateTime();
+        }
     }
     private void GenerateBall()
     {

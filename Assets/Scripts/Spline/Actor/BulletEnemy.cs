@@ -8,13 +8,17 @@ public class BulletEnemy : PlayerInteractableBase
 {
     public GameObject Sphere;
     public GameObject targetPlayer;
+    [SerializeField] private Transform rotationRoot;
+    [SerializeField] private float spreadAngle = 15f;
     [SerializeField] private float attackInterval_ = 5.0f;
     [SerializeField] private float bulletSpeed_ = 30.0f;
     [SerializeField] private float battleDistance_ = 50.0f;
+    [SerializeField] private float minAttackDistance = 15.0f;
     [SerializeField] private EaseInterpolator easeInterpolator_;
     [SerializeField] private Vector3 bulletOffset_ = Vector3.zero;
     [HideInInspector] protected int animIDBattle;
 
+    [SerializeField] private bool shootOnFirstDetect_ = true;
     // 独自のフィールドをここに追加
     /// <summary>
     /// 初期化処理
@@ -50,6 +54,11 @@ public class BulletEnemy : PlayerInteractableBase
         if (distanceSqr < Mathf.Pow(battleDistance_,2))
         {
             animator.SetBool(animIDBattle, true);
+            if(shootOnFirstDetect_)
+            {
+                GenerateBullet();
+                shootOnFirstDetect_ = false;
+            }
         }
         else
         {
@@ -61,8 +70,19 @@ public class BulletEnemy : PlayerInteractableBase
         if (animator.GetBool(animIDBattle))
         {
             //ターゲットに向く(全方位向く)
-            transform.LookAt(targetPlayer.transform);
-            easeInterpolator_.UpdateTime();
+            transform.position = splineController_.GetEvaluationInfo(Progress).position;
+            Vector3 toTarget = targetPlayer.transform.position - transform.position;
+            if (toTarget.sqrMagnitude > 1e-6f)
+            {
+                Vector3 desiredUp = toTarget.normalized;
+                // rotationRootの現状のupをdesiredUpに合わせる
+                rotationRoot.rotation = Quaternion.FromToRotation(-rotationRoot.up, desiredUp) * rotationRoot.rotation;
+            }
+            // ターゲットが極近距離の場合、射撃のカウントダウンを行わない
+            if (toTarget.sqrMagnitude > Mathf.Pow(minAttackDistance,2f))
+            {
+                easeInterpolator_.UpdateTime();
+            }
         }
 
         Debug.DrawLine(transform.position, transform.position + dir * battleDistance_);
@@ -74,17 +94,29 @@ public class BulletEnemy : PlayerInteractableBase
         {
             return;
         }
-        GameObject bullet = Instantiate(Sphere);
-        
-        bullet.transform.localPosition = transform.position + bulletOffset_;
-        Rigidbody rigidbody = bullet.GetComponent<Rigidbody>();
-        //rigidbody.useGravity = false;
-        //rigidbody.AddForce(transform.forward * 500.0f);
-        rigidbody.AddForce(transform.forward * bulletSpeed_, ForceMode.Impulse);
-        Destroy(bullet, 10.0f);
-        //bullet.AddComponent<DamageObject>();
-        animator?.SetTrigger(animIDAttack);
 
+        Vector3 origin = transform.position + bulletOffset_;
+        Vector3 toTarget = targetPlayer.transform.position - transform.position;
+        Vector3 baseDir = toTarget.sqrMagnitude > 1e-6f ? toTarget.normalized : transform.forward;
+
+        Vector3 leftDir = Quaternion.AngleAxis(-spreadAngle, Vector3.up) * baseDir;
+        Vector3 rightDir = Quaternion.AngleAxis(spreadAngle, Vector3.up) * baseDir;
+        CreateBullet(origin, baseDir);
+        CreateBullet(origin, leftDir);
+        CreateBullet(origin, rightDir);
+
+        animator?.SetTrigger(animIDAttack);
+    }
+    private void CreateBullet(Vector3 position, Vector3 direction)
+    {
+        GameObject bullet = Instantiate(Sphere);
+        bullet.transform.position = position;
+        Rigidbody rb = bullet.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.AddForce(direction * bulletSpeed_, ForceMode.Impulse);
+        }
+        Destroy(bullet, 10.0f);
     }
     /// <summary>
     /// 移動処理の更新
@@ -135,8 +167,8 @@ public class BulletEnemy : PlayerInteractableBase
         // 踏みつけ時の処理をここに記述
         // 例: 
         OnDamage();
-         PlayerInteractionUtils.ApplyStompBounce(player, StompBounceForce);
-        
+        PlayerInteractionUtils.ApplyStompBounce(player, StompBounceForce);
+        animator.SetBool(animIDBattle, false);
     }
     //public override void OnRequestDestroy()
     //{
