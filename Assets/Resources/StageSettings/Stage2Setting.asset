@@ -19,4 +19,4 @@ MonoBehaviour:
   hpTarget: 2
   achievedClearTimeLimit: 1
   achievedScoreTarget: 0
-  achievedHpTarget: 1
+  achievedHpTarget: 0
