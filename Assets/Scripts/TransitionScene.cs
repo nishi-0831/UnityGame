@@ -3,6 +3,7 @@ using System.Collections;
 using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 public class TransitionScene : MonoBehaviour
 {
     public static TransitionScene Instance { get; private set; }
@@ -22,22 +23,13 @@ public class TransitionScene : MonoBehaviour
 
     private void Awake()
     {
-        //if (Instance == null)
-        //{
-        //    Instance = this;
-        //    DontDestroyOnLoad(gameObject);
-        //}
-        //else
-        //{
-        //    Destroy(gameObject);
-        //}
+        // インスタンス設定
         Instance = this;
-
     }
-    // Update is called once per frame
+
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             Debug.Log("QuitGame");
             QuitGame();
@@ -58,36 +50,47 @@ public class TransitionScene : MonoBehaviour
     }
     public void ToResult(float delay = 0.0f)
     {
-        StartCoroutine(ExecuteAfterDelay(delay,() => SceneManager.LoadScene(SceneName.result)));
+        StartCoroutine(ExecuteAfterDelay(delay, () => SceneManager.LoadScene(SceneName.result)));
     }
+
+    // 遅延ありのToStageSelect（既存）
     public void ToStageSelect(float delay = 0.0f)
     {
         StartCoroutine(ExecuteAfterDelay(delay, () => SceneManager.LoadScene(SceneName.stageSelect)));
     }
+
     public void ToPause(float delay = 0.0f)
     {
         StartCoroutine(ExecuteAfterDelay(delay, () => SceneManager.LoadScene(SceneName.pause)));
     }
-    IEnumerator ExecuteAfterDelay(float delay,Action cb)
+
+    IEnumerator ExecuteAfterDelay(float delay, Action cb)
     {
         yield return new WaitForSeconds(delay);
         cb();
     }
-    public void ToStageSelect()
-    {
-        SceneManager.LoadScene(SceneName.StageSelect);
-    }
-    public void ToMainMenu()
-    {
-        SceneManager.LoadScene(SceneName.MainMenu);
-    }
+
+    // StageSelectへの遷移（Time Scaleリセットを追加）
+   // StageSelectへの遷移（LoadSceneの直前でTimeScaleをリセット）
+public void ToStageSelect()
+{
+    Time.timeScale = 1.0f; 
+    SceneManager.LoadScene(SceneName.StageSelect);
+}
+
+// MainMenuへの遷移（LoadSceneの直前でTimeScaleをリセット）
+public void ToMainMenu()
+{
+    Time.timeScale = 1.0f;
+    SceneManager.LoadScene(SceneName.MainMenu);
+}
+
     public void QuitGame()
     {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
         Application.Quit();
-
 #endif
     }
 }

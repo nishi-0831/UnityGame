@@ -879,17 +879,6 @@ public partial class @Horizontalscrolling: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""c0fcd8a0-59ee-4532-b492-4ada9648cfb8"",
-                    ""path"": ""<Gamepad>/leftStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""9e8b49e5-27a7-410b-ac62-4101fdb6837a"",
                     ""path"": ""<Gamepad>/dpad"",
                     ""interactions"": """",
