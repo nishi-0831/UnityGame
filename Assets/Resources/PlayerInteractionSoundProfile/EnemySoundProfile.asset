@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: EnemySoundProfile
   m_EditorClassIdentifier: 
   onStompedAudio: {fileID: 8300000, guid: 1134911da460ed14ea758168ac8ee3bc, type: 3}
-  onStompedAudioVolume: 0.3
+  onStompedAudioVolume: 0.2
   onSideHitAudio: {fileID: 0}
   onSideHitAudioVolume: 0.5

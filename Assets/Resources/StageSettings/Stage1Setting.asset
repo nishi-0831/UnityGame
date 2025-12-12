@@ -17,6 +17,6 @@ MonoBehaviour:
   clearTimeLimit: 180
   scoreTarget: 2100
   hpTarget: 2
-  achievedClearTimeLimit: 1
-  achievedScoreTarget: 1
-  achievedHpTarget: 1
+  achievedClearTimeLimit: 0
+  achievedScoreTarget: 0
+  achievedHpTarget: 0
