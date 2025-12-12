@@ -79,7 +79,10 @@ public class ScoreItemSplineMovement : PlayerInteractableBase
         {
             ScoreManager.Instance?.ReceiveScore(ScoreValue);
         }
-        
+        if (FloatingScoreManager.Instance != null && ScoreValue > 0)
+        {
+            FloatingScoreManager.Instance.DisplayFloatingScore(ScoreValue, transform.position);
+        }
         Destroy(this.gameObject);
     }
     

@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.InputSystem.UI;
+using Unity.VisualScripting;
 
 public class GamepadCursorController : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class GamepadCursorController : MonoBehaviour
     public float speed = 1000f;
 
     // === 内部で使用する変数 ===
-    private Vector2 cursorPos;
+    [SerializeField]private Vector2 cursorPos;
     private Vector2 moveInput;
 
     private PointerEventData eventData;
@@ -35,18 +36,22 @@ public class GamepadCursorController : MonoBehaviour
 
     private GameObject currentHoverObject = null;
 
-
-    void Start()
+    [SerializeField]Vector2 screenPoint;
+    public void InitCursorPos()
     {
         if (cursorRect != null)
         {
             cursorPos = cursorRect.anchoredPosition;
         }
+    }
+    void Start()
+    {
+        InitCursorPos();
 
         eventData = new PointerEventData(EventSystem.current);
         raycastResults = new List<RaycastResult>();
 
-        Cursor.visible = false;
+        //Cursor.visible = false;
         Cursor.lockState = CursorLockMode.None;
 
         if (moveAction != null)
@@ -65,6 +70,8 @@ public class GamepadCursorController : MonoBehaviour
             moveAction.action.canceled -= OnMoveCanceled;
             moveAction.action.Disable();
         }
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void OnMovePerformed(InputAction.CallbackContext context)
@@ -82,30 +89,48 @@ public class GamepadCursorController : MonoBehaviour
     {
         if (cursorRect == null) return;
 
-        // 1. カーソル位置の更新と制限
-        cursorPos += moveInput * speed * Time.deltaTime;
+        // 1. カーソル位置の更新
+        cursorPos += moveInput * speed * Time.unscaledDeltaTime;
 
-        float maxX = 900f;
-        float maxY = 500f;
-
-        cursorPos.x = Mathf.Clamp(cursorPos.x, -maxX, maxX);
-        cursorPos.y = Mathf.Clamp(cursorPos.y, -maxY, maxY);
+        // 2. カーソル位置を親Canvas内に制限
+        ClampCursorToCanvasRect();
 
         cursorRect.anchoredPosition = cursorPos;
 
-        // 2. マウスの強制同期処理は削除。カーソル位置を直接使ってイベントを処理
+        // 3. ホバーイベント処理
         HandleHoverEvents();
 
-        // 3. クリック処理
+        // 4. クリック処理
         HandleUIClick();
     }
 
+    private void ClampCursorToCanvasRect()
+    {
+        // 親のCanvasを取得
+        Canvas parentCanvas = cursorRect.GetComponentInParent<Canvas>();
+        if (parentCanvas == null) return;
+
+        // Canvasの RectTransform を取得
+        RectTransform canvasRect = parentCanvas.GetComponent<RectTransform>();
+        if (canvasRect == null) return;
+
+        // Canvas のローカル座標での bounds を計算
+        Vector2 canvasSize = canvasRect.rect.size;
+        Vector2 canvasMin = -canvasSize * canvasRect.pivot;
+        Vector2 canvasMax = canvasMin + canvasSize;
+
+        // カーソル位置を制限
+        cursorPos.x = Mathf.Clamp(cursorPos.x, canvasMin.x, canvasMax.x);
+        cursorPos.y = Mathf.Clamp(cursorPos.y, canvasMin.y, canvasMax.y);
+
+
+    }
 
     // カーソルがUI要素に乗った/離れたときのイベント処理 (ハイライトに必須)
     private void HandleHoverEvents()
     {
         // ★ 修正点: UICursorのスクリーン座標を直接イベントデータに設定する ★
-        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(null, cursorRect.position);
+        screenPoint = RectTransformUtility.WorldToScreenPoint(null, cursorRect.position);
         eventData.position = screenPoint;
 
         raycastResults.Clear();
@@ -117,7 +142,16 @@ public class GamepadCursorController : MonoBehaviour
         if (raycastResults.Count > 0)
         {
             newHoverObject = raycastResults[0].gameObject;
+            Debug.Log("Raycast");
+            // Buttonのみ強調表示
+            if (newHoverObject.GetComponent<Button>() == null)
+            {
+                Debug.Log($"Button null{newHoverObject.name}");
+                return;
+            }
+            AddOutline(newHoverObject);
         }
+        
 
         if (newHoverObject != currentHoverObject)
         {
@@ -153,5 +187,10 @@ public class GamepadCursorController : MonoBehaviour
                 Debug.Log($"Clicked: {currentHoverObject.name}");
             }
         }
+    }
+  
+    private void AddOutline(GameObject obj)
+    {
+       obj.GetOrAddComponent<OutlineButton>();
     }
 }

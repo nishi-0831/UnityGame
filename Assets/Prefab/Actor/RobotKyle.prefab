@@ -2305,9 +2305,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9091554052753675359}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.00011109051, y: -0.7071068, z: 0.00011109051, w: -0.7071068}
-  m_LocalPosition: {x: -13.662141, y: 4.45, z: -0.000000040612022}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 3.5, y: 3.5, z: 3.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6659203875561437918}
@@ -2355,13 +2355,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1.74
-  m_Radius: 0.19
+  m_Height: 1.54
+  m_Radius: 0.1
   m_SlopeLimit: 89
   m_StepOffset: 0.25
   m_SkinWidth: 0.02
   m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0.89, z: 0}
+  m_Center: {x: 0, y: 0.77, z: 0}
 --- !u!114 &3867249455386190724
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2488,6 +2488,58 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 980e881e-182c-404c-8cbf-3d09fdb48fef
     m_ActionName: 'Player/Sprint[/Keyboard/leftShift,/XInputControllerWindows/leftTrigger]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 9f7d4769-c94d-45ae-81c3-1cd6ecb7947c
+    m_ActionName: 'Player/Pause[/DualShock4GamepadHID/start]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 961bdcb9-580b-42e9-97de-1e1694c21d7e
+    m_ActionName: 'UI/Navigate[/DualShock4GamepadHID/leftStick/up,/DualShock4GamepadHID/rightStick/up,/DualShock4GamepadHID/leftStick/down,/DualShock4GamepadHID/rightStick/down,/DualShock4GamepadHID/leftStick/left,/DualShock4GamepadHID/rightStick/left,/DualShock4GamepadHID/leftStick/right,/DualShock4GamepadHID/rightStick/right,/DualShock4GamepadHID/dpad,/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b37b03cd-349b-44c3-a309-3f5d26893e7c
+    m_ActionName: 'UI/Submit[/Keyboard/enter,/DualShock4GamepadHID/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 419bc21a-1e4e-4225-9de4-27c87cdb76e1
+    m_ActionName: 'UI/Cancel[/Keyboard/escape,/DualShock4GamepadHID/buttonEast]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b8021a57-d093-43b0-9bba-a1933a2fbfd9
+    m_ActionName: 'UI/Point[/Mouse/position]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 9baa42f4-426b-432a-bbc3-cfd6a77422f2
+    m_ActionName: 'UI/Click[/Mouse/leftButton,/DualShock4GamepadHID/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6ad06fca-609b-4f2c-adf1-3c6a76bbf2a7
+    m_ActionName: 'UI/ScrollWheel[/Mouse/scroll]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 91ef3525-6c30-4ffe-8e22-8e2b5923c995
+    m_ActionName: 'UI/MiddleClick[/Mouse/middleButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: fea8486d-7d82-4e83-8696-2f7bed5fd2da
+    m_ActionName: 'UI/RightClick[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8281abc5-e2b7-462f-b8cd-49d65fe5bf14
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4145d61c-e781-4bf4-93bf-f158e278b9b1
+    m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: aba87779-ef66-45bd-99f4-fbef23aec025
+    m_ActionName: 'UI/Move[/DualShock4GamepadHID/leftStick]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7b277967-c7f2-4876-af01-8cc04266db73
+    m_ActionName: 'UI/Pause[/DualShock4GamepadHID/start]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -2515,10 +2567,6 @@ MonoBehaviour:
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
   autoUpdateInfo_: 1
-  onUpdateEditor_:
-    m_PersistentCalls:
-      m_Calls: []
-  splineMeshRadius_: 2.9
   offsetY_: 0
   prevSplineLength: 136.82999
   evaluationInfo_:
@@ -2542,7 +2590,6 @@ MonoBehaviour:
   autoInitialize_: 1
   splineController_: {fileID: 7463270403788800420}
   isActive_: 1
-  onDestroySE_: {fileID: 0}
   runSpeed_: 40
   hp_: 3
   takeDamageInterval_: 3
@@ -2552,7 +2599,6 @@ MonoBehaviour:
   attenuationDelta_: 20
   animController_: {fileID: 2768966881961337981}
   cameraController_: {fileID: 0}
-  verticalForce_: 7
   groundLayer_:
     serializedVersion: 2
     m_Bits: 8
@@ -2564,14 +2610,15 @@ MonoBehaviour:
   hasSplineChangedThisFrame_: 0
   splineChangeFrameCount_: 0
   previousSplinePosition_: {x: 0, y: 0, z: 0}
-  isOffSpline_: 0
   offSplineVelocity_: {x: 0, y: 0, z: 0}
   lastValidTangent_: {x: 0, y: 0, z: 0}
   smashPlayer_: {fileID: 5660682240979132065}
-  rb_: {fileID: 1873772516215525529}
   isBeingSmashed_: 0
   respawnPoint_: {fileID: 0}
+  speedInterpolateProgress_: 0
+  speedChangeDuration_: 1
   jumpControllerVariableHeight_: {fileID: 825623998830045978}
+  hitSound_: {fileID: 8300000, guid: db126fe367cd8eb468b3b7ff38a2b1cd, type: 3}
 --- !u!114 &2768966881961337981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2673,6 +2720,7 @@ MonoBehaviour:
   useVelocityClampOnRelease: 1
   groundEpsilon: 0.001
   showDebug: 0
+  isJumping: 0
 --- !u!1001 &2142177730512228394
 PrefabInstance:
   m_ObjectHideFlags: 0
