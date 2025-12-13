@@ -156,6 +156,10 @@ public class PlayerController : SplineMovementBase
         {
             OnFoundNewSpline(highGround.groundSpline);
         }
+        else
+        {
+            splineController_.ClampProgress();
+        }
     }
 
     protected override void OnReachMinT()
@@ -175,7 +179,10 @@ public class PlayerController : SplineMovementBase
         {
             OnFoundNewSpline(highGround.groundSpline);
         }
-
+        else
+        {
+            splineController_.ClampProgress();
+        }
     }
 
     public void OnFoundNewSpline(SplineContainer newSplineContainer)
