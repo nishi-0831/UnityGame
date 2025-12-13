@@ -33,11 +33,12 @@ public class SplineMeshSplitter : EditorWindow
 		bottomMaterial = (Material)EditorGUILayout.ObjectField("BottomMaterial", bottomMaterial, typeof(Material), false);
 		topRatio = EditorGUILayout.Slider("TopRatio",topRatio, minVal, maxVal);
 
-		findLayer = EditorGUILayout.LayerField("layer", 0);
+		findLayer = EditorGUILayout.LayerField("layer", findLayer);
 		if(GUILayout.Button("FindObjectByLayer"))
 		{
             // ì¡íËÉåÉCÉÑÅ[ÇÃÇ›éÊìæ
-            generators = FindObjectsByType<SplineMeshGenerator>(FindObjectsSortMode.None).Where(generator => generator.gameObject.layer == (int)Mathf.Log(findLayer, 2)).ToList();
+            generators = FindObjectsByType<SplineMeshGenerator>(FindObjectsSortMode.None).ToList();
+            //generators = FindObjectsByType<SplineMeshGenerator>(FindObjectsSortMode.None).Where(generator => generator.gameObject.layer == (int)Mathf.Log(findLayer, 2)).ToList();
         }
 		so.Update();
 		EditorGUILayout.PropertyField(generatorsProperty,true);

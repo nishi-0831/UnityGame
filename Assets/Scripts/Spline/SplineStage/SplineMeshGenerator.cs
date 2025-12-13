@@ -92,7 +92,6 @@ namespace Assets.Scripts
             // C = P + (0, -height, 0)
             // D = P + (width / 2, -height, 0)
 
-
             for (int i = 0; i < knotCount; i++)
             {
                 Vector3 pLocal = spline[i].Position; // 既にローカル座標
@@ -147,6 +146,7 @@ namespace Assets.Scripts
                 }
             }
 
+            Undo.RecordObject(pbMesh, "Build Mesh");
             pbMesh.Clear();
             // 頂点座標と面から構築
             pbMesh.RebuildWithPositionsAndFaces(positions, faces);
@@ -156,7 +156,6 @@ namespace Assets.Scripts
             if(addCollider)
             {
                 CleanupCreatedColliders();
-                //CreateColliderFromGeneratedMesh(positions, segmentCount);
                 BuildSegmentChildColliders();
             }
             //pbMesh.マテリアル...
@@ -293,6 +292,7 @@ namespace Assets.Scripts
                 
                 // 子GameObjectを作成
                 GameObject child = new GameObject($"SegmentCollider_{seg}");
+                Undo.RegisterCreatedObjectUndo(child, "Create SegmentCollider");
                 child.transform.SetParent(transform, false);
                 child.transform.localPosition = centerPos;
                 child.transform.localRotation = rotation;
