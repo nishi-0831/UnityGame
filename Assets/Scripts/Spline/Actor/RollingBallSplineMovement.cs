@@ -10,12 +10,13 @@ public class RollingBallSplineMovement : PlayerInteractableBase
     [Header("自動で曲線から落ちる時間(秒)")]
     [SerializeField] private float lifespan_ = 5.0f;
     [Header("落下してから破棄されるまでの時間")]
-    [SerializeField]private float destroyDelay_ = 3.0f;
+    [SerializeField]private float destroyDelay_ = 5.0f;
 
     [SerializeField] private float rollSpeed = 360.0f;
     [SerializeField] private bool bounceOnBounds = false;
     [SerializeField] private float bounceForce = 5.0f;
-    //[SerializeField] private float knockbackForce = 10.0f;
+    // 落下時に右方向へ与える力
+    [SerializeField] private float rightDirForceOnFall = 0.5f;
     [Header("触れたら曲線から落ちるトリガーのレイヤー")]
     [SerializeField] private LayerMask destroyTriggerLayer_;
     private Rigidbody rb_;
@@ -52,7 +53,6 @@ public class RollingBallSplineMovement : PlayerInteractableBase
     public void SetParam(SplineContainer splineContainer, float t, float moveSpeed, float rollSpeed, bool isLeft,float lifeSpan)
     {
         this.splineController_.currentSplineContainer_ = splineContainer;
-        //splineController_.SetSplineMeshRadius();
 
         this.splineController_.Progress = t;
         this.speed_ = moveSpeed;
@@ -132,8 +132,30 @@ public class RollingBallSplineMovement : PlayerInteractableBase
     /// </summary>
     private void Fall()
     {
-        rb_.linearVelocity = lastVelosity_.magnitude * splineController_.EvaluationInfo.tangent.normalized;
+        // 曲線の接線、右ベクトルを取得
+        Vector3 tangent = splineController_.currentSplineContainer_.Spline.EvaluateTangent(Mathf.Clamp01(Progress));
+        Vector3 right = Vector3.Cross(Vector3.up, tangent).normalized;
+
+        // そのまま直進するよう速度を設定
+        Vector3 velocity = lastVelosity_.magnitude * tangent;
+        // 進行方向が曲線の接線と反対向きならば反転
+        if(splineController_.isMovingLeft)
+        {
+            velocity *= -1;
+        }
+        // 重力を有効にする
         rb_.useGravity = true;
+
+        // 右方向に速度を付与
+        rb_.AddForce(right * rightDirForceOnFall, ForceMode.VelocityChange);
+
+        // 直進するよう速度を付与
+        rb_.AddForce(velocity, ForceMode.Acceleration);
+
+        // 衝突判定を通常に戻す
+        GetComponent<Collider>().isTrigger = false;
+
+        // 一定時間後に破棄
         Destroy(gameObject, destroyDelay_);
     }
 

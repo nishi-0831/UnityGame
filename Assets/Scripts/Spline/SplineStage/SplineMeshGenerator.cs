@@ -6,28 +6,32 @@ using UnityEngine.ProBuilder.MeshOperations;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
 using UnityEngine.Rendering.Universal.Internal;
+using UnityEditor;
 
 namespace Assets.Scripts
 {
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(SplineContainer))]
-    //[RequireComponent(typeof(ProBuilderMesh))]
+    [RequireComponent(typeof(ProBuilderMesh))]
     public class SplineMeshGenerator : MonoBehaviour
     {
         [Header("断面サイズ設定 (Knot位置を原点として +X に幅, -Y に高さ)")]
-        [SerializeField, Min(0.0001f)] private float height = 1.0f; // 下方向(-Y)
-        [SerializeField, Min(0.0001f)] private float width = 1.0f;  // +X 方向
+        [SerializeField, Min(0.0001f)] public float height = 1.0f; // 下方向(-Y)
+        [SerializeField, Min(0.0001f)] public float width = 1.0f;  // +X 方向
+        [SerializeField] public Vector3 offset; // 生成位置のオフセット
+        [SerializeField] public Material material;
+        //[SerializeField] private Layer
         public float Height() { return height; }
         public float Width() { return width; }
         [Header("参照 / オプション")]
-        [SerializeField] private SplineContainer splineContainer;
+        [SerializeField] public SplineContainer splineContainer;
         [SerializeField] private bool generateEndCaps = true;  // Open Spline の両端に蓋を付ける
         [SerializeField] private bool autoGenerateOnPlay = false;
         
 
         [Header("Collider 生成オプション")]
-        [SerializeField] private bool addCollider = true;
+        [SerializeField] public bool addCollider = false;
         [SerializeField]
         private List<Collider> createdColliders = new List<Collider>();
 
@@ -55,6 +59,12 @@ namespace Assets.Scripts
         [ContextMenu("Generate ProBuilder Mesh From Spline")]
         public void Generate()
         {
+            // Undoグループ開始
+            int group = Undo.GetCurrentGroup();
+            Undo.SetCurrentGroupName("Generate SplineMesh");
+
+            // 既存オブジェクトの変更をUndo登録
+            Undo.RecordObject(pbMesh, "Change pbMesh");
             if (splineContainer == null || splineContainer.Spline == null)
             {
                 Debug.LogError("SplineContainer / Spline が設定されていません");
@@ -82,7 +92,6 @@ namespace Assets.Scripts
             // C = P + (0, -height, 0)
             // D = P + (width / 2, -height, 0)
 
-
             for (int i = 0; i < knotCount; i++)
             {
                 Vector3 pLocal = spline[i].Position; // 既にローカル座標
@@ -91,10 +100,10 @@ namespace Assets.Scripts
                 Vector3 B = pLocal + rotLocal * Vector3.right * (width / 2);
                 Vector3 C = B + rotLocal * Vector3.down * (height);
                 Vector3 D = A + rotLocal * Vector3.down * (height);
-                positions.Add(A); // index +0
-                positions.Add(B); // +1
-                positions.Add(C); // +2
-                positions.Add(D); // +3
+                positions.Add(A + offset); // index +0
+                positions.Add(B + offset); // +1
+                positions.Add(C + offset); // +2
+                positions.Add(D + offset); // +3
             }
 
             bool closed = spline.Closed;
@@ -137,6 +146,7 @@ namespace Assets.Scripts
                 }
             }
 
+            Undo.RecordObject(pbMesh, "Build Mesh");
             pbMesh.Clear();
             // 頂点座標と面から構築
             pbMesh.RebuildWithPositionsAndFaces(positions, faces);
@@ -146,12 +156,13 @@ namespace Assets.Scripts
             if(addCollider)
             {
                 CleanupCreatedColliders();
-                //CreateColliderFromGeneratedMesh(positions, segmentCount);
                 BuildSegmentChildColliders();
             }
             //pbMesh.マテリアル...
-            EnsureDefaultMaterial();
+            EnsureMaterial();
             Debug.Log($"Spline Mesh Generated: Knots={knotCount}, Segments={segmentCount}, Vertices={positions.Count}, Faces={faces.Count}");
+            // Undoグループをまとめる
+            Undo.CollapseUndoOperations(group);
         }
 
         
@@ -160,11 +171,16 @@ namespace Assets.Scripts
             faces.Add(new Face(new int[] { v0, v1, v2, v0, v2, v3 }));
         }
 
-        private void EnsureDefaultMaterial()
+        private void EnsureMaterial()
         {
             var renderer = pbMesh.GetComponent<MeshRenderer>();
             if (renderer == null) return;
             
+            if(material != null)
+            {
+                renderer.material = material;
+                return;
+            }
             // マテリアルが未設定または nullの場合
             if (renderer.sharedMaterial == null || renderer.sharedMaterials.Length == 0)
             {
@@ -229,11 +245,11 @@ namespace Assets.Scripts
                     // 子オブジェクト全体を削除
                     if(c.gameObject != null)
                     {
-                        DestroyImmediate(c.gameObject);
+                        Undo.DestroyObjectImmediate(c.gameObject);
                     }
                     else
                     {
-                        DestroyImmediate(c);
+                        Undo.DestroyObjectImmediate(c);
                     }
                 }
                 createdColliders.RemoveAt(i);
@@ -276,6 +292,7 @@ namespace Assets.Scripts
                 
                 // 子GameObjectを作成
                 GameObject child = new GameObject($"SegmentCollider_{seg}");
+                Undo.RegisterCreatedObjectUndo(child, "Create SegmentCollider");
                 child.transform.SetParent(transform, false);
                 child.transform.localPosition = centerPos;
                 child.transform.localRotation = rotation;
