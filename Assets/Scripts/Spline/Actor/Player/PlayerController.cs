@@ -64,6 +64,7 @@ public class PlayerController : SplineMovementBase
     public int Hp { get { return hp_; } }
 
     public AudioClip hitSound_;
+    public AudioClip jumpSound_;
     
     private Action OnDamageCallback_;
     protected override void Initialize()
@@ -254,6 +255,7 @@ public class PlayerController : SplineMovementBase
             {
                
                 jumpControllerVariableHeight_.StartJump(splineController_.EvaluationInfo.position.y);
+                AudioManager.Instance.PlaySound(jumpSound_, 0.2f);
             }
         }
       

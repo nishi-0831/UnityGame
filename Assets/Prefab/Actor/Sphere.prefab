@@ -2342,8 +2342,8 @@ MonoBehaviour:
   splineController_: {fileID: 1421127866671353073}
   isActive_: 1
   profile: {fileID: 11400000, guid: e19d58743d6b5784fa753eadf75a7f49, type: 2}
-  soundProfile: {fileID: 0}
-  lifespan_: 10
+  soundProfile: {fileID: 11400000, guid: da53a49d64eff9e468c1de370d954459, type: 2}
+  lifespan_: 5
   destroyDelay_: 3
   rollSpeed: 360
   bounceOnBounds: 0
@@ -2353,3 +2353,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   radius_: 0
+  stompSound_: {fileID: 0}
