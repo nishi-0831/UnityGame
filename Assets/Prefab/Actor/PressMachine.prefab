@@ -5768,10 +5768,9 @@ MonoBehaviour:
   _to: {x: 0, y: 0, z: 0}
   goingTime: 0.5
   comeBackTime: 3
+  firstTime: 1
   againGoingTime: 2
   againComebackTime: 0
-  firstTime: 1
-  currentState_: 0
 --- !u!65 &2299111483979360461
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5813,15 +5812,12 @@ MonoBehaviour:
   soundProfile: {fileID: 0}
   pingPong_: {fileID: 7971946760139128203}
   respawnPoint_: {fileID: 1150643821407076299}
-  from_: {x: 47.913643, y: 12.389999, z: 33.220795}
-  to_: {x: 59.96864, y: 12.389999, z: 11.319257}
   backDistance_: 20
   forwardDistance_: 5
-  meshRenderer: {fileID: 0}
-  warningDuration: 1.2
-  startInterval: 0.4
-  minInterval: 0.1
-  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  waitTime_: 3
+  blinkTime_: 1
+  blinkInterval_: 0.2
+  emissionColor_: {r: 3, g: 3, b: 0, a: 3}
 --- !u!114 &5976918758377031522
 MonoBehaviour:
   m_ObjectHideFlags: 0
