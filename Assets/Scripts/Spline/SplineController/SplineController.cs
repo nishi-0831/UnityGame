@@ -180,8 +180,6 @@ public class SplineController : MonoBehaviour
             //onUpdateEditor_?.Invoke();
             if (!Application.isPlaying)
             {
-                Debug.Log("Paint");
-                UnityEditor.SceneView.RepaintAll();
             }
         }
 

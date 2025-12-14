@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts;
 
+
+
 #if UNITY_EDITOR
 public class SplineContainerSplitter : MonoBehaviour
 {
