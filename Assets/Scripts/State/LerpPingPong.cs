@@ -27,8 +27,10 @@ public class LerpPingPong : MonoBehaviour
 
     [Header("警告演出（WAIT 残り70%）")]
     [SerializeField] private Color blinkColor = Color.yellow;
-    [SerializeField] private float blinkSpeed = 2.0f;
-    [SerializeField] private float emissionIntensity = 2.0f;
+    [SerializeField, Tooltip("値を大きくすると点滅が速くなる")]
+    private float blinkSpeed = 4.0f;
+    [SerializeField, Tooltip("Emission の強さ（HDR）")]
+    private float emissionIntensity = 2.0f;
 
     private MoveState currentState_;
     public MoveState CurrentState => currentState_;
@@ -49,7 +51,7 @@ public class LerpPingPong : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         interpolator = GetComponent<EaseInterpolator>();
 
-        // FBX子オブジェクト含め Renderer 取得
+        // FBX 子オブジェクト含め Renderer 取得
         renderers = GetComponentsInChildren<Renderer>();
         baseEmissionColors = new Color[renderers.Length];
 
@@ -92,7 +94,7 @@ public class LerpPingPong : MonoBehaviour
                         break;
                 }
 
-                // WAIT残り70%で点滅開始
+                // WAIT 残り70%で点滅開始（経過30%）
                 if (waitTime > 0f)
                     blinkDelayCoroutine = StartCoroutine(StartBlinkLate(waitTime));
 
@@ -105,7 +107,7 @@ public class LerpPingPong : MonoBehaviour
             }
         );
 
-        // GOING
+        // GOING 
         stateMachine_.RegisterState(MoveState.GOING).SetCallbacks(
             onEntry: () =>
             {
@@ -176,7 +178,7 @@ public class LerpPingPong : MonoBehaviour
 
     private IEnumerator StartBlinkLate(float waitTime)
     {
-        yield return new WaitForSeconds(waitTime * 0.3f); // 残り時間70%到達で点滅
+        yield return new WaitForSeconds(waitTime * 0.3f); // 残り70%
         StartBlink();
     }
 
@@ -203,7 +205,7 @@ public class LerpPingPong : MonoBehaviour
             blinkCoroutine = null;
         }
 
-        // 元のEmissionに戻す
+        // Emission を元に戻す
         for (int i = 0; i < renderers.Length; i++)
         {
             if (renderers[i].material.HasProperty("_EmissionColor"))
@@ -211,11 +213,16 @@ public class LerpPingPong : MonoBehaviour
         }
     }
 
+    // ラグ対策済み点滅（deltaTime方式）
     private IEnumerator BlinkEmission()
     {
+        float time = 0f;
+
         while (true)
         {
-            float t = Mathf.PingPong(Time.time * blinkSpeed, 1f);
+            time += Time.deltaTime * blinkSpeed;
+
+            float t = Mathf.PingPong(time, 1f);
             Color emit = blinkColor * Mathf.Lerp(0f, emissionIntensity, t);
 
             foreach (var r in renderers)
