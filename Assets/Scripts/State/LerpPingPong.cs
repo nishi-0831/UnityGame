@@ -25,7 +25,7 @@ public class LerpPingPong : MonoBehaviour
     [SerializeField] private float againGoingTime = 1.5f;
     [SerializeField] private float againComebackTime = 0.0f;
 
-    [Header("Blink (WAIT後半50%)")]
+    [Header("警告演出（WAIT 残り70%）")]
     [SerializeField] private Color blinkColor = Color.yellow;
     [SerializeField] private float blinkSpeed = 2.0f;
     [SerializeField] private float emissionIntensity = 2.0f;
