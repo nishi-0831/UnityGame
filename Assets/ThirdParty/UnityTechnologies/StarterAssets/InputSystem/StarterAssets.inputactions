@@ -281,16 +281,7 @@
                     "name": "Submit",
                     "type": "Button",
                     "id": "b37b03cd-349b-44c3-a309-3f5d26893e7c",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Cancel",
-                    "type": "Button",
-                    "id": "419bc21a-1e4e-4225-9de4-27c87cdb76e1",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -655,17 +646,6 @@
                 },
                 {
                     "name": "",
-                    "id": "2c8eb7b6-2c3c-403f-b2b2-3d092701a83b",
-                    "path": "*/{Cancel}",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
-                    "action": "Cancel",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "3fb54c52-ea2c-43f0-9220-065749fe05ab",
                     "path": "<Mouse>/position",
                     "interactions": "",
@@ -737,6 +717,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "446602cd-b3c0-441e-9aad-e07697609b3a",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
                     "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false

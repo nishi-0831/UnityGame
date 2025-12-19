@@ -2348,9 +2348,8 @@ MonoBehaviour:
   rollSpeed: 360
   bounceOnBounds: 0
   bounceForce: 14
-  rightDirForceOnFall: 3
+  rightDirForceOnFall: 6
   destroyTriggerLayer_:
     serializedVersion: 2
     m_Bits: 256
   radius_: 0
-  stompSound_: {fileID: 0}
