@@ -25,7 +25,8 @@ public class LerpPingPong : MonoBehaviour
     [SerializeField] private float againGoingTime = 1.5f;
     [SerializeField] private float againComebackTime = 0.0f;
 
-    [Header("警告演出（WAIT 残り70%）")]
+    [Header("WAIT進行度がこの割合を下回ると点滅開始")]
+    [SerializeField] private float blinkStartThreshold = 0.7f;
     [SerializeField] private Color blinkColor = Color.yellow;
     [SerializeField, Tooltip("値を大きくすると点滅が速くなる")]
     private float blinkSpeed = 4.0f;
@@ -94,7 +95,7 @@ public class LerpPingPong : MonoBehaviour
                         break;
                 }
 
-                // WAIT 残り70%で点滅開始（経過30%）
+                // WAIT
                 if (waitTime > 0f)
                     blinkDelayCoroutine = StartCoroutine(StartBlinkLate(waitTime));
 
@@ -178,7 +179,8 @@ public class LerpPingPong : MonoBehaviour
 
     private IEnumerator StartBlinkLate(float waitTime)
     {
-        yield return new WaitForSeconds(waitTime * 0.3f); // 残り70%
+        // 点滅を行う時間まで待機
+        yield return new WaitForSeconds(waitTime * (1.0f - blinkStartThreshold )); 
         StartBlink();
     }
 
