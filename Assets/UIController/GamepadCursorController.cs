@@ -177,7 +177,10 @@ public class GamepadCursorController : MonoBehaviour
     // Aボタンが押されたときのクリック処理
     private void HandleUIClick()
     {
-        if (Gamepad.current != null && Gamepad.current.aButton.wasPressedThisFrame && currentHoverObject != null)
+        if (Gamepad.current == null || currentHoverObject == null)
+            return;
+
+        if (Gamepad.current.buttonSouth.wasPressedThisFrame || Gamepad.current.buttonEast.wasPressedThisFrame)
         {
             Button button = currentHoverObject.GetComponent<Button>();
 
