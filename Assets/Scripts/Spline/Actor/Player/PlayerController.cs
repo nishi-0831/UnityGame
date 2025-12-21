@@ -69,7 +69,9 @@ public class PlayerController : SplineMovementBase
     private Action OnDamageCallback_;
     protected override void Initialize()
     {
+        // ゲームクリアしたら、アニメーション再生、ダメージ処理を無効にする
         GameOutcomeManager.Instance?.RegisterGameClearCallback(() => animController_.GameClear());
+        GameOutcomeManager.Instance?.RegisterGameClearCallback(() => canTakeDamage_ = false);
         // タイムアップ時にゲームオーバー
         ScoreManager.Instance?.RegisterOnTimeUpCallback(OnPlayerDie);
 
@@ -78,7 +80,6 @@ public class PlayerController : SplineMovementBase
         {
             animController_ = GetComponent<AnimationController>();
         }
-        //characterController_ = GetComponent<CharacterController>();
         splineController_.splineDirection_ = 1;
 
         // 初期SplineContainerを記録

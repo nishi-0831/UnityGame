@@ -46,7 +46,7 @@ public class LerpPingPong : MonoBehaviour
 
     private Renderer[] renderers;
     private Color[] baseEmissionColors;
-
+    private MaterialPropertyBlock propertyBlock;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -218,6 +218,9 @@ public class LerpPingPong : MonoBehaviour
     // ラグ対策済み点滅（deltaTime方式）
     private IEnumerator BlinkEmission()
     {
+        if (propertyBlock == null)
+            propertyBlock = new MaterialPropertyBlock();
+
         float time = 0f;
 
         while (true)
@@ -229,8 +232,9 @@ public class LerpPingPong : MonoBehaviour
 
             foreach (var r in renderers)
             {
-                if (r.material.HasProperty("_EmissionColor"))
-                    r.material.SetColor("_EmissionColor", emit);
+                r.GetPropertyBlock(propertyBlock);
+                propertyBlock.SetColor("_EmissionColor", emit);
+                r.SetPropertyBlock(propertyBlock);
             }
 
             yield return null;

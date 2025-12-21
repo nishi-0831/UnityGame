@@ -138,7 +138,6 @@ public class SplineController : MonoBehaviour
 
                 if (CanFindSplineContainer())
                 {
-                    //Debug.Log("FindSplineContainer");
                     FindParentSplineContainer();
                 }
             };
