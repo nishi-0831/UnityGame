@@ -62,8 +62,12 @@ namespace Assets.Scripts
             int group = Undo.GetCurrentGroup();
             Undo.SetCurrentGroupName("Generate SplineMesh");
 
-            // 既存オブジェクトの変更をUndo登録
-            Undo.RecordObject(pbMesh, "Change pbMesh");
+            if(pbMesh != null)
+            {
+                // 既存オブジェクトの変更をUndo登録
+                Undo.RecordObject(pbMesh, "Change pbMesh");
+
+            }
             if (splineContainer == null || splineContainer.Spline == null)
             {
                 Debug.LogError("SplineContainer / Spline が設定されていません");

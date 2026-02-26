@@ -125,6 +125,10 @@ public class SplineContainerSplitter : MonoBehaviour
             {
                 secondSpline.Add(originalSpline[i]);
             }
+            if(originalSpline.Closed)
+            {
+                secondSpline.Add(originalSpline[0]);
+            }
         }
         // splitKnotLastIndex が totalKnots - 1 の場合: 0 から splitKnotFirstIndex
         else if (splitKnotLastIndex == totalKnots - 1)
@@ -133,7 +137,7 @@ public class SplineContainerSplitter : MonoBehaviour
             if (originalSpline.Closed)
             {
                 // 閉じたスプラインの場合、splitKnotLastIndex から始まり、splitKnotFirstIndex で終わる
-                for (int i = splitKnotLastIndex; i < totalKnots + splitKnotFirstIndex; i++)
+                for (int i = splitKnotLastIndex; i <= totalKnots + splitKnotFirstIndex; i++)
                 {
                     secondSpline.Add(originalSpline[i % totalKnots]);
                 }
