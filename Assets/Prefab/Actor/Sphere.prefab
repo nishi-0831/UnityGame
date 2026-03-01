@@ -32,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 5900284842744972119}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12.344505, y: 10.780001, z: 7.0348215}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2308,27 +2308,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineLayerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
-  followTarget_: {fileID: 5900284842744972119}
   currentSplineContainer_: {fileID: 0}
-  t_: 0
+  followTarget_: {fileID: 5900284842744972119}
+  SplineProgress_: 0
   splineDirection_: 0
   isMovingLeft: 1
   offsetRayStartPosY: 1
   enableEditorPreview: 0
-  onUpdateEditor_:
-    m_PersistentCalls:
-      m_Calls: []
-  splineMeshRadius_: 0
-  offsetY_: 0
   autoFindParentSplineContainer_: 1
   overwriteCurrentWithParentSplineContainer_: 0
+  autoUpdateInfo_: 1
+  offsetY_: 0
+  prevSplineLength: -1
   evaluationInfo_:
     position: {x: 0, y: 0, z: 0}
     tangent: {x: 0, y: 0, z: 0}
     upVector: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0, w: 0}
-  autoUpdateInfo_: 1
 --- !u!114 &3936872027912104542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2341,23 +2337,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e29df038230e4742a84e73137a30688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp_: 1
   speed_: 10
   autoInitialize_: 1
-  wallTag_: Wall
   splineController_: {fileID: 1421127866671353073}
   isActive_: 1
-  layerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
-  onDestroySE_: {fileID: 0}
+  profile: {fileID: 11400000, guid: e19d58743d6b5784fa753eadf75a7f49, type: 2}
+  soundProfile: {fileID: 11400000, guid: da53a49d64eff9e468c1de370d954459, type: 2}
   lifespan_: 5
   destroyDelay_: 3
   rollSpeed: 360
   bounceOnBounds: 0
   bounceForce: 14
+  rightDirForceOnFall: 6
   destroyTriggerLayer_:
     serializedVersion: 2
     m_Bits: 256
   radius_: 0
-  canBeStomped: 1
-  damageToPlayer: 1
-  stompForce: 5

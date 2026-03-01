@@ -19,8 +19,6 @@ public class SplineInterpolator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        //splineAnimate_.Completed += WaitInterpolator;
     }
 
     void WaitInterpolator()

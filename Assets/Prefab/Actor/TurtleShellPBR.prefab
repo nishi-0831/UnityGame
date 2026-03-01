@@ -156,7 +156,7 @@ Transform:
   m_GameObject: {fileID: 4272168667981661040}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -31.724264, y: 10.674855, z: 5.927738}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -216,21 +216,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1439b1a6de054044586ca8bc9e37d29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineLayerSettings_: {fileID: 0}
-  followTarget_: {fileID: 4272168667981661040}
   currentSplineContainer_: {fileID: 0}
-  t_: 0
+  followTarget_: {fileID: 4272168667981661040}
+  SplineProgress_: 0
   splineDirection_: 1
   isMovingLeft: 0
   offsetRayStartPosY: 1
   enableEditorPreview: 1
+  autoFindParentSplineContainer_: 1
+  overwriteCurrentWithParentSplineContainer_: 0
+  autoUpdateInfo_: 1
   onUpdateEditor_:
     m_PersistentCalls:
       m_Calls: []
   splineMeshRadius_: 0
   offsetY_: 0
-  autoFindParentSplineContainer_: 1
-  overwriteCurrentWithParentSplineContainer_: 0
+  prevSplineLength: -1
   evaluationInfo_:
     position: {x: 0, y: 0, z: 0}
     tangent: {x: 0, y: 0, z: 0}
@@ -248,25 +249,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f774bd54a08c941bea67bf25c19778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp_: 1
   speed_: 1
   autoInitialize_: 1
   splineController_: {fileID: 7509334385762693493}
   isActive_: 1
-  layerSettings_: {fileID: 11400000, guid: 2108a0769af38bd4d92630f60cc2f864, type: 2}
-  onDestroySE_: {fileID: 0}
+  profile: {fileID: 11400000, guid: a3bdc36cb5eae2d4a80ba8c3e656335c, type: 2}
+  soundProfile: {fileID: 11400000, guid: da53a49d64eff9e468c1de370d954459, type: 2}
   attackInterval_: 5
   ballMoveSpeed_: 10
   ballRollSpeed_: 360
-  ballOffsetT_: 0.1
+  ballOffset_: 5
   ballPrefab_: {fileID: 5900284842744972119, guid: fa4b07e48ed5c294cbb870e4ed47442f, type: 3}
   ballRadius_: 0.5
   easeInterpolator_: {fileID: 536357929650465464}
-  canBeStomped: 1
-  damageToPlayer: 0
-  animator: {fileID: 8728576206991912903}
-  stompBounceForce: 5
   ballLifeSpan_: 5
+  enemyDieClip: {fileID: 0}
 --- !u!65 &7272133104683582006
 BoxCollider:
   m_ObjectHideFlags: 0

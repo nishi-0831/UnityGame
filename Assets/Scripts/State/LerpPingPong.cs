@@ -1,9 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 public enum MoveState
 {
@@ -11,126 +7,129 @@ public enum MoveState
     GOING,
     COMBACKING
 }
+
 [RequireComponent(typeof(EaseInterpolator))]
+[RequireComponent(typeof(Rigidbody))]
 public class LerpPingPong : MonoBehaviour
 {
-    [Header("補間の始点")]
+    [Header("Position")]
     [SerializeField] public Vector3 _from;
-
-    [Header("線形補間の終点")]
     [SerializeField] public Vector3 _to;
-    
-    [Header("行きに掛かる時間")]
-    [SerializeField] private float goingTime = 1;
-    
-    [Header("帰りに掛かる時間")]
-    [SerializeField] private float comeBackTime = 3;
-    
-    [Header("行き始めるまでの時間")]
-    [SerializeField] private float againGoingTime = 2f;
 
-    [Header("戻り始めるまでの時間")]
-    [SerializeField] private float againComebackTime = 2f;
+    [Header("Time (seconds)")]
+    [SerializeField] private float goingTime = 2.0f;
+    [SerializeField] private float comeBackTime = 0.6f;
+    [SerializeField] private float firstTime = 2.0f;
+    public float FirstTime => firstTime;
 
-    [Header("最初、動き出すまでの時間")]
-    [SerializeField] private float firstTime = 0;
+    [SerializeField] private float againGoingTime = 1.5f;
+    [SerializeField] private float againComebackTime = 0.0f;
 
-    [SerializeField] private MoveState prevState_;
-    [SerializeField] private MoveState currentState_;
+    [Header("WAIT進行度がこの割合を下回ると点滅開始")]
+    [SerializeField] private float blinkStartThreshold = 0.7f;
+    [SerializeField] private Color blinkColor = Color.yellow;
+    [SerializeField, Tooltip("値を大きくすると点滅が速くなる")]
+    private float blinkSpeed = 4.0f;
+    [SerializeField, Tooltip("Emission の強さ（HDR）")]
+    private float emissionIntensity = 2.0f;
 
-    public MoveState CurrentState
-    {
-        get { return currentState_; }
-    }
-    public StateMachine<MoveState> stateMachine_;
-    
-    //衝突時に掛かる力
-    [SerializeField] private float power = 1f;
+    private MoveState currentState_;
+    public MoveState CurrentState => currentState_;
+
+    private StateMachine<MoveState> stateMachine_;
+    private EaseInterpolator interpolator;
     private Rigidbody rb;
-    
-    //行きだけ吹き飛ばすか否か
-    private bool addForceOnlyGoing = true;
 
-    [SerializeField]EaseInterpolator interpolator;
+    private Coroutine waitCoroutine;
+    private Coroutine blinkCoroutine;
+    private Coroutine blinkDelayCoroutine;
 
+    private Renderer[] renderers;
+    private Color[] baseEmissionColors;
+    private MaterialPropertyBlock propertyBlock;
     private void Awake()
     {
-        power = power * this.GetComponent<Rigidbody>().mass;
-        rb = this.GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         interpolator = GetComponent<EaseInterpolator>();
-        stateMachine_ = new StateMachine<MoveState>();
-    }
-    private void Start()
-    {
 
-        
-        //StartPingPong();
+        // FBX 子オブジェクト含め Renderer 取得
+        renderers = GetComponentsInChildren<Renderer>();
+        baseEmissionColors = new Color[renderers.Length];
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Material mat = renderers[i].material;
+            mat.EnableKeyword("_EMISSION");
+
+            if (mat.HasProperty("_EmissionColor"))
+                baseEmissionColors[i] = mat.GetColor("_EmissionColor");
+        }
+
+        stateMachine_ = new StateMachine<MoveState>();
+        InitializeStateMachine();
     }
+
     private void InitializeStateMachine()
     {
-
-        //WAIT状態の設定
-        /*何もしない*/
+        // WAIT 
         stateMachine_.RegisterState(MoveState.WAIT).SetCallbacks(
-            onEntry: () => 
+            onEntry: () =>
             {
+                StopWaitCoroutine();
+                StopBlink();
+                StopBlinkDelay();
+
+                float waitTime = firstTime;
+                MoveState next = MoveState.GOING;
+
                 switch (stateMachine_.PrevState)
                 {
                     case MoveState.GOING:
-                        StartCoroutine(delay(againComebackTime, MoveState.COMBACKING));
+                        waitTime = againComebackTime;
+                        next = MoveState.COMBACKING;
                         break;
+
                     case MoveState.COMBACKING:
-                        StartCoroutine(delay(againGoingTime, MoveState.GOING));
+                        waitTime = againGoingTime;
+                        next = MoveState.GOING;
                         break;
-                    case MoveState.WAIT:
-                        
-                        StartCoroutine(delay(firstTime, MoveState.GOING));
-                        break;
-                    default:
-                        
-                        StartCoroutine(delay(firstTime, MoveState.GOING));
-                        break;
-
                 }
-                
-            },
-            onUpdate: () => 
-            {
-                //interpolator.UpdateTime();
-            },
-            onExit: () => { }
-            );
-        
-       
-        //stateMachine_[MoveState.WAIT].AddTransition
 
+                // WAIT
+                if (waitTime > 0f)
+                    blinkDelayCoroutine = StartCoroutine(StartBlinkLate(waitTime));
+
+                waitCoroutine = StartCoroutine(WaitAndTransition(waitTime, next));
+            },
+            onExit: () =>
+            {
+                StopBlink();
+                StopBlinkDelay();
+            }
+        );
+
+        // GOING 
         stateMachine_.RegisterState(MoveState.GOING).SetCallbacks(
             onEntry: () =>
             {
-                //interpolator.from_ = _from.position;
-                //interpolator.to_ = _to.position;
                 interpolator.duration = goingTime;
-                
                 interpolator.isReverse_ = false;
+                interpolator.from_ = _from;
+                interpolator.to_ = _to;
                 interpolator.Reset();
             },
             onUpdate: () =>
             {
                 interpolator.UpdateTime();
                 Move();
-            },
-            onExit: () =>
-            {
-                
-            }).
-            AddTransition(MoveState.WAIT, ref interpolator.onFinished_);
+            }
+        ).AddTransition(MoveState.WAIT, ref interpolator.onFinished_);
 
+        // COMBACKING
         stateMachine_.RegisterState(MoveState.COMBACKING).SetCallbacks(
             onEntry: () =>
             {
-                
                 interpolator.duration = comeBackTime;
-                
                 interpolator.isReverse_ = true;
                 interpolator.Reset();
             },
@@ -138,74 +137,114 @@ public class LerpPingPong : MonoBehaviour
             {
                 interpolator.UpdateTime();
                 Move();
-            },
-            onExit: () =>
-            {
-                
-            }).
-            AddTransition(MoveState.WAIT,ref interpolator.onComeback_);
+            }
+        ).AddTransition(MoveState.WAIT, ref interpolator.onComeback_);
     }
-    private async Task<bool> Wait(int delay)
-    {
-        await Task.Delay(delay * 1000).ConfigureAwait(false);
-        return true;
-    }
-    
-    
+
     public void StartPingPong()
     {
-        InitializeStateMachine();
-        interpolator.onFinished_ += OnFinished;
-        interpolator.from_ = _from;
-        interpolator.to_ = _to;
-
+        StopWaitCoroutine();
         stateMachine_.Start(MoveState.WAIT);
     }
+
     private void Update()
     {
-        
         stateMachine_.UpdateCurrent();
         currentState_ = stateMachine_.CurrentState;
-        prevState_ = stateMachine_.PrevState;
     }
-    
 
-    private void OnFinished()
-    {
-        
-    }
-    
-     IEnumerator delay(float time,MoveState nextState)
-    {
-        yield return new WaitForSeconds(time);
-        stateMachine_.TransitionTo(nextState);
-    }
-   
     private void Move()
     {
-        Vector3 newPosition = interpolator.Interpolation();
-        rb.MovePosition(newPosition);
+        rb.MovePosition(interpolator.Interpolation());
     }
-    
-    void OnCollisionEnter(Collision collision)
-    {
-        // 接触したオブジェクトのRigidbodyを取得
-        Rigidbody rb = collision.gameObject.GetComponent<Rigidbody>();
 
-        // Rigidbodyが存在する場合、力を加える
-        if (rb != null && collision.gameObject.CompareTag("Player"))
+    private IEnumerator WaitAndTransition(float time, MoveState next)
+    {
+        if (time > 0f)
+            yield return new WaitForSeconds(time);
+
+        stateMachine_.TransitionTo(next);
+    }
+
+    private void StopWaitCoroutine()
+    {
+        if (waitCoroutine != null)
         {
-            if (addForceOnlyGoing == false || currentState_ != MoveState.WAIT)
-            {
-                // 力を加える方向と強さを設定
-                Vector3 forceDirection = transform.forward;
-                //float forceMagnitude = 10.0f;
-                Debug.Log("AddForce");
-                // 力を加える
-                rb.AddForce(forceDirection * power, ForceMode.Impulse);
-            }
+            StopCoroutine(waitCoroutine);
+            waitCoroutine = null;
         }
     }
-    
-    
+
+    // 点滅制御
+
+    private IEnumerator StartBlinkLate(float waitTime)
+    {
+        // 点滅を行う時間まで待機
+        yield return new WaitForSeconds(waitTime * (1.0f - blinkStartThreshold )); 
+        StartBlink();
+    }
+
+    private void StopBlinkDelay()
+    {
+        if (blinkDelayCoroutine != null)
+        {
+            StopCoroutine(blinkDelayCoroutine);
+            blinkDelayCoroutine = null;
+        }
+    }
+
+    private void StartBlink()
+    {
+        StopBlink();
+        blinkCoroutine = StartCoroutine(BlinkEmission());
+    }
+
+    private void StopBlink()
+    {
+        if (blinkCoroutine != null)
+        {
+            StopCoroutine(blinkCoroutine);
+            blinkCoroutine = null;
+        }
+
+        // Emission を元に戻す
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i].material.HasProperty("_EmissionColor"))
+                renderers[i].material.SetColor("_EmissionColor", baseEmissionColors[i]);
+        }
+    }
+
+    // ラグ対策済み点滅（deltaTime方式）
+    private IEnumerator BlinkEmission()
+    {
+        if (propertyBlock == null)
+            propertyBlock = new MaterialPropertyBlock();
+
+        float time = 0f;
+
+        while (true)
+        {
+            time += Time.deltaTime * blinkSpeed;
+
+            float t = Mathf.PingPong(time, 1f);
+            Color emit = blinkColor * Mathf.Lerp(0f, emissionIntensity, t);
+
+            foreach (var r in renderers)
+            {
+                r.GetPropertyBlock(propertyBlock);
+                propertyBlock.SetColor("_EmissionColor", emit);
+                r.SetPropertyBlock(propertyBlock);
+            }
+
+            yield return null;
+        }
+    }
+
+    // 外部調整用
+    public void SetMoveTime(float going, float comeback)
+    {
+        goingTime = going;
+        comeBackTime = comeback;
+    }
 }

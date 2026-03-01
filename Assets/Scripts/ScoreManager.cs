@@ -1,5 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using TMPro;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
+using static ScoreManager;
 
 
 public class ScoreManager : MonoBehaviour
@@ -7,10 +12,14 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance { get; private set; }
     [SerializeField] private ScoreData scoreData_;
     
-
     private bool isStartedCountClearTime = false;
     [SerializeField] private float startTime_;
+    [SerializeField] private float remainingTime_;
     [SerializeField] private float endTime_;
+    [SerializeField] private TextMeshProUGUI scoreText_;
+    [SerializeField] private TextMeshProUGUI timerText_;
+    private Action timeUp_;
+    private bool countTime_;
     //クリア時間の計測を始める
     //[SerializeField] private 
 
@@ -31,6 +40,18 @@ public class ScoreManager : MonoBehaviour
         }
         scoreData_.Initialize();
         StartCountClearTime();
+        
+    }
+    private void Start()
+    {
+        if (StageUIManager.Instance)
+        {
+            remainingTime_ = StageUIManager.Instance.CurrentStageSetting().timeLimit;
+        }
+    }
+    public void RegisterOnTimeUpCallback(Action callback)
+    {
+        timeUp_ = callback;
     }
     public void StartCountClearTime()
     {
@@ -46,27 +67,57 @@ public class ScoreManager : MonoBehaviour
     {
         endTime_ = Time.time;
         isStartedCountClearTime = false;
-
+        
         scoreData_.clearTime = endTime_ - startTime_;
         Debug.Log($"ClearTime:{scoreData_.clearTime}!!!");
     }
     // Update is called once per frame
     void Update()
     {
-        //デバッグ
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            StartCountClearTime();
-        }
-        else if(Input.GetKeyDown(KeyCode.Y))
-        {
-            EndCountClearTime();
-        }
+        if(isStartedCountClearTime == false)
+            return;
+        
         scoreData_.clearTime = Time.time - startTime_;
+        if(remainingTime_ > 0) 
+        {
+            CountDownTimer();
+        }
+        scoreText_.text = scoreData_.score.ToString();
     }
-    
+
+    public void CountDownTimer()
+    {
+        remainingTime_ -= Time.deltaTime;
+        if (remainingTime_ > 0)
+        {
+            //カウントダウンタイマーの時間表示
+            timerText_.text = $"Time:{Math.Truncate(remainingTime_)}";
+        }
+        else if (remainingTime_ <= 0)
+        {
+            //カウントダウンタイマーが０になった時の処理
+            timeUp_?.Invoke();
+        }
+    }
+
     public void ReceiveScore(int value)
     {
         scoreData_.score += value;
     }
+#if UNITY_EDITOR
+    [InitializeOnEnterPlayMode]
+    static void ResetScoreForPlayMode()
+    {
+        string[] guids = AssetDatabase.FindAssets("t:ScoreData");
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            ScoreData scoreData = AssetDatabase.LoadAssetAtPath<ScoreData>(path);
+            if (scoreData != null)
+            {
+                scoreData.Initialize();
+            }
+        }
+    }
+#endif
 }
